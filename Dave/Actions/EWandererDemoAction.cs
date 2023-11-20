@@ -1,4 +1,4 @@
-﻿namespace DemoMod.Actions
+﻿namespace Dave.Actions
 {
     public class EWandererDemoAction : CardAction
     {

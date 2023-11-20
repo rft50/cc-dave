@@ -1,6 +1,6 @@
-﻿using DemoMod.Actions;
+﻿using Dave.Actions;
 
-namespace DemoMod.Cards
+namespace Dave.Cards
 {
     [CardMeta(deck = Deck.riggs, rarity = Rarity.common, upgradesTo = new Upgrade[] { Upgrade.A, Upgrade.B })]
     public class EWandererDemoCard : Card

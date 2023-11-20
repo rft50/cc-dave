@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PlatformTarget>x64</PlatformTarget>
+    <RootNamespace>Dave</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,8 +21,15 @@
 
   <ItemGroup>
     <Reference Include="CobaltCore">
-      <HintPath>CobaltCore.dll</HintPath>
+      <HintPath>./CobaltCore.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="MonoGame.Framework.dll">
+      <HintPath>./MonoGame.Framework.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="CobaltCoreModding.Definitions">
+      <HintPath>..\CobaltCoreModding.Definitions\bin\Debug\net6.0\CobaltCoreModding.Definitions.dll</HintPath>
     </Reference>
   </ItemGroup>
 
@@ -41,6 +49,10 @@
     <None Update="Sprites\Shield.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="bin\Debug\net6.0\Sprites\blue.png" />
+    <None Include="bin\Debug\net6.0\Sprites\blue_orange.png" />
+    <None Include="bin\Debug\net6.0\Sprites\orange.png" />
+    <None Include="bin\Debug\net6.0\Sprites\random_move_foe.png" />
   </ItemGroup>
 
 </Project>

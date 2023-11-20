@@ -2,12 +2,14 @@
 using CobaltCoreModding.Definitions.ModContactPoints;
 using CobaltCoreModding.Definitions.ModManifests;
 using CobaltCoreModding.Definitions.OverwriteItems;
-using DemoMod.Actions;
-using DemoMod.Cards;
+using Dave.Actions;
+using Dave.Cards;
+using HarmonyLib;
 
-namespace DemoMod
+namespace Dave
 {
-    public class ModManifest : IModManifest, ISpriteManifest, IDBManifest, IAnimationManifest, IDeckManifest, ICardManifest, ICardOverwriteManifest, ICharacterManifest, IGlossaryManifest, IArtifactManifest, IStatusManifest, ICustomEventManifest
+    // IDBManifest
+    public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, IDeckManifest, ICardManifest, ICardOverwriteManifest, ICharacterManifest, IGlossaryManifest, IArtifactManifest, IStatusManifest, ICustomEventManifest
     {
         public static ExternalStatus? demo_status;
         internal static ICustomEventHub? EventHub;
@@ -21,14 +23,19 @@ namespace DemoMod
         private ExternalAnimation? mini_animation;
         private ExternalSprite? mini_dracula_sprite;
         private ExternalSprite? pinker_per_border_over_sprite;
+        private ExternalSprite? random_move_foe_sprite;
+        private ExternalSprite? blue_orange_sprite;
+        private ExternalSprite? blue_sprite;
+        private ExternalSprite? orange_sprite;
         public IEnumerable<string> Dependencies => new string[0];
         public DirectoryInfo? ModRootFolder { get; set; }
         public DirectoryInfo? GameRootFolder { get; set; }
-        public string Name => "EWanderer.DemoMod";
+        public string Name => "Dave";
 
         public void BootMod(IModLoaderContact contact)
         {
-            //Nothing to do here lol.
+            var harmony = new Harmony("Dave");
+            harmony.PatchAll();
         }
 
         public void LoadManifest(IArtRegistry artRegistry)
@@ -69,6 +76,37 @@ namespace DemoMod
                 if (!artRegistry.RegisterArt(demo_status_sprite))
                     throw new Exception("Cannot register sprite.");
             }
+
+            {
+                var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("random_move_foe.png"));
+                random_move_foe_sprite = new ExternalSprite("rft.Dave.random_move_foe", new FileInfo(path));
+                if (!artRegistry.RegisterArt(random_move_foe_sprite))
+                    throw new Exception("Cannot register sprite.");
+                RandomMoveFoeAction.spr = (Spr)(random_move_foe_sprite.Id ?? throw new NullReferenceException());
+            }
+
+            {
+                var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("blue_orange.png"));
+                blue_orange_sprite = new ExternalSprite("rft.Dave.blue_orange", new FileInfo(path));
+                if (!artRegistry.RegisterArt(blue_orange_sprite))
+                    throw new Exception("Cannot register sprite.");
+            }
+
+            {
+                var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("blue.png"));
+                blue_sprite = new ExternalSprite("rft.Dave.blue", new FileInfo(path));
+                if (!artRegistry.RegisterArt(blue_sprite))
+                    throw new Exception("Cannot register sprite.");
+                CardRenderPatch.blue = (Spr) (blue_sprite.Id ?? throw new NullReferenceException());
+            }
+
+            {
+                var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("orange.png"));
+                orange_sprite = new ExternalSprite("rft.Dave.orange", new FileInfo(path));
+                if (!artRegistry.RegisterArt(orange_sprite))
+                    throw new Exception("Cannot register sprite.");
+                CardRenderPatch.orange = (Spr) (orange_sprite.Id ?? throw new NullReferenceException());
+            }
         }
 
         public void LoadManifest(IDbRegistry dbRegistry)
@@ -77,39 +115,39 @@ namespace DemoMod
 
         public void LoadManifest(IAnimationRegistry registry)
         {
-            default_animation = new ExternalAnimation("ewanderer.demomod.dracula.neutral", dracula_deck ?? throw new NullReferenceException(), "neutral", false, new ExternalSprite[] {
-                ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_0),
-                ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_1),
-                ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_2),
-                ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_3),
-                ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_4),
-            });
-
-            registry.RegisterAnimation(default_animation);
-            if (mini_dracula_sprite == null)
-                throw new Exception();
-
-            mini_animation = new ExternalAnimation("ewanderer.demomod.dracula.mini", dracula_deck, "mini", false, new ExternalSprite[] { mini_dracula_sprite });
-
-            registry.RegisterAnimation(mini_animation);
+            // default_animation = new ExternalAnimation("ewanderer.demomod.dracula.neutral", dracula_deck ?? throw new NullReferenceException(), "neutral", false, new ExternalSprite[] {
+            //     ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_0),
+            //     ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_1),
+            //     ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_2),
+            //     ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_3),
+            //     ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_4),
+            // });
+            //
+            // registry.RegisterAnimation(default_animation);
+            // if (mini_dracula_sprite == null)
+            //     throw new Exception();
+            //
+            // mini_animation = new ExternalAnimation("ewanderer.demomod.dracula.mini", dracula_deck, "mini", false, new ExternalSprite[] { mini_dracula_sprite });
+            //
+            // registry.RegisterAnimation(mini_animation);
         }
 
         public void LoadManifest(IDeckRegistry registry)
         {
             //make peri deck mod
-            var art_default = ExternalSprite.GetRaw((int)Spr.cards_WaveBeam);
-            var border = ExternalSprite.GetRaw((int)Spr.cardShared_border_ephemeral);
-
-            var pinker_peri = new ExternalDeck("Ewanderer.DemoMod.PinkerPeri", System.Drawing.Color.Brown, System.Drawing.Color.Yellow, art_default, border, pinker_per_border_over_sprite);
-            registry.RegisterDeck(pinker_peri, (int)Deck.peri);
-
-            dracular_art = ExternalSprite.GetRaw((int)Spr.cards_colorless);
-            dracular_border = ExternalSprite.GetRaw((int)Spr.cardShared_border_dracula);
-
-            dracula_deck = new ExternalDeck("EWanderer.Demomod.DraculaDeck", System.Drawing.Color.Crimson, System.Drawing.Color.Purple, dracular_art ?? throw new NullReferenceException(), dracular_border ?? throw new NullReferenceException(), null);
-
-            if (!registry.RegisterDeck(dracula_deck))
-                return;
+            // var art_default = ExternalSprite.GetRaw((int)Spr.cards_WaveBeam);
+            // var border = ExternalSprite.GetRaw((int)Spr.cardShared_border_ephemeral);
+            //
+            // var pinker_peri = new ExternalDeck("Ewanderer.DemoMod.PinkerPeri", System.Drawing.Color.Brown, System.Drawing.Color.Yellow, art_default, border, pinker_per_border_over_sprite);
+            // registry.RegisterDeck(pinker_peri, (int)Deck.peri);
+            //
+            // dracular_art = ExternalSprite.GetRaw((int)Spr.cards_colorless);
+            // dracular_border = ExternalSprite.GetRaw((int)Spr.cardShared_border_dracula);
+            //
+            // dracula_deck = new ExternalDeck("EWanderer.Demomod.DraculaDeck", System.Drawing.Color.Crimson, System.Drawing.Color.Purple, dracular_art ?? throw new NullReferenceException(), dracular_border ?? throw new NullReferenceException(), null);
+            //
+            // if (!registry.RegisterDeck(dracula_deck))
+            //     return;
         }
 
         public void LoadManifest(ICardRegistry registry)
@@ -122,6 +160,18 @@ namespace DemoMod
             card.AddLocalisation("Schwarzmagier");
             //register card in the db extender.
             registry.RegisterCard(card);
+
+            var wildStep = new ExternalCard("rft.Dave.WildStepCard", typeof(WildStepCard), card_art_sprite, null);
+            wildStep.AddLocalisation("Wild Step");
+            registry.RegisterCard(wildStep);
+
+            var wildShot = new ExternalCard("rft.Dave.WildShotCard", typeof(WildShotCard), card_art_sprite, null);
+            wildShot.AddLocalisation("Wild Shot");
+            registry.RegisterCard(wildShot);
+
+            var wildBarrage = new ExternalCard("rft.Dave.WildBarrageCard", typeof(WildBarrageCard), card_art_sprite, null);
+            wildBarrage.AddLocalisation("Wild Barrage");
+            registry.RegisterCard(wildBarrage);
         }
 
         public void LoadManifest(ICardOverwriteRegistry registry)
@@ -161,13 +211,13 @@ namespace DemoMod
 
         public void LoadManifest(ICharacterRegistry registry)
         {
-            var dracular_spr = ExternalSprite.GetRaw((int)Spr.panels_char_colorless);
-
-            var start_cards = new Type[] { typeof(DraculaCard), typeof(DraculaCard) };
-            var playable_dracular_character = new ExternalCharacter("EWanderer.DemoMod.DracularChar", dracula_deck ?? throw new NullReferenceException(), dracular_spr, start_cards, new Type[0], default_animation ?? throw new NullReferenceException(), mini_animation ?? throw new NullReferenceException());
-            playable_dracular_character.AddNameLocalisation("Count Dracula");
-            playable_dracular_character.AddDescLocalisation("A vampire using blood magic to invoke the powers of the void.");
-            registry.RegisterCharacter(playable_dracular_character);
+            // var dracular_spr = ExternalSprite.GetRaw((int)Spr.panels_char_colorless);
+            //
+            // var start_cards = new Type[] { typeof(DraculaCard), typeof(DraculaCard) };
+            // var playable_dracular_character = new ExternalCharacter("EWanderer.DemoMod.DracularChar", dracula_deck ?? throw new NullReferenceException(), dracular_spr, start_cards, new Type[0], default_animation ?? throw new NullReferenceException(), mini_animation ?? throw new NullReferenceException());
+            // playable_dracular_character.AddNameLocalisation("Count Dracula");
+            // playable_dracular_character.AddDescLocalisation("A vampire using blood magic to invoke the powers of the void.");
+            // registry.RegisterCharacter(playable_dracular_character);
         }
 
         public void LoadManifest(IGlossaryRegisty registry)
@@ -177,6 +227,18 @@ namespace DemoMod
             glossary.AddLocalisation("en", "EWDemoaction", "Have all the cheesecake in the world!");
             registry.RegisterGlossary(glossary);
             EWandererDemoAction.glossary_item = glossary.Head;
+
+            var randomMoveFoeGlossary = new ExternalGlossary("rft.Dave.RandomMoveFoe.Glossary", "randommovefoe", false,
+                ExternalGlossary.GlossayType.action, random_move_foe_sprite);
+            randomMoveFoeGlossary.AddLocalisation("en", "random foe move", "Instantly move the opponent {0} spaces in a random direction.");
+            registry.RegisterGlossary(randomMoveFoeGlossary);
+            RandomMoveFoeAction.glossary_item = randomMoveFoeGlossary.Head;
+
+            var blueOrangeGlossary = new ExternalGlossary("rft.Dave.BlueOrange.Glossary", "blueorange", false,
+                ExternalGlossary.GlossayType.action, blue_orange_sprite);
+            blueOrangeGlossary.AddLocalisation("en", "blue/orange", "When played, either performs the blue or orange actions.");
+            registry.RegisterGlossary(blueOrangeGlossary);
+            RandomChoiceActionFactory.glossary_item = blueOrangeGlossary.Head;
         }
 
         public void LoadManifest(IArtifactRegistry registry)
