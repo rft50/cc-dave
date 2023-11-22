@@ -4,8 +4,8 @@ namespace Dave.Cards
 {
     // 1-cost, pow-move-pow-move-pow
     // A: + move-pow
-    // b: moves are Blue
-    [CardMeta(deck = Deck.riggs, rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    // b: moves and shots become stronger
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class WildBarrageCard : Card
     {
         private static Spr card_sprite = Spr.cards_GoatDrone;

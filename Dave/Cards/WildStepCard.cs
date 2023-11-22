@@ -5,7 +5,7 @@ namespace Dave.Cards
     // 1-cost, move enemy 1, move self 1 (both random)
     // A: 0-cost
     // B: 2 distance on enemy, you gain Evade
-    [CardMeta(deck = Deck.riggs, rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class WildStepCard : Card
     {
         private static Spr card_sprite = Spr.cards_GoatDrone;
