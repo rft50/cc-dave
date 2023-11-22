@@ -22,9 +22,7 @@
 
         public override List<Tooltip> GetTooltips(State s)
         {
-            var tooltips = new List<Tooltip> { new TTGlossary(glossary_item, dist) };
-
-            return tooltips;
+            return new List<Tooltip> { new TTGlossary(glossary_item, dist) };
         }
     }
 }

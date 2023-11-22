@@ -7,21 +7,21 @@ namespace Dave
     [HarmonyPatch("RenderAction")]
     public class CardRenderPatch
     {
-        public static Spr blue;
-        public static Spr orange;
+        public static Spr red;
+        public static Spr black;
         
         public static void Prefix(G g, State state, ref CardAction action, bool dontDraw)
         {
             Spr? id = null;
-            if (action is RandomChoiceActionFactory.BlueAction a)
+            if (action is RandomChoiceActionFactory.RedAction a)
             {
                 action = a.action;
-                id = blue;
+                id = red;
             }
-            else if (action is RandomChoiceActionFactory.OrangeAction b)
+            else if (action is RandomChoiceActionFactory.BlackAction b)
             {
                 action = b.action;
-                id = orange;
+                id = black;
             }
 
             if (action.GetIcon(state) == null || dontDraw || id == null)
