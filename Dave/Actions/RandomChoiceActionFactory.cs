@@ -10,7 +10,7 @@
         // 0th element is a setup action that should be the first action
         // after that it's all the blues, then all the oranges
         // you probably want to put a dummy action at the end to fix the render issue of the setup action
-        public static List<CardAction> BuildActions(List<CardAction>? blue, List<CardAction>? orange = null)
+        public static List<CardAction> BuildActions(List<CardAction>? red, List<CardAction>? black = null)
         {
             var data = new RandomChoiceActionData();
 
@@ -19,11 +19,11 @@
                 new RandomChoiceSetupAction { data = data }
             };
             
-            if (blue != null)
-                actions.AddRange(blue.Select(t => new RedAction { action = t, data = data }));
+            if (red != null)
+                actions.AddRange(red.Select(t => new RedAction { action = t, data = data }));
             
-            if (orange != null)
-                actions.AddRange(orange.Select(t => new BlackAction { action = t, data = data }));
+            if (black != null)
+                actions.AddRange(black.Select(t => new BlackAction { action = t, data = data }));
 
             return actions;
         }

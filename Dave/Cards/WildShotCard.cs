@@ -4,7 +4,7 @@ namespace Dave.Cards
 {
     // 1-cost, shoot once, maybe shoot two more times
     // A: shoot twice, maybe shoot three more times
-    // b: piercing once, either piercing twice or shoot once
+    // B: piercing once, either piercing twice or shoot once
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class WildShotCard : Card
     {

@@ -4,12 +4,12 @@ using HarmonyLib;
 namespace Dave
 {
     [HarmonyPatch(typeof(Card))]
-    [HarmonyPatch("RenderAction")]
     public class CardRenderPatch
     {
         public static Spr red;
         public static Spr black;
         
+        [HarmonyPatch("RenderAction")]
         public static void Prefix(G g, State state, ref CardAction action, bool dontDraw)
         {
             Spr? id = null;

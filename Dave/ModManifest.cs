@@ -135,6 +135,9 @@ namespace Dave
             registry.RegisterCard(wildShot);
 
             // common
+            var raise = new ExternalCard("rft.Dave.Raise", typeof(RaiseCard), card_art_sprite, dave_deck);
+            raise.AddLocalisation("Raise");
+            registry.RegisterCard(raise);
             
             // uncommon
             var wildBarrage = new ExternalCard("rft.Dave.WildBarrageCard", typeof(WildBarrageCard), card_art_sprite, dave_deck);
@@ -149,6 +152,18 @@ namespace Dave
             var loadedDice = new ExternalCard("rft.Dave.LoadedDiceCard", typeof(LoadedDiceCard), card_art_sprite, dave_deck);
             loadedDice.AddLocalisation("Loaded Dice");
             registry.RegisterCard(loadedDice);
+            
+            var allIn = new ExternalCard("rft.Dave.AllInCard", typeof(AllInCard), card_art_sprite, dave_deck);
+            allIn.AddLocalisation("All In");
+            registry.RegisterCard(allIn);
+            
+            var evenBet = new ExternalCard("rft.Dave.EvenBetCard", typeof(EvenBetCard), card_art_sprite, dave_deck);
+            evenBet.AddLocalisation("Even Bet");
+            registry.RegisterCard(evenBet);
+            
+            var allBetsAreOff = new ExternalCard("rft.Dave.AllBetsAreOffCard", typeof(AllBetsAreOffCard), card_art_sprite, dave_deck);
+            allBetsAreOff.AddLocalisation("All Bets Are Off");
+            registry.RegisterCard(allBetsAreOff);
         }
 
         public void LoadManifest(ICardOverwriteRegistry registry)
