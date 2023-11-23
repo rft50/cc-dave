@@ -1,9 +1,11 @@
-﻿using CobaltCoreModding.Definitions.ExternalItems;
+﻿using CobaltCoreModding.Definitions;
+using CobaltCoreModding.Definitions.ExternalItems;
 using CobaltCoreModding.Definitions.ModContactPoints;
 using CobaltCoreModding.Definitions.ModManifests;
 using Dave.Actions;
 using Dave.Cards;
 using HarmonyLib;
+using Microsoft.Extensions.Logging;
 
 namespace Dave
 {
@@ -24,8 +26,13 @@ namespace Dave
         private ExternalSprite? red_black_sprite;
         private ExternalSprite? red_sprite;
         private ExternalSprite? black_sprite;
+        private IEnumerable<DependencyEntry> _dependencies => Array.Empty<DependencyEntry>();
         public IEnumerable<string> Dependencies => new string[0];
+        public ILogger? Logger { get; set; }
         public DirectoryInfo? ModRootFolder { get; set; }
+
+        IEnumerable<DependencyEntry> IManifest.Dependencies => _dependencies;
+
         public DirectoryInfo? GameRootFolder { get; set; }
         public string Name => "Dave";
 
@@ -35,7 +42,7 @@ namespace Dave
             harmony.PatchAll();
         }
 
-        public void LoadManifest(IArtRegistry artRegistry)
+        public void LoadManifest(ISpriteRegistry spriteRegistry)
         {
             if (ModRootFolder == null)
                 throw new Exception("No root folder set!");
@@ -43,32 +50,32 @@ namespace Dave
             {
                 var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("frame_dave.png"));
                 card_art_sprite = new ExternalSprite("rft.Dave.DaveFrame", new FileInfo(path));
-                if (!artRegistry.RegisterArt(card_art_sprite))
+                if (!spriteRegistry.RegisterArt(card_art_sprite))
                     throw new Exception("Cannot register frame_dave.png.");
             }
             {
                 var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("dracula_mini_0.png"));
                 mini_dave_sprite = new ExternalSprite("EWanderer.DemoMod.dracular.mini", new FileInfo(path));
-                if (!artRegistry.RegisterArt(mini_dave_sprite))
+                if (!spriteRegistry.RegisterArt(mini_dave_sprite))
                     throw new Exception("Cannot register dracula_mini_0.png.");
             }
             {
                 var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("random_move_foe.png"));
                 random_move_foe_sprite = new ExternalSprite("rft.Dave.random_move_foe", new FileInfo(path));
-                if (!artRegistry.RegisterArt(random_move_foe_sprite))
+                if (!spriteRegistry.RegisterArt(random_move_foe_sprite))
                     throw new Exception("Cannot register random_move_foe.png.");
                 RandomMoveFoeAction.spr = (Spr)(random_move_foe_sprite.Id ?? throw new NullReferenceException());
             }
             {
                 var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("red_black.png"));
                 red_black_sprite = new ExternalSprite("rft.Dave.red_black", new FileInfo(path));
-                if (!artRegistry.RegisterArt(red_black_sprite))
+                if (!spriteRegistry.RegisterArt(red_black_sprite))
                     throw new Exception("Cannot register red_black.png.");
             }
             {
                 var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("red.png"));
                 red_sprite = new ExternalSprite("rft.Dave.red", new FileInfo(path));
-                if (!artRegistry.RegisterArt(red_sprite))
+                if (!spriteRegistry.RegisterArt(red_sprite))
                     throw new Exception("Cannot register red.png.");
                 CardRenderPatch.red = (Spr) (red_sprite.Id ?? throw new NullReferenceException());
                 BiasStatusAction.spr_red = (Spr) red_sprite.Id;
@@ -76,7 +83,7 @@ namespace Dave
             {
                 var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("black.png"));
                 black_sprite = new ExternalSprite("rft.Dave.black", new FileInfo(path));
-                if (!artRegistry.RegisterArt(black_sprite))
+                if (!spriteRegistry.RegisterArt(black_sprite))
                     throw new Exception("Cannot register black.png.");
                 CardRenderPatch.black = (Spr) (black_sprite.Id ?? throw new NullReferenceException());
                 BiasStatusAction.spr_black = (Spr) black_sprite.Id;
