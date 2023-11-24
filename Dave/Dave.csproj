@@ -46,6 +46,7 @@
     <None Include="bin\Debug\net6.0\Sprites\arin_dave.png" />
     <None Include="bin\Debug\net6.0\Sprites\arin_dave_2.png" />
     <None Include="bin\Debug\net6.0\Sprites\black.png" />
+    <None Include="bin\Debug\net6.0\Sprites\black_chip.png" />
     <None Include="bin\Debug\net6.0\Sprites\blue.png" />
     <None Include="bin\Debug\net6.0\Sprites\blue_orange.png" />
     <None Include="bin\Debug\net6.0\Sprites\frame_dave.png" />
@@ -53,6 +54,7 @@
     <None Include="bin\Debug\net6.0\Sprites\random_move_foe.png" />
     <None Include="bin\Debug\net6.0\Sprites\red.png" />
     <None Include="bin\Debug\net6.0\Sprites\red_black.png" />
+    <None Include="bin\Debug\net6.0\Sprites\red_chip.png" />
   </ItemGroup>
 
   <ItemGroup>

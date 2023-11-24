@@ -26,6 +26,10 @@ namespace Dave
         private ExternalSprite? red_black_sprite;
         private ExternalSprite? red_sprite;
         private ExternalSprite? black_sprite;
+        private ExternalSprite? red_chip_sprite;
+        private ExternalSprite? black_chip_sprite;
+        private ExternalSprite? red_clover_sprite;
+        private ExternalSprite? black_clover_sprite;
         private IEnumerable<DependencyEntry> _dependencies => Array.Empty<DependencyEntry>();
         public IEnumerable<string> Dependencies => new string[0];
         public ILogger? Logger { get; set; }
@@ -78,7 +82,6 @@ namespace Dave
                 if (!spriteRegistry.RegisterArt(red_sprite))
                     throw new Exception("Cannot register red.png.");
                 CardRenderPatch.red = (Spr) (red_sprite.Id ?? throw new NullReferenceException());
-                BiasStatusAction.spr_red = (Spr) red_sprite.Id;
             }
             {
                 var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("black.png"));
@@ -86,7 +89,32 @@ namespace Dave
                 if (!spriteRegistry.RegisterArt(black_sprite))
                     throw new Exception("Cannot register black.png.");
                 CardRenderPatch.black = (Spr) (black_sprite.Id ?? throw new NullReferenceException());
-                BiasStatusAction.spr_black = (Spr) black_sprite.Id;
+            }
+            {
+                var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("red_chip.png"));
+                red_chip_sprite = new ExternalSprite("rft.Dave.red_chip", new FileInfo(path));
+                if (!spriteRegistry.RegisterArt(red_chip_sprite))
+                    throw new Exception("Cannot register red_chip.png.");
+            }
+            {
+                var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("black_chip.png"));
+                black_chip_sprite = new ExternalSprite("rft.Dave.black_chip", new FileInfo(path));
+                if (!spriteRegistry.RegisterArt(black_chip_sprite))
+                    throw new Exception("Cannot register black_chip.png.");
+            }
+            {
+                var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("red_clover.png"));
+                red_clover_sprite = new ExternalSprite("rft.Dave.red_clover", new FileInfo(path));
+                if (!spriteRegistry.RegisterArt(red_clover_sprite))
+                    throw new Exception("Cannot register red_clover.png.");
+                BiasStatusAction.spr_red = (Spr) (red_clover_sprite.Id ?? throw  new NullReferenceException());
+            }
+            {
+                var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("black_clover.png"));
+                black_clover_sprite = new ExternalSprite("rft.Dave.black_clover", new FileInfo(path));
+                if (!spriteRegistry.RegisterArt(black_clover_sprite))
+                    throw new Exception("Cannot register black_clover.png.");
+                BiasStatusAction.spr_black = (Spr) (black_clover_sprite.Id ?? throw  new NullReferenceException());
             }
         }
 
@@ -126,6 +154,15 @@ namespace Dave
                 return;
 
             // starter
+            var luckyEscape = new ExternalCard("rft.Dave.LuckyEscapeCard", typeof(LuckyEscapeCard), card_art_sprite, dave_deck);
+            luckyEscape.AddLocalisation("Lucky Escape");
+            registry.RegisterCard(luckyEscape);
+
+            var riggingShot = new ExternalCard("rft.Dave.RiggingShotCard", typeof(RiggingShotCard), card_art_sprite, dave_deck);
+            riggingShot.AddLocalisation("Rigging Shot");
+            registry.RegisterCard(riggingShot);
+
+            // common
             var wildStep = new ExternalCard("rft.Dave.WildStepCard", typeof(WildStepCard), card_art_sprite, dave_deck);
             wildStep.AddLocalisation("Wild Step");
             registry.RegisterCard(wildStep);
@@ -133,8 +170,7 @@ namespace Dave
             var wildShot = new ExternalCard("rft.Dave.WildShotCard", typeof(WildShotCard), card_art_sprite, dave_deck);
             wildShot.AddLocalisation("Wild Shot");
             registry.RegisterCard(wildShot);
-
-            // common
+            
             var raise = new ExternalCard("rft.Dave.Raise", typeof(RaiseCard), card_art_sprite, dave_deck);
             raise.AddLocalisation("Raise");
             registry.RegisterCard(raise);
@@ -174,7 +210,7 @@ namespace Dave
         {
             var dave_spr = ExternalSprite.GetRaw((int)Spr.panels_char_colorless);
             
-            var start_cards = new Type[] { typeof(WildStepCard), typeof(WildShotCard) };
+            var start_cards = new Type[] { typeof(LuckyEscapeCard), typeof(RiggingShotCard) };
             var dave_char = new ExternalCharacter("rft.Dave.DaveChar", dave_deck ?? throw new NullReferenceException(), dave_spr, start_cards, new Type[0], default_animation ?? throw new NullReferenceException(), mini_animation ?? throw new NullReferenceException());
             dave_char.AddNameLocalisation("Dave");
             dave_char.AddDescLocalisation("A gambler.");
@@ -196,13 +232,13 @@ namespace Dave
             RandomChoiceActionFactory.glossary_item = redBlackGlossary.Head;
             
             var redBiasGlossary = new ExternalGlossary("rft.Dave.RedBias.Glossary", "RedBias", false,
-                ExternalGlossary.GlossayType.action, red_sprite);
+                ExternalGlossary.GlossayType.action, red_clover_sprite);
             redBiasGlossary.AddLocalisation("en", "red bias", "Each stack of this makes Red/Black actions 10% more likely to roll Red.");
             registry.RegisterGlossary(redBiasGlossary);
             BiasStatusAction.blue_glossary_item = redBiasGlossary.Head;
             
             var blackBiasGlossary = new ExternalGlossary("rft.Dave.BlackBias.Glossary", "BlackBias", false,
-                ExternalGlossary.GlossayType.action, black_sprite);
+                ExternalGlossary.GlossayType.action, black_clover_sprite);
             blackBiasGlossary.AddLocalisation("en", "black bias", "Each stack of this makes Red/Black actions 10% more likely to roll Black.");
             registry.RegisterGlossary(blackBiasGlossary);
             BiasStatusAction.orange_glossary_item = blackBiasGlossary.Head;
@@ -214,19 +250,19 @@ namespace Dave
 
         public void LoadManifest(IStatusRegistry statusRegistry)
         {
-            red_rigging = new ExternalStatus("rft.Dave.RedRiggingStatus", true, System.Drawing.Color.Red, null, red_sprite ?? throw new Exception("missing sprite"), false);
+            red_rigging = new ExternalStatus("rft.Dave.RedRiggingStatus", true, System.Drawing.Color.Red, null, red_chip_sprite ?? throw new Exception("missing sprite"), false);
             statusRegistry.RegisterStatus(red_rigging);
             red_rigging.AddLocalisation("Red Rigging", "The next {0} cards with Red/Black actions will go Red.");
             
-            black_rigging = new ExternalStatus("rft.Dave.BlackRiggingStatus", true, System.Drawing.Color.Black, null, black_sprite ?? throw new Exception("missing sprite"), false);
+            black_rigging = new ExternalStatus("rft.Dave.BlackRiggingStatus", true, System.Drawing.Color.Black, null, black_chip_sprite ?? throw new Exception("missing sprite"), false);
             statusRegistry.RegisterStatus(black_rigging);
             black_rigging.AddLocalisation("Black Rigging", "The next {0} cards with Red/Black actions will go Black.");
             
-            red_bias = new ExternalStatus("rft.Dave.RedBiasStatus", true, System.Drawing.Color.Red, null, red_sprite ?? throw new Exception("missing sprite"), false);
+            red_bias = new ExternalStatus("rft.Dave.RedBiasStatus", true, System.Drawing.Color.Red, null, red_clover_sprite ?? throw new Exception("missing sprite"), false);
             statusRegistry.RegisterStatus(red_bias);
             red_bias.AddLocalisation("Red Bias", "Each stack of this makes Red/Black actions 10% more likely to roll Red.");
             
-            black_bias = new ExternalStatus("rft.Dave.BlackBiasStatus", true, System.Drawing.Color.Black, null, black_sprite ?? throw new Exception("missing sprite"), false);
+            black_bias = new ExternalStatus("rft.Dave.BlackBiasStatus", true, System.Drawing.Color.Black, null, black_clover_sprite ?? throw new Exception("missing sprite"), false);
             statusRegistry.RegisterStatus(black_bias);
             black_bias.AddLocalisation("Black Bias", "Each stack of this makes Red/Black actions 10% more likely to roll Black.");
         }
