@@ -17,12 +17,14 @@ namespace Dave
         public static ExternalStatus? black_bias;
         public static ExternalDeck? dave_deck;
         private ExternalSprite? card_art_sprite;
+        private ExternalSprite? character_frame_sprite;
         private ExternalAnimation? default_animation;
         private ExternalSprite? dave_art;
         private ExternalSprite? dave_border;
         private ExternalAnimation? mini_animation;
         private ExternalSprite? mini_dave_sprite;
         private ExternalSprite? random_move_foe_sprite;
+        private ExternalSprite? shield_hurt_sprite;
         private ExternalSprite? red_black_sprite;
         private ExternalSprite? red_sprite;
         private ExternalSprite? black_sprite;
@@ -30,6 +32,7 @@ namespace Dave
         private ExternalSprite? black_chip_sprite;
         private ExternalSprite? red_clover_sprite;
         private ExternalSprite? black_clover_sprite;
+        private Dictionary<string, ExternalSprite[]> animations = new();
         private IEnumerable<DependencyEntry> _dependencies => Array.Empty<DependencyEntry>();
         public IEnumerable<string> Dependencies => new string[0];
         public ILogger? Logger { get; set; }
@@ -53,9 +56,15 @@ namespace Dave
 
             {
                 var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("frame_dave.png"));
-                card_art_sprite = new ExternalSprite("rft.Dave.DaveFrame", new FileInfo(path));
+                card_art_sprite = new ExternalSprite("rft.Dave.DaveCardFrame", new FileInfo(path));
                 if (!spriteRegistry.RegisterArt(card_art_sprite))
                     throw new Exception("Cannot register frame_dave.png.");
+            }
+            {
+                var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("char_frame_dave.png"));
+                character_frame_sprite = new ExternalSprite("rft.Dave.DaveFrame", new FileInfo(path));
+                if (!spriteRegistry.RegisterArt(character_frame_sprite))
+                    throw new Exception("Cannot register char_frame_dave.png.");
             }
             {
                 var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("dracula_mini_0.png"));
@@ -69,6 +78,10 @@ namespace Dave
                 if (!spriteRegistry.RegisterArt(random_move_foe_sprite))
                     throw new Exception("Cannot register random_move_foe.png.");
                 RandomMoveFoeAction.spr = (Spr)(random_move_foe_sprite.Id ?? throw new NullReferenceException());
+            }
+            {
+                shield_hurt_sprite = ExternalSprite.GetRaw((int)Spr.icons_hurt);
+                ShieldHurtAction.spr = (Spr)(shield_hurt_sprite.Id ?? throw new NullReferenceException());
             }
             {
                 var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("red_black.png"));
@@ -107,25 +120,46 @@ namespace Dave
                 red_clover_sprite = new ExternalSprite("rft.Dave.red_clover", new FileInfo(path));
                 if (!spriteRegistry.RegisterArt(red_clover_sprite))
                     throw new Exception("Cannot register red_clover.png.");
-                BiasStatusAction.spr_red = (Spr) (red_clover_sprite.Id ?? throw  new NullReferenceException());
+                BiasStatusAction.spr_red = (Spr) (red_clover_sprite.Id ?? throw new NullReferenceException());
             }
             {
                 var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("black_clover.png"));
                 black_clover_sprite = new ExternalSprite("rft.Dave.black_clover", new FileInfo(path));
                 if (!spriteRegistry.RegisterArt(black_clover_sprite))
                     throw new Exception("Cannot register black_clover.png.");
-                BiasStatusAction.spr_black = (Spr) (black_clover_sprite.Id ?? throw  new NullReferenceException());
+                BiasStatusAction.spr_black = (Spr) (black_clover_sprite.Id ?? throw new NullReferenceException());
+            }
+            {
+                var groups = new[]
+                {
+                    "Neutral"
+                };
+                foreach (var g in groups)
+                {
+                    var sprites = new ExternalSprite[1];
+
+                    for (var i = 0; i < 1; i++)
+                    {
+                        var path = Path.Combine(ModRootFolder.FullName, "Sprites", "Animation",
+                            Path.GetFileName("Dave" + g + i + ".png"));
+                        sprites[i] = new ExternalSprite("rft.Dave.Anim." + g + i, new FileInfo(path));
+                        if (!spriteRegistry.RegisterArt(sprites[i]))
+                            throw new Exception("Cannot register animation " + path);
+                    }
+
+                    animations[g] = sprites;
+                }
             }
         }
 
         public void LoadManifest(IAnimationRegistry registry)
         {
             default_animation = new ExternalAnimation("rft.Dave.Dave.neutral", dave_deck ?? throw new NullReferenceException(), "neutral", false, new ExternalSprite[] {
-                ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_0),
-                ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_1),
-                ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_2),
-                ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_3),
-                ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_4),
+                animations["Neutral"][0],
+                animations["Neutral"][0],
+                animations["Neutral"][0],
+                animations["Neutral"][0],
+                animations["Neutral"][0]
             });
             
             registry.RegisterAnimation(default_animation);
@@ -170,10 +204,34 @@ namespace Dave
             var wildShot = new ExternalCard("rft.Dave.WildShotCard", typeof(WildShotCard), card_art_sprite, dave_deck);
             wildShot.AddLocalisation("Wild Shot");
             registry.RegisterCard(wildShot);
-            
-            var raise = new ExternalCard("rft.Dave.Raise", typeof(RaiseCard), card_art_sprite, dave_deck);
-            raise.AddLocalisation("Raise");
-            registry.RegisterCard(raise);
+
+            var windup = new ExternalCard("rft.Dave.WindupCard", typeof(WindupCard), card_art_sprite, dave_deck);
+            windup.AddLocalisation("Windup");
+            registry.RegisterCard(windup);
+
+            var primedShot = new ExternalCard("rft.Dave.PrimedShotCard", typeof(PrimedShotCard), card_art_sprite, dave_deck);
+            primedShot.AddLocalisation("Primed Shot");
+            registry.RegisterCard(primedShot);
+
+            var pinchShot = new ExternalCard("rft.Dave.PinchShotCard", typeof(PinchShotCard), card_art_sprite, dave_deck);
+            pinchShot.AddLocalisation("Pinch Shot");
+            registry.RegisterCard(pinchShot);
+
+            var wildWall = new ExternalCard("rft.Dave.WildWallCard", typeof(WildWallCard), card_art_sprite, dave_deck);
+            wildWall.AddLocalisation("Wild Wall");
+            registry.RegisterCard(wildWall);
+
+            var fold = new ExternalCard("rft.Dave.FoldCard", typeof(FoldCard), card_art_sprite, dave_deck);
+            fold.AddLocalisation("Fold");
+            registry.RegisterCard(fold);
+
+            var luckyShot = new ExternalCard("rft.Dave.LuckyShotCard", typeof(LuckyShotCard), card_art_sprite, dave_deck);
+            luckyShot.AddLocalisation("Lucky Shot");
+            registry.RegisterCard(luckyShot);
+
+            var seeingRed = new ExternalCard("rft.Dave.SeeingRedCard", typeof(SeeingRedCard), card_art_sprite, dave_deck);
+            seeingRed.AddLocalisation("Seeing Red");
+            registry.RegisterCard(seeingRed);
             
             // uncommon
             var wildBarrage = new ExternalCard("rft.Dave.WildBarrageCard", typeof(WildBarrageCard), card_art_sprite, dave_deck);
@@ -183,6 +241,18 @@ namespace Dave
             var rigging = new ExternalCard("rft.Dave.RiggingCard", typeof(RiggingCard), card_art_sprite, dave_deck);
             rigging.AddLocalisation("Rigging");
             registry.RegisterCard(rigging);
+            
+            var raise = new ExternalCard("rft.Dave.Raise", typeof(RaiseCard), card_art_sprite, dave_deck);
+            raise.AddLocalisation("Raise");
+            registry.RegisterCard(raise);
+
+            var investment = new ExternalCard("rft.Dave.Investment", typeof(InvestmentCard), card_art_sprite, dave_deck);
+            investment.AddLocalisation("Investment");
+            registry.RegisterCard(investment);
+
+            var lowball = new ExternalCard("rft.Dave.Lowball", typeof(LowballCard), card_art_sprite, dave_deck);
+            lowball.AddLocalisation("Lowball");
+            registry.RegisterCard(lowball);
             
             // rare
             var loadedDice = new ExternalCard("rft.Dave.LoadedDiceCard", typeof(LoadedDiceCard), card_art_sprite, dave_deck);
@@ -200,6 +270,10 @@ namespace Dave
             var allBetsAreOff = new ExternalCard("rft.Dave.AllBetsAreOffCard", typeof(AllBetsAreOffCard), card_art_sprite, dave_deck);
             allBetsAreOff.AddLocalisation("All Bets Are Off");
             registry.RegisterCard(allBetsAreOff);
+            
+            var drawnGambit = new ExternalCard("rft.Dave.DrawnGambitCard", typeof(DrawnGambitCard), card_art_sprite, dave_deck);
+            drawnGambit.AddLocalisation("Drawn Gambit");
+            registry.RegisterCard(drawnGambit);
         }
 
         public void LoadManifest(ICardOverwriteRegistry registry)
@@ -208,12 +282,12 @@ namespace Dave
 
         public void LoadManifest(ICharacterRegistry registry)
         {
-            var dave_spr = ExternalSprite.GetRaw((int)Spr.panels_char_colorless);
+            var dave_spr = character_frame_sprite;
             
             var start_cards = new Type[] { typeof(LuckyEscapeCard), typeof(RiggingShotCard) };
             var dave_char = new ExternalCharacter("rft.Dave.DaveChar", dave_deck ?? throw new NullReferenceException(), dave_spr, start_cards, new Type[0], default_animation ?? throw new NullReferenceException(), mini_animation ?? throw new NullReferenceException());
             dave_char.AddNameLocalisation("Dave");
-            dave_char.AddDescLocalisation("A gambler.");
+            dave_char.AddDescLocalisation("<c=soggins>DAVE</c>\nA gambler. His cards have random effects and allow him to rig the odds.");
             registry.RegisterCharacter(dave_char);
         }
 
@@ -224,6 +298,12 @@ namespace Dave
             randomMoveFoeGlossary.AddLocalisation("en", "random foe move", "Instantly move the opponent {0} spaces in a random direction.");
             registry.RegisterGlossary(randomMoveFoeGlossary);
             RandomMoveFoeAction.glossary_item = randomMoveFoeGlossary.Head;
+
+            var shieldHurtGlossary = new ExternalGlossary("rft.Dave.ShieldHurt.Glossary", "shieldhurt", false,
+                ExternalGlossary.GlossayType.action, shield_hurt_sprite);
+            shieldHurtGlossary.AddLocalisation("en", "shield hurt", "Take {0} damage, hitting shields first.");
+            registry.RegisterGlossary(shieldHurtGlossary);
+            ShieldHurtAction.glossary_item = shieldHurtGlossary.Head;
 
             var redBlackGlossary = new ExternalGlossary("rft.Dave.RedBlack.Glossary", "RedBlack", false,
                 ExternalGlossary.GlossayType.action, red_black_sprite);

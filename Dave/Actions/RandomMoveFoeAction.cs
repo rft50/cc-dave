@@ -11,6 +11,8 @@
         public override void Begin(G g, State s, Combat c)
         {
             c.QueueImmediate(new AMove { dir = dist, targetPlayer = false, isRandom = true });
+
+            timer = 0;
         }
         
         public override Icon? GetIcon(State s)

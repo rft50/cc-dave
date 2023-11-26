@@ -5,7 +5,7 @@ namespace Dave.Cards
     // 0-cost, -1 on red, +1 on black
     // A: -1 on red, +2 on black
     // B: -2 on red, +3 on black
-    [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+    [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class RaiseCard : Card
     {
         private static Spr card_sprite = Spr.cards_GoatDrone;

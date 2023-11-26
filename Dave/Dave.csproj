@@ -43,12 +43,15 @@
     <None Update="Sprites\Shield.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="bin\Debug\net6.0\Sprites\Animation\DaveNeutral0.png" />
     <None Include="bin\Debug\net6.0\Sprites\arin_dave.png" />
     <None Include="bin\Debug\net6.0\Sprites\arin_dave_2.png" />
     <None Include="bin\Debug\net6.0\Sprites\black.png" />
     <None Include="bin\Debug\net6.0\Sprites\black_chip.png" />
     <None Include="bin\Debug\net6.0\Sprites\blue.png" />
     <None Include="bin\Debug\net6.0\Sprites\blue_orange.png" />
+    <None Include="bin\Debug\net6.0\Sprites\char_frame_dave.png" />
+    <None Include="bin\Debug\net6.0\Sprites\frame.png" />
     <None Include="bin\Debug\net6.0\Sprites\frame_dave.png" />
     <None Include="bin\Debug\net6.0\Sprites\orange.png" />
     <None Include="bin\Debug\net6.0\Sprites\random_move_foe.png" />

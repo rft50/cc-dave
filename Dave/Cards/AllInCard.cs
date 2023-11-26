@@ -2,9 +2,9 @@
 
 namespace Dave.Cards
 {
-    // 1-cost, 7 damage on Red, 2 bruise on Black
-    // A: 7 damage on Red, 1 bruise on Black
-    // B: 10 damage on Red, 3 bruise on Black
+    // 1-cost, 7 damage on Red, 2 shield hurt on Black, exhaust
+    // A: 1 shield hurt on Black instead
+    // B: 10 damage on Red, 3 shield hurt on Black instead
     [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class AllInCard : Card
     {
@@ -22,7 +22,7 @@ namespace Dave.Cards
                         new AAttack { damage = this.GetDmg(s, 7) }
                     }, new List<CardAction>
                     {
-                        new AHurt { hurtAmount = 2, targetPlayer = true }
+                        new ShieldHurtAction { dmg = 2 }
                     });
                     actions.Add(new ADummyAction());
                     break;
@@ -32,7 +32,7 @@ namespace Dave.Cards
                         new AAttack { damage = this.GetDmg(s, 7) }
                     }, new List<CardAction>
                     {
-                        new AHurt { hurtAmount = 1, targetPlayer = true }
+                        new ShieldHurtAction { dmg = 1 }
                     });
                     actions.Add(new ADummyAction());
                     break;
@@ -42,7 +42,7 @@ namespace Dave.Cards
                         new AAttack { damage = this.GetDmg(s, 10) }
                     }, new List<CardAction>
                     {
-                        new AHurt { hurtAmount = 3, targetPlayer = true }
+                        new ShieldHurtAction { dmg = 3 }
                     });
                     actions.Add(new ADummyAction());
                     break;
@@ -54,7 +54,8 @@ namespace Dave.Cards
         public override CardData GetData(State state) => new()
         {
             cost = 1,
-            art = card_sprite
+            art = card_sprite,
+            exhaust = true
         };
     }
 }
