@@ -8,7 +8,7 @@ namespace Dave.Cards
     [CardMeta(rarity = Rarity.common, upgradesTo = new [] { Upgrade.A, Upgrade.B })]
     public class RiggingShotCard : Card
     {
-        private static Spr card_sprite = Spr.cards_GoatDrone;
+        public static Spr card_sprite;
 
         public override List<CardAction> GetActions(State s, Combat c)
         {
@@ -21,34 +21,40 @@ namespace Dave.Cards
                     builtActions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
                     {
                         new AAttack { damage = this.GetDmg(s, 1), fast = true }
+                    }, new List<CardAction>
+                    {
+                        new AStatus
+                        {
+                            status = (Status)(ModManifest.black_rigging.Id ?? throw new Exception("missing status")),
+                            targetPlayer = true,
+                            statusAmount = 1,
+                            mode = AStatusMode.Add
+                        }
                     });
                     actions.Add(builtActions[0]);
                     actions.Add(new AAttack { damage = this.GetDmg(s, 1), fast = true });
                     actions.Add(builtActions[1]);
-                    actions.Add(new AStatus
-                    {
-                        status = (Status)(ModManifest.black_rigging.Id ?? throw new Exception("missing status")),
-                        targetPlayer = true,
-                        statusAmount = 1,
-                        mode = AStatusMode.Add
-                    });
+                    actions.Add(builtActions[2]);
                     actions.Add(new ADummyAction());
                     break;
                 case Upgrade.A:
                     builtActions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
                     {
                         new AAttack { damage = this.GetDmg(s, 2), fast = true }
+                    }, new List<CardAction>
+                    {
+                        new AStatus
+                        {
+                            status = (Status)(ModManifest.black_rigging.Id ?? throw new Exception("missing status")),
+                            targetPlayer = true,
+                            statusAmount = 1,
+                            mode = AStatusMode.Add
+                        }
                     });
                     actions.Add(builtActions[0]);
                     actions.Add(new AAttack { damage = this.GetDmg(s, 1), fast = true });
                     actions.Add(builtActions[1]);
-                    actions.Add(new AStatus
-                    {
-                        status = (Status)(ModManifest.black_rigging.Id ?? throw new Exception("missing status")),
-                        targetPlayer = true,
-                        statusAmount = 1,
-                        mode = AStatusMode.Add
-                    });
+                    actions.Add(builtActions[2]);
                     actions.Add(new ADummyAction());
                     break;
                 case Upgrade.B:
@@ -56,18 +62,21 @@ namespace Dave.Cards
                     {
                         new AAttack { damage = this.GetDmg(s, 1), fast = true },
                         new AAttack { damage = this.GetDmg(s, 0), fast = true }
+                    }, new List<CardAction>
+                    {
+                        new AStatus
+                        {
+                            status = (Status)(ModManifest.black_rigging.Id ?? throw new Exception("missing status")),
+                            targetPlayer = true,
+                            statusAmount = 2,
+                            mode = AStatusMode.Add
+                        }
                     });
                     actions.Add(builtActions[0]);
                     actions.Add(new AAttack { damage = this.GetDmg(s, 1), fast = true });
                     actions.Add(builtActions[1]);
                     actions.Add(builtActions[2]);
-                    actions.Add(new AStatus
-                    {
-                        status = (Status)(ModManifest.black_rigging.Id ?? throw new Exception("missing status")),
-                        targetPlayer = true,
-                        statusAmount = 1,
-                        mode = AStatusMode.Add
-                    });
+                    actions.Add(builtActions[3]);
                     actions.Add(new ADummyAction());
                     break;
             }

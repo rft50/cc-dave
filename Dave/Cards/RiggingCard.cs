@@ -2,13 +2,15 @@
 
 namespace Dave.Cards
 {
-    // 1-cost, 1 rig of your choice
-    // A: 2 rigs
-    // B: 3 rigs, blue/orange, opposite of roll
+    // 1-cost, 2s rig of your choice
+    // A: 3 rigs
+    // B: 3 rigs, red/black, opposite of roll
     [CardMeta(rarity = Rarity.uncommon, upgradesTo = new [] { Upgrade.A, Upgrade.B })]
     public class RiggingCard : Card
     {
-        private static Spr card_sprite = Spr.cards_GoatDrone;
+        public static Spr card_sprite;
+        public static Spr red_sprite;
+        public static Spr black_sprite;
 
         public override List<CardAction> GetActions(State s, Combat c)
         {
@@ -50,7 +52,7 @@ namespace Dave.Cards
         public override CardData GetData(State state) => new()
         {
             cost = 1,
-            art = card_sprite,
+            art = upgrade == Upgrade.B ? card_sprite : (flipped ? black_sprite : red_sprite),
             floppable = upgrade != Upgrade.B
         };
     }

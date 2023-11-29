@@ -1,4 +1,6 @@
-﻿namespace Dave.Actions
+﻿using Dave.Artifacts;
+
+namespace Dave.Actions
 {
     public class RandomChoiceActionFactory
     {
@@ -40,6 +42,8 @@
 
             public override void Begin(G g, State s, Combat c)
             {
+                var isRoll = false;
+                
                 var blueOdds = 0.5;
                 blueOdds += s.ship.Get((Status)(ModManifest.red_bias?.Id ?? throw new Exception()));
                 blueOdds -= s.ship.Get((Status)(ModManifest.black_bias?.Id ?? throw new Exception()));
@@ -60,7 +64,13 @@
                 {
                     data.isRed = Random.NextDouble() < blueOdds;
                     data.isBlack = !data.isRed;
+                    isRoll = true;
                 }
+                
+                ModManifest.EventHub.SignalEvent("Dave.RedBlackRoll", Tuple.Create(s, c, data.isRed, data.isBlack, isRoll));
+                
+                if (!ArtifactUtil.PlayerHasArtifactOfType(s, typeof(Chip)))
+                    c.QueueImmediate(new AAddArtifact { artifact = new Chip() });
 
                 timer = 0;
             }

@@ -8,7 +8,8 @@ namespace Dave.Cards
     [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class LoadedDiceCard : Card
     {
-        private static Spr card_sprite = Spr.cards_GoatDrone;
+        public static Spr red_sprite;
+        public static Spr black_sprite;
 
         public override List<CardAction> GetActions(State s, Combat c)
         {
@@ -27,7 +28,7 @@ namespace Dave.Cards
         public override CardData GetData(State state) => new()
         {
             cost = upgrade == Upgrade.A ? 1 : 2,
-            art = card_sprite,
+            art = flipped ? black_sprite : red_sprite,
             floppable = true,
             exhaust = true
         };

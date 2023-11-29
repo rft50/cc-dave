@@ -8,7 +8,7 @@ namespace Dave.Cards;
 [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
 public class WindupCard : Card
 {
-    private static Spr card_sprite = Spr.cards_GoatDrone;
+    public static Spr card_sprite;
 
     public override List<CardAction> GetActions(State s, Combat c)
     {
