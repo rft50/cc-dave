@@ -5,7 +5,7 @@ namespace Dave.Cards;
 // 1-cost, Black to 2 temp shield, 2 shield hurt, 1 Overdrive, Red to 1 Overdrive
 // A: shield and shield hurt are 1
 // B: shield and shield hurt are 3, main Overdrive is 2
-[CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+[CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
 public class SeeingRedCard : Card
 {
     public static Spr card_sprite;

@@ -362,18 +362,6 @@ namespace Dave
             var fold = new ExternalCard("rft.Dave.FoldCard", typeof(FoldCard), cards["common"], dave_deck);
             fold.AddLocalisation("Fold");
             registry.RegisterCard(fold);
-
-            LuckyShotCard.card_sprite = (Spr) cards["common"].Id!;
-            
-            var luckyShot = new ExternalCard("rft.Dave.LuckyShotCard", typeof(LuckyShotCard), cards["common"], dave_deck);
-            luckyShot.AddLocalisation("Lucky Shot");
-            registry.RegisterCard(luckyShot);
-
-            SeeingRedCard.card_sprite = (Spr) cards["common"].Id!;
-            
-            var seeingRed = new ExternalCard("rft.Dave.SeeingRedCard", typeof(SeeingRedCard), cards["common"], dave_deck);
-            seeingRed.AddLocalisation("Seeing Red");
-            registry.RegisterCard(seeingRed);
             
             // uncommon
             WildBarrageCard.card_sprite = (Spr) cards["common"].Id!;
@@ -407,6 +395,18 @@ namespace Dave
             var lowball = new ExternalCard("rft.Dave.Lowball", typeof(LowballCard), cards["common"], dave_deck);
             lowball.AddLocalisation("Lowball");
             registry.RegisterCard(lowball);
+
+            LuckyShotCard.card_sprite = (Spr) cards["common"].Id!;
+            
+            var luckyShot = new ExternalCard("rft.Dave.LuckyShotCard", typeof(LuckyShotCard), cards["common"], dave_deck);
+            luckyShot.AddLocalisation("Lucky Shot");
+            registry.RegisterCard(luckyShot);
+
+            SeeingRedCard.card_sprite = (Spr) cards["common"].Id!;
+            
+            var seeingRed = new ExternalCard("rft.Dave.SeeingRedCard", typeof(SeeingRedCard), cards["common"], dave_deck);
+            seeingRed.AddLocalisation("Seeing Red");
+            registry.RegisterCard(seeingRed);
             
             // rare
             LoadedDiceCard.red_sprite = (Spr)cards["red"].Id!;
