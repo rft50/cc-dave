@@ -2,9 +2,9 @@
 
 namespace Dave.Cards
 {
-    // 1-cost, 7 damage on Red, 2 shield hurt on Black, exhaust
-    // A: 1 shield hurt on Black instead
-    // B: 10 damage on Red, 3 shield hurt on Black instead
+    // 3-cost, 3 shield hurt on Black, 10 damage on Red, exhaust
+    // A: Damage goes first
+    // B: Switch Red/Black parity
     [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class AllInCard : Card
     {
@@ -19,30 +19,36 @@ namespace Dave.Cards
                 default:
                     actions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
                     {
-                        new AAttack { damage = this.GetDmg(s, 7) }
+                        new AAttack { damage = GetDmg(s, 10) }
                     }, new List<CardAction>
                     {
-                        new ShieldHurtAction { dmg = 2 }
+                        new ShieldHurtAction { dmg = 3 }
                     });
-                    actions.Add(new ADummyAction());
+                    actions = new List<CardAction>
+                    {
+                        actions[0],
+                        actions[2],
+                        actions[1],
+                        new ADummyAction()
+                    };
                     break;
                 case Upgrade.A:
                     actions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
                     {
-                        new AAttack { damage = this.GetDmg(s, 7) }
+                        new AAttack { damage = GetDmg(s, 10) }
                     }, new List<CardAction>
                     {
-                        new ShieldHurtAction { dmg = 1 }
+                        new ShieldHurtAction { dmg = 3 }
                     });
                     actions.Add(new ADummyAction());
                     break;
                 case Upgrade.B:
                     actions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
                     {
-                        new AAttack { damage = this.GetDmg(s, 10) }
+                        new ShieldHurtAction { dmg = 3 }
                     }, new List<CardAction>
                     {
-                        new ShieldHurtAction { dmg = 3 }
+                        new AAttack { damage = GetDmg(s, 10) }
                     });
                     actions.Add(new ADummyAction());
                     break;
@@ -53,7 +59,7 @@ namespace Dave.Cards
 
         public override CardData GetData(State state) => new()
         {
-            cost = 1,
+            cost = 3,
             art = card_sprite,
             exhaust = true
         };

@@ -24,6 +24,7 @@ public class PerfectOddsCard : Card
         floppable = true,
         temporary = true,
         retain = true,
-        exhaust = true
+        exhaust = true,
+        artTint = "ffffff"
     };
 }

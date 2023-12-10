@@ -237,16 +237,21 @@ namespace Dave
                     throw new Exception("Cannot register UnderdriveGenerator.png.");
             }
             {
-                var cards = new[]
+                var cards = new List<string>
                 {
-                    "common",
-                    "red",
-                    "black"
+                    "dave_common",
+                    "dave_red",
+                    "dave_black",
+                    "DaveCardArtDrawnGambit",
+                    "DaveCardArtSeeingRed"
                 };
+                
+                for (var i = 1; i <= 19; i++)
+                    cards.Add($"DaveCardArt{i}");
 
                 foreach (var c in cards)
                 {
-                    var path = Path.Combine(ModRootFolder.FullName, "Sprites", "Card", Path.GetFileName("dave_" + c + ".png"));
+                    var path = Path.Combine(ModRootFolder.FullName, "Sprites", "Card", Path.GetFileName(c + ".png"));
                     var sprite = new ExternalSprite("rft.Dave.Card." + c, new FileInfo(path));
                     if (!spriteRegistry.RegisterArt(sprite))
                         throw new Exception("Cannot register cardback " + path);
@@ -308,143 +313,143 @@ namespace Dave
                 return;
 
             // starter
-            LuckyEscapeCard.card_sprite = (Spr) cards["common"].Id!;
+            LuckyEscapeCard.card_sprite = (Spr) cards["DaveCardArt3"].Id!;
             
-            var luckyEscape = new ExternalCard("rft.Dave.LuckyEscapeCard", typeof(LuckyEscapeCard), cards["common"], dave_deck);
+            var luckyEscape = new ExternalCard("rft.Dave.LuckyEscapeCard", typeof(LuckyEscapeCard), cards["dave_common"], dave_deck);
             luckyEscape.AddLocalisation("Lucky Escape");
             registry.RegisterCard(luckyEscape);
 
-            RiggingShotCard.card_sprite = (Spr) cards["common"].Id!;
+            RiggingShotCard.card_sprite = (Spr) cards["DaveCardArt4"].Id!;
             
-            var riggingShot = new ExternalCard("rft.Dave.RiggingShotCard", typeof(RiggingShotCard), cards["common"], dave_deck);
+            var riggingShot = new ExternalCard("rft.Dave.RiggingShotCard", typeof(RiggingShotCard), cards["dave_common"], dave_deck);
             riggingShot.AddLocalisation("Rigging Shot");
             registry.RegisterCard(riggingShot);
 
             // common
-            WildStepCard.card_sprite = (Spr) cards["common"].Id!;
+            WildStepCard.card_sprite = (Spr) cards["DaveCardArt8"].Id!;
             
-            var wildStep = new ExternalCard("rft.Dave.WildStepCard", typeof(WildStepCard), cards["common"], dave_deck);
+            var wildStep = new ExternalCard("rft.Dave.WildStepCard", typeof(WildStepCard), cards["dave_common"], dave_deck);
             wildStep.AddLocalisation("Wild Step");
             registry.RegisterCard(wildStep);
 
-            WildShotCard.card_sprite = (Spr) cards["common"].Id!;
+            WildShotCard.card_sprite = (Spr) cards["DaveCardArt4"].Id!;
             
-            var wildShot = new ExternalCard("rft.Dave.WildShotCard", typeof(WildShotCard), cards["common"], dave_deck);
+            var wildShot = new ExternalCard("rft.Dave.WildShotCard", typeof(WildShotCard), cards["dave_common"], dave_deck);
             wildShot.AddLocalisation("Wild Shot");
             registry.RegisterCard(wildShot);
 
-            WindupCard.card_sprite = (Spr) cards["common"].Id!;
+            WindupCard.card_sprite = (Spr) cards["DaveCardArt9"].Id!;
             
-            var windup = new ExternalCard("rft.Dave.WindupCard", typeof(WindupCard), cards["common"], dave_deck);
+            var windup = new ExternalCard("rft.Dave.WindupCard", typeof(WindupCard), cards["dave_common"], dave_deck);
             windup.AddLocalisation("Windup");
             registry.RegisterCard(windup);
 
-            PrimedShotCard.card_sprite = (Spr) cards["common"].Id!;
+            PrimedShotCard.card_sprite = (Spr) cards["DaveCardArt6"].Id!;
             
-            var primedShot = new ExternalCard("rft.Dave.PrimedShotCard", typeof(PrimedShotCard), cards["common"], dave_deck);
+            var primedShot = new ExternalCard("rft.Dave.PrimedShotCard", typeof(PrimedShotCard), cards["dave_common"], dave_deck);
             primedShot.AddLocalisation("Primed Shot");
             registry.RegisterCard(primedShot);
 
-            PinchShotCard.card_sprite = (Spr) cards["common"].Id!;
+            PinchShotCard.card_sprite = (Spr) cards["DaveCardArt6"].Id!;
             
-            var pinchShot = new ExternalCard("rft.Dave.PinchShotCard", typeof(PinchShotCard), cards["common"], dave_deck);
+            var pinchShot = new ExternalCard("rft.Dave.PinchShotCard", typeof(PinchShotCard), cards["dave_common"], dave_deck);
             pinchShot.AddLocalisation("Pinch Shot");
             registry.RegisterCard(pinchShot);
 
-            WildWallCard.card_sprite = (Spr) cards["common"].Id!;
+            WildWallCard.card_sprite = (Spr) cards["DaveCardArt7"].Id!;
             
-            var wildWall = new ExternalCard("rft.Dave.WildWallCard", typeof(WildWallCard), cards["common"], dave_deck);
+            var wildWall = new ExternalCard("rft.Dave.WildWallCard", typeof(WildWallCard), cards["dave_common"], dave_deck);
             wildWall.AddLocalisation("Wild Wall");
             registry.RegisterCard(wildWall);
 
-            FoldCard.card_sprite = (Spr) cards["common"].Id!;
+            FoldCard.card_sprite = (Spr) cards["DaveCardArt10"].Id!;
             
-            var fold = new ExternalCard("rft.Dave.FoldCard", typeof(FoldCard), cards["common"], dave_deck);
+            var fold = new ExternalCard("rft.Dave.FoldCard", typeof(FoldCard), cards["dave_common"], dave_deck);
             fold.AddLocalisation("Fold");
             registry.RegisterCard(fold);
             
             // uncommon
-            WildBarrageCard.card_sprite = (Spr) cards["common"].Id!;
+            WildBarrageCard.card_sprite = (Spr) cards["DaveCardArt5"].Id!;
             
-            var wildBarrage = new ExternalCard("rft.Dave.WildBarrageCard", typeof(WildBarrageCard), cards["common"], dave_deck);
+            var wildBarrage = new ExternalCard("rft.Dave.WildBarrageCard", typeof(WildBarrageCard), cards["dave_common"], dave_deck);
             wildBarrage.AddLocalisation("Wild Barrage");
             registry.RegisterCard(wildBarrage);
             
-            RiggingCard.card_sprite = (Spr) cards["common"].Id!;
-            RiggingCard.red_sprite = (Spr)cards["red"].Id!;
-            RiggingCard.black_sprite = (Spr)cards["black"].Id!;
+            RiggingCard.card_sprite = (Spr) cards["DaveCardArt11"].Id!;
+            RiggingCard.red_sprite = (Spr)cards["DaveCardArt16"].Id!;
+            RiggingCard.black_sprite = (Spr)cards["DaveCardArt17"].Id!;
             
-            var rigging = new ExternalCard("rft.Dave.RiggingCard", typeof(RiggingCard), cards["common"], dave_deck);
+            var rigging = new ExternalCard("rft.Dave.RiggingCard", typeof(RiggingCard), cards["dave_common"], dave_deck);
             rigging.AddLocalisation("Rigging");
             registry.RegisterCard(rigging);
             
-            RaiseCard.card_sprite = (Spr) cards["common"].Id!;
+            RaiseCard.card_sprite = (Spr) cards["DaveCardArt12"].Id!;
             
-            var raise = new ExternalCard("rft.Dave.Raise", typeof(RaiseCard), cards["common"], dave_deck);
+            var raise = new ExternalCard("rft.Dave.Raise", typeof(RaiseCard), cards["dave_common"], dave_deck);
             raise.AddLocalisation("Raise");
             registry.RegisterCard(raise);
 
-            InvestmentCard.card_sprite = (Spr) cards["common"].Id!;
+            InvestmentCard.card_sprite = (Spr) cards["DaveCardArt12"].Id!;
             
-            var investment = new ExternalCard("rft.Dave.Investment", typeof(InvestmentCard), cards["common"], dave_deck);
+            var investment = new ExternalCard("rft.Dave.Investment", typeof(InvestmentCard), cards["dave_common"], dave_deck);
             investment.AddLocalisation("Investment");
             registry.RegisterCard(investment);
 
-            LowballCard.card_sprite = (Spr) cards["common"].Id!;
+            LowballCard.card_sprite = (Spr) cards["DaveCardArt9"].Id!;
             
-            var lowball = new ExternalCard("rft.Dave.Lowball", typeof(LowballCard), cards["common"], dave_deck);
+            var lowball = new ExternalCard("rft.Dave.Lowball", typeof(LowballCard), cards["dave_common"], dave_deck);
             lowball.AddLocalisation("Lowball");
             registry.RegisterCard(lowball);
 
-            LuckyShotCard.card_sprite = (Spr) cards["common"].Id!;
+            LuckyShotCard.card_sprite = (Spr) cards["DaveCardArt4"].Id!;
             
-            var luckyShot = new ExternalCard("rft.Dave.LuckyShotCard", typeof(LuckyShotCard), cards["common"], dave_deck);
+            var luckyShot = new ExternalCard("rft.Dave.LuckyShotCard", typeof(LuckyShotCard), cards["dave_common"], dave_deck);
             luckyShot.AddLocalisation("Lucky Shot");
             registry.RegisterCard(luckyShot);
 
-            SeeingRedCard.card_sprite = (Spr) cards["common"].Id!;
+            SeeingRedCard.card_sprite = (Spr) cards["DaveCardArtSeeingRed"].Id!;
             
-            var seeingRed = new ExternalCard("rft.Dave.SeeingRedCard", typeof(SeeingRedCard), cards["common"], dave_deck);
+            var seeingRed = new ExternalCard("rft.Dave.SeeingRedCard", typeof(SeeingRedCard), cards["dave_common"], dave_deck);
             seeingRed.AddLocalisation("Seeing Red");
             registry.RegisterCard(seeingRed);
             
             // rare
-            LoadedDiceCard.red_sprite = (Spr)cards["red"].Id!;
-            LoadedDiceCard.black_sprite = (Spr)cards["black"].Id!;
+            LoadedDiceCard.red_sprite = (Spr)cards["DaveCardArt18"].Id!;
+            LoadedDiceCard.black_sprite = (Spr)cards["DaveCardArt19"].Id!;
             
-            var loadedDice = new ExternalCard("rft.Dave.LoadedDiceCard", typeof(LoadedDiceCard), cards["common"], dave_deck);
+            var loadedDice = new ExternalCard("rft.Dave.LoadedDiceCard", typeof(LoadedDiceCard), cards["dave_common"], dave_deck);
             loadedDice.AddLocalisation("Loaded Dice");
             registry.RegisterCard(loadedDice);
             
-            AllInCard.card_sprite = (Spr) cards["common"].Id!;
+            AllInCard.card_sprite = (Spr) cards["DaveCardArt2"].Id!;
             
-            var allIn = new ExternalCard("rft.Dave.AllInCard", typeof(AllInCard), cards["common"], dave_deck);
+            var allIn = new ExternalCard("rft.Dave.AllInCard", typeof(AllInCard), cards["dave_common"], dave_deck);
             allIn.AddLocalisation("All In");
             registry.RegisterCard(allIn);
             
-            EvenBetCard.card_sprite = (Spr) cards["common"].Id!;
+            EvenBetCard.card_sprite = (Spr) cards["DaveCardArt11"].Id!;
             
-            var evenBet = new ExternalCard("rft.Dave.EvenBetCard", typeof(EvenBetCard), cards["common"], dave_deck);
+            var evenBet = new ExternalCard("rft.Dave.EvenBetCard", typeof(EvenBetCard), cards["dave_common"], dave_deck);
             evenBet.AddLocalisation("Even Bet");
             registry.RegisterCard(evenBet);
             
-            AllBetsAreOffCard.card_sprite = (Spr) cards["common"].Id!;
+            AllBetsAreOffCard.card_sprite = (Spr) cards["DaveCardArt6"].Id!;
             
-            var allBetsAreOff = new ExternalCard("rft.Dave.AllBetsAreOffCard", typeof(AllBetsAreOffCard), cards["common"], dave_deck);
+            var allBetsAreOff = new ExternalCard("rft.Dave.AllBetsAreOffCard", typeof(AllBetsAreOffCard), cards["dave_common"], dave_deck);
             allBetsAreOff.AddLocalisation("All Bets Are Off");
             registry.RegisterCard(allBetsAreOff);
             
-            DrawnGambitCard.card_sprite = (Spr) cards["common"].Id!;
+            DrawnGambitCard.card_sprite = (Spr) cards["DaveCardArtDrawnGambit"].Id!;
             
-            var drawnGambit = new ExternalCard("rft.Dave.DrawnGambitCard", typeof(DrawnGambitCard), cards["common"], dave_deck);
+            var drawnGambit = new ExternalCard("rft.Dave.DrawnGambitCard", typeof(DrawnGambitCard), cards["dave_common"], dave_deck);
             drawnGambit.AddLocalisation("Drawn Gambit");
             registry.RegisterCard(drawnGambit);
             
             // SPECIAL
-            PerfectOddsCard.red_sprite = (Spr)cards["red"].Id!;
-            PerfectOddsCard.black_sprite = (Spr)cards["black"].Id!;
+            PerfectOddsCard.red_sprite = (Spr)cards["DaveCardArt16"].Id!;
+            PerfectOddsCard.black_sprite = (Spr)cards["DaveCardArt17"].Id!;
             
-            var perfectOdds = new ExternalCard("rft.Dave.PerfectOddsCard", typeof(PerfectOddsCard), cards["common"], dave_deck);
+            var perfectOdds = new ExternalCard("rft.Dave.PerfectOddsCard", typeof(PerfectOddsCard), cards["dave_common"], dave_deck);
             perfectOdds.AddLocalisation("Perfect Odds");
             registry.RegisterCard(perfectOdds);
         }

@@ -34,61 +34,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Sprites\demo_status.png">
+    <None Update="Sprites\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Sprites\dracula_mini_0.png">
+    <None Update="Sprites\*\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Sprites\Shield.png">
+    <None Update="test cards.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="bin\Debug\net6.0\Sprites\Animation\DaveGameOver.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Animation\DaveMini.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Animation\DaveNeutral0.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Animation\DaveNeutral1.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Animation\DaveNeutral2.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Animation\DaveNeutral3.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Animation\DaveSquint0.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Animation\DaveSquint1.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Animation\DaveSquint2.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Animation\DaveSquint3.png" />
-    <None Include="bin\Debug\net6.0\Sprites\arin_dave.png" />
-    <None Include="bin\Debug\net6.0\Sprites\arin_dave_2.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Artifact\Ashtray.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Artifact\Chip_black.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Artifact\Chip_both.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Artifact\Chip_neutral.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Artifact\Chip_red.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Artifact\DriveRefund.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Artifact\DriveRefund_off.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Artifact\RiggedDice.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Artifact\Roulette.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Artifact\UnderdriveGenerator.png" />
-    <None Include="bin\Debug\net6.0\Sprites\black.png" />
-    <None Include="bin\Debug\net6.0\Sprites\black_chip.png" />
-    <None Include="bin\Debug\net6.0\Sprites\blue.png" />
-    <None Include="bin\Debug\net6.0\Sprites\blue_orange.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Card\dave_black.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Card\dave_common.png" />
-    <None Include="bin\Debug\net6.0\Sprites\Card\dave_red.png" />
-    <None Include="bin\Debug\net6.0\Sprites\char_frame_dave.png" />
-    <None Include="bin\Debug\net6.0\Sprites\frame.png" />
-    <None Include="bin\Debug\net6.0\Sprites\frame_dave.png" />
-    <None Include="bin\Debug\net6.0\Sprites\orange.png" />
-    <None Include="bin\Debug\net6.0\Sprites\random_move_foe.png" />
-    <None Include="bin\Debug\net6.0\Sprites\red.png" />
-    <None Include="bin\Debug\net6.0\Sprites\red_black.png" />
-    <None Include="bin\Debug\net6.0\Sprites\red_chip.png" />
-    <None Include="bin\Debug\net6.0\Sprites\shield_hurt.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="bin\Debug\net6.0\Sprites\JoCardFrame.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Sprites\Card\" />
   </ItemGroup>
 
 </Project>

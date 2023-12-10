@@ -41,6 +41,7 @@ public class SeeingRedCard : Card
     public override CardData GetData(State state) => new()
     {
         cost = 1,
-        art = card_sprite
+        art = card_sprite,
+        artTint = "ffffff"
     };
 }

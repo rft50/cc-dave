@@ -30,7 +30,8 @@ namespace Dave.Cards
             cost = upgrade == Upgrade.A ? 1 : 2,
             art = flipped ? black_sprite : red_sprite,
             floppable = true,
-            exhaust = true
+            exhaust = true,
+            artTint = "ffffff"
         };
     }
 }
