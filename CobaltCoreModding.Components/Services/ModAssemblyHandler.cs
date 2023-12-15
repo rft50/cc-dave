@@ -1,8 +1,9 @@
-﻿using CobaltCoreModding.Definitions.ItemLookups;
-using CobaltCoreModding.Definitions.ModContactPoints;
+﻿using CobaltCoreModding.Definitions.ModContactPoints;
 using CobaltCoreModding.Definitions.ModManifests;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
+using System.Runtime.Loader;
+using CobaltCoreModding.Definitions;
 
 namespace CobaltCoreModding.Components.Services
 {
@@ -10,7 +11,7 @@ namespace CobaltCoreModding.Components.Services
     /// A singleton to help store any assembly and its manifest.
     /// Can also run their bootup according to dependency.
     /// </summary>
-    public class ModAssemblyHandler : IModLoaderContact
+    public class ModAssemblyHandler
     {
         private static List<IAddinManifest> addinManifests = new();
         private static List<IAnimationManifest> animationManifests = new();
@@ -34,7 +35,11 @@ namespace CobaltCoreModding.Components.Services
         private static List<ISpriteManifest> spriteManifests = new();
         private static List<IStartershipManifest> startershipManifests = new();
         private static List<IStatusManifest> statusManifests = new();
+        private static List<IStoryManifest> storyManifests = new();
+        private static List<IApiProviderManifest> apiProviderManifests = new();
+        private readonly List<AssemblyLoadContext> contexts = new List<AssemblyLoadContext>();
         private readonly Dictionary<Type, List<IManifest>> loadedManifests = new Dictionary<Type, List<IManifest>>();
+        private readonly Dictionary<IManifest, PerModModLoaderContact> modLoaderContacts = new();
 
         public ModAssemblyHandler(ILogger<ModAssemblyHandler> logger, CobaltCoreHandler cobalt_core_handler, ILoggerFactory loggerFactory)
         {
@@ -48,7 +53,7 @@ namespace CobaltCoreModding.Components.Services
 
         public static IEnumerable<IArtifactManifest> ArtifactManifests => artifactManifests.ToArray();
 
-        public static IEnumerable<IModManifest> BootManifests => BootManifests.ToArray();
+        public static IEnumerable<IModManifest> BootManifests => bootManifests.ToArray();
 
         public static IEnumerable<ICardManifest> CardManifests => cardManifests.ToArray();
 
@@ -65,6 +70,7 @@ namespace CobaltCoreModding.Components.Services
         public static IEnumerable<Assembly> ModAssemblies => modAssemblies.ToArray();
 
         public static IEnumerable<IPartTypeManifest> PartTypeManifests => partTypeManifests.ToArray();
+
         public static IEnumerable<IPrelaunchManifest> PrelaunchManifests => prelaunchManifests.ToArray();
 
         public static IEnumerable<IRawShipManifest> RawShipManifests => rawShipManifests.ToArray();
@@ -80,6 +86,10 @@ namespace CobaltCoreModding.Components.Services
         public static IEnumerable<IStartershipManifest> StartershipManifests => startershipManifests.ToArray();
 
         public static IEnumerable<IStatusManifest> StatusManifests => statusManifests.ToArray();
+        public static IEnumerable<IStoryManifest> StoryManifests => storyManifests.ToArray();
+
+        public static IEnumerable<IApiProviderManifest> ApiProviderManifests => apiProviderManifests.ToArray();
+
         public Assembly CobaltCoreAssembly => CobaltCoreHandler.CobaltCoreAssembly ?? throw new Exception("No Cobalt Core found.");
 
         public IEnumerable<IManifest> LoadedManifests => registered_manifests.Values;
@@ -96,8 +106,12 @@ namespace CobaltCoreModding.Components.Services
         {
             foreach (var manifest in LoadOrderly(ModAssemblyHandler.prelaunchManifests, logger))
             {
-                if (manifest == null) continue;
-                manifest.FinalizePreperations();
+                if (!modLoaderContacts.TryGetValue(manifest, out var contact))
+                {
+                    contact = new PerModModLoaderContact(this, logger, manifest);
+                    modLoaderContacts[manifest] = contact;
+                }
+                manifest.FinalizePreperations(contact);
             }
         }
 
@@ -106,12 +120,11 @@ namespace CobaltCoreModding.Components.Services
             try
             {
                 logger.LogInformation($"Loading mod from {mod_file.FullName}...");
-                var assembly = Assembly.LoadFile(mod_file.FullName);
-                if (modAssemblies.Add(assembly))
-                    ExtractManifestFromAssembly(
-                        assembly,
-                        mod_file.Directory ?? throw new Exception("Mod file has no parent directory!")
-                    );
+                var context = new AssemblyLoadContext(mod_file.DirectoryName ?? throw new Exception("Mod doesn't have folder???"));
+                var assembly = context.LoadFromAssemblyPath(mod_file.FullName);
+                context.Resolving += ModContext_Resolving;
+                contexts.Add(context);
+                modAssemblies.Add(assembly);
             }
             catch (Exception err)
             {
@@ -131,15 +144,16 @@ namespace CobaltCoreModding.Components.Services
                 {
                     var candidate = remaining_manifests[i];
                     bool failed = false;
+
                     //check each dependency
-                    foreach (var dependency in candidate.Dependencies)
+                    foreach (var dependency in candidate.Dependencies ?? Array.Empty<DependencyEntry>())
                     {
                         //Skip dependecies not yet relevant.
                         if (!loadedManifests.Any(e => dependency.DependencyType.IsAssignableTo(e.Key)))
                             continue;
                         var loaded_list = loadedManifests.First(e => dependency.DependencyType.IsAssignableTo(e.Key)).Value;
                         //check if dependeny has been loaded.
-                        if (!loaded_list.Any(m => string.Compare(m.Name, dependency.DependencyName) == 0))
+                        if (!dependency.IgnoreIfMissing && !loaded_list.Any(m => m.Name.Equals(dependency.DependencyName)))
                         {
                             failed = true;
                             break;
@@ -169,11 +183,13 @@ namespace CobaltCoreModding.Components.Services
                     //Determine missing dependency names
                     var missing_dependency_names = leftover.Dependencies.Where(d =>
                     {
+                        if (d.IgnoreIfMissing)
+                            return false;
                         if (!loadedManifests.Any(e => d.DependencyType.IsAssignableTo(e.Key)))
                             return false;
                         var loaded_list = loadedManifests.First(e => d.DependencyType.IsAssignableTo(e.Key)).Value;
                         //check if dependeny has been loaded.
-                        return !loaded_list.Any(m => string.Compare(m.Name, d.DependencyName) == 0);
+                        return !loaded_list.Any(m => m.Name.Equals(d.DependencyName));
                     }).Select(e => e.DependencyName);
                     var mdn_list = string.Join("\n", missing_dependency_names);
                     missing_logger.LogCritical("The Manifest '{0}' is missing the following dependencies and thus cannot be loaded:\n {1}", leftover.Name, mdn_list);
@@ -181,12 +197,7 @@ namespace CobaltCoreModding.Components.Services
             }
         }
 
-        IManifest IManifestLookup.LookupManifest(string globalName)
-        {
-            return LookupManifest(globalName) ?? throw new KeyNotFoundException();
-        }
-
-        bool IModLoaderContact.RegisterNewAssembly(Assembly assembly, DirectoryInfo working_directory)
+        internal bool RegisterNewAssembly(Assembly assembly, DirectoryInfo working_directory)
         {
             if (modAssemblies.Add(assembly))
                 ExtractManifestFromAssembly(assembly, working_directory);
@@ -194,12 +205,39 @@ namespace CobaltCoreModding.Components.Services
             return true;
         }
 
+        private IModLoaderContact ObtainModLoaderContact(IModManifest modManifest)
+        {
+            if (!modLoaderContacts.TryGetValue(modManifest, out var contact))
+            {
+                contact = new PerModModLoaderContact(this, logger, modManifest);
+                modLoaderContacts[modManifest] = contact;
+            }
+            return contact;
+        }
+
         public void WarumMods(object? ui_object)
         {
+            //actually extractr manifests from all assemblies
+            foreach (var assembly in modAssemblies)
+            {
+                try
+                {
+                    ExtractManifestFromAssembly(
+                                assembly,
+                              new DirectoryInfo(Path.GetDirectoryName(assembly.Location) ?? throw new Exception("No directory found for assembly"))
+                            );
+                }
+                catch (Exception err)
+                {
+                    logger?.LogError(err, "Extraction of manifest from directory failed");
+                }
+            }
+
             foreach (var manifest in LoadOrderly(ModAssemblyHandler.bootManifests, logger))
             {
-                if (manifest == null) continue;
-                manifest.BootMod(this);
+                if (manifest == null)
+                    continue;
+                manifest.BootMod(ObtainModLoaderContact(manifest));
             }
 
             foreach (var manifest in LoadOrderly(ModAssemblyHandler.addinManifests, logger))
@@ -273,6 +311,8 @@ namespace CobaltCoreModding.Components.Services
                     startershipManifests.Add(startership_manifest);
                 if (spawned_manifest is IRawStartershipManifest rawStartership_manifest)
                     rawStartershipManifests.Add(rawStartership_manifest);
+                if (spawned_manifest is IStoryManifest story_manifest)
+                    storyManifests.Add(story_manifest);
                 if (spawned_manifest is IModManifest boot_manifest)
                     bootManifests.Add(boot_manifest);
                 if (spawned_manifest is IPrelaunchManifest prelaunchManifest)
@@ -281,7 +321,27 @@ namespace CobaltCoreModding.Components.Services
                     addinManifests.Add(addinManifest);
                 if (spawned_manifest is IPartTypeManifest partTypeManifest)
                     partTypeManifests.Add(partTypeManifest);
+                if (spawned_manifest is IApiProviderManifest apiProviderManifest)
+                    apiProviderManifests.Add(apiProviderManifest);
             }
+        }
+
+        private Assembly? ModContext_Resolving(AssemblyLoadContext context, AssemblyName assemblyName)
+        {
+            //Mods should either cross reference another mod.
+            Assembly? result = modAssemblies.Concat(new Assembly[] { CobaltCoreAssembly }).FirstOrDefault(e => e.GetName().FullName == assemblyName.FullName);
+            //or an internal dependency, which we will load here to its context to avoid collision between mods.
+            if (result == null)
+            {
+                try
+                {
+                    result = context.LoadFromAssemblyPath(Path.Combine(context.Name ?? throw new Exception(), (assemblyName.Name ?? throw new Exception()) + ".dll"));
+                }
+                catch
+                {
+                }
+            }
+            return result;
         }
     }
 }

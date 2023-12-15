@@ -1,5 +1,4 @@
-﻿using CobaltCoreModdding.Components.Services;
-using CobaltCoreModding.Components.Utils;
+﻿using CobaltCoreModding.Components.Utils;
 using CobaltCoreModding.Definitions.ExternalItems;
 using CobaltCoreModding.Definitions.ItemLookups;
 using CobaltCoreModding.Definitions.ModContactPoints;
@@ -65,7 +64,7 @@ namespace CobaltCoreModding.Components.Services
 
             var artifact_reward_get_blocked_artifacts_method = CobaltCoreHandler.CobaltCoreAssembly?.GetType("ArtifactReward")?.GetMethod("GetBlockedArtifacts", BindingFlags.Static | BindingFlags.NonPublic) ?? throw new Exception("ArtifactReward.GetBlockedArtifacts method not found");
 
-            var artifact_reward_get_blocked_artifacts_postfix = typeof(PartTypeRegistry).GetMethod("GetBlockedArtifacts_Postfix", BindingFlags.Static | BindingFlags.NonPublic) ?? throw new Exception("PartTypeRegistry.GetBlockedArtifacts_Postfix method not found");
+            var artifact_reward_get_blocked_artifacts_postfix = typeof(ArtifactRegistry).GetMethod("GetBlockedArtifacts_Postfix", BindingFlags.Static | BindingFlags.NonPublic) ?? throw new Exception("PartTypeRegistry.GetBlockedArtifacts_Postfix method not found");
 
             harmony.Patch(artifact_reward_get_blocked_artifacts_method, postfix: new HarmonyMethod(artifact_reward_get_blocked_artifacts_postfix));
         }
