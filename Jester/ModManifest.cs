@@ -182,6 +182,10 @@ namespace Jester
             smokeAndMirrors.AddLocalisation("Smoke and Mirrors");
             registry.RegisterCard(smokeAndMirrors);
 
+            var curtainCall = new ExternalCard("rft.Jester.CurtainCall", typeof(CurtainCall), card_art_sprite, JesterDeck);
+            curtainCall.AddLocalisation("Curtain Call");
+            registry.RegisterCard(curtainCall);
+
             var madCackle = new ExternalCard("rft.Jester.MadCackle", typeof(MadCackle), card_art_sprite, JesterDeck);
             madCackle.AddLocalisation("Mad Cackle");
             registry.RegisterCard(madCackle);
