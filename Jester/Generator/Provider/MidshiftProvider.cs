@@ -31,6 +31,7 @@ public class MidshiftProvider : IProvider
         public HashSet<string> Tags =>
             new()
             {
+                "utility",
                 "midshift",
                 "flippable"
             };

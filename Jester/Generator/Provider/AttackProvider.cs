@@ -46,24 +46,13 @@ public class AttackProvider : IProvider
             Piercing = piercing;
         }
 
-        public HashSet<string> Tags
-        {
-            get
+        public HashSet<string> Tags =>
+            new()
             {
-                if (Damage == 1 && !Piercing)
-                    return new HashSet<string>
-                    {
-                        "starter",
-                        "attack",
-                        "shot"
-                    };
-                return new HashSet<string>
-                {
-                    "attack",
-                    "shot"
-                };
-            }
-        }
+                "offensive",
+                "attack",
+                "shot"
+            };
 
         public IProvider Provider { get; }
         public int GetActionCount() => 1;

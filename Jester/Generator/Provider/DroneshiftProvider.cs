@@ -31,24 +31,14 @@ public class DroneshiftProvider : IProvider
         }
 
 
-        public HashSet<string> Tags
-        {
-            get
+        public HashSet<string> Tags =>
+            new()
             {
-                if (Droneshift == 1)
-                    return new HashSet<string>
-                    {
-                        "starter",
-                        "droneshift",
-                        "move"
-                    };
-                return new HashSet<string>
-                {
-                    "droneshift",
-                    "move"
-                };
-            }
-        }
+                "defensive",
+                "droneshift",
+                "move"
+            };
+
         public IProvider Provider { get; }
         public int GetActionCount() => 1;
 

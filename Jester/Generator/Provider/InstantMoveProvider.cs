@@ -38,11 +38,13 @@ public class InstantMoveProvider : IProvider
                 if (Random)
                     return new HashSet<string>
                     {
+                        "defensive",
                         "move",
                         "random"
                     };
                 return new HashSet<string>
                 {
+                    "defensive",
                     "move",
                     "flippable"
                 };
@@ -98,7 +100,7 @@ public class InstantMoveProvider : IProvider
             request.Blacklist.Add("move");
             if (Random)
             {
-                var result = request.OccupiedMidrow = request.OccupiedMidrow.Select(e => e - Distance).ToHashSet();
+                var result = request.OccupiedMidrow.Select(e => e - Distance).ToHashSet();
                 result.UnionWith(request.OccupiedMidrow.Select(e => e + Distance).ToHashSet());
                 request.OccupiedMidrow = result;
             }

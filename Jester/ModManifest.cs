@@ -2,9 +2,10 @@
 using CobaltCoreModding.Definitions.ExternalItems;
 using CobaltCoreModding.Definitions.ModContactPoints;
 using CobaltCoreModding.Definitions.ModManifests;
-using CobaltCoreModding.Definitions.OverwriteItems;
+using HarmonyLib;
 using Jester.Actions;
 using Jester.Cards;
+using Jester.External;
 using Microsoft.Extensions.Logging;
 
 namespace Jester
@@ -12,27 +13,39 @@ namespace Jester
     public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, IDeckManifest, ICardManifest, ICardOverwriteManifest, ICharacterManifest, IGlossaryManifest, IArtifactManifest, IStatusManifest, ICustomEventManifest
     {
         public static ExternalStatus? demo_status;
-        internal static ICustomEventHub? EventHub;
+        public static ICustomEventHub? EventHub;
         private ExternalSprite? card_art_sprite;
         private ExternalAnimation? default_animation;
         private ExternalSprite? demo_status_sprite;
         private ExternalSprite? DemoAttackSprite;
-        private ExternalDeck? dracula_deck;
+        public static ExternalDeck? JesterDeck;
         private ExternalSprite? dracular_art;
         private ExternalSprite? dracular_border;
         private ExternalAnimation? mini_animation;
         private ExternalSprite? mini_dracula_sprite;
         private ExternalSprite? pinker_per_border_over_sprite;
 
-        public IEnumerable<DependencyEntry> Dependencies => new DependencyEntry[0];
+        public static IKokoroApi KokoroApi = null!;
+
+        public IEnumerable<DependencyEntry> Dependencies => new DependencyEntry[]
+        {
+            new DependencyEntry<IModManifest>("Shockah.Kokoro")
+        };
         public DirectoryInfo? GameRootFolder { get; set; }
         public ILogger? Logger { get; set; }
         public DirectoryInfo? ModRootFolder { get; set; }
-        public string Name => "EWanderer.DemoMod.MainManifest";
+        public string Name => "rft.Jester";
 
         public void BootMod(IModLoaderContact contact)
         {
-            //Nothing to do here lol.
+            ReflectionExt.CurrentAssemblyLoadContext.LoadFromAssemblyPath(Path.Combine(ModRootFolder!.FullName, "Shrike.dll"));
+            ReflectionExt.CurrentAssemblyLoadContext.LoadFromAssemblyPath(Path.Combine(ModRootFolder!.FullName, "Shrike.Harmony.dll"));
+
+            KokoroApi = contact.GetApi<IKokoroApi>("Shockah.Kokoro")!;
+            KokoroApi.RegisterTypeForExtensionData(typeof(Combat));
+            
+            var harmony = new Harmony("Jester");
+            harmony.PatchAll();
         }
 
         public void LoadManifest(ISpriteRegistry artRegistry)
@@ -53,7 +66,7 @@ namespace Jester
             }
 
             {
-                var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("Shield.png"));
+                var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("Question.png"));
                 card_art_sprite = new ExternalSprite("EWanderer.DemoMod.DemoCardArt", new FileInfo(path));
                 if (!artRegistry.RegisterArt(card_art_sprite))
                     throw new Exception("Cannot register sprite.");
@@ -77,7 +90,7 @@ namespace Jester
 
         public void LoadManifest(IAnimationRegistry registry)
         {
-            default_animation = new ExternalAnimation("ewanderer.demomod.dracula.neutral", dracula_deck ?? throw new NullReferenceException(), "neutral", false, new ExternalSprite[] {
+            default_animation = new ExternalAnimation("ewanderer.demomod.dracula.neutral", JesterDeck ?? throw new NullReferenceException(), "neutral", false, new ExternalSprite[] {
                 ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_0),
                 ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_1),
                 ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_2),
@@ -89,7 +102,7 @@ namespace Jester
             if (mini_dracula_sprite == null)
                 throw new Exception();
 
-            mini_animation = new ExternalAnimation("ewanderer.demomod.dracula.mini", dracula_deck, "mini", false, new ExternalSprite[] { mini_dracula_sprite });
+            mini_animation = new ExternalAnimation("ewanderer.demomod.dracula.mini", JesterDeck, "mini", false, new ExternalSprite[] { mini_dracula_sprite });
 
             registry.RegisterAnimation(mini_animation);
         }
@@ -99,20 +112,92 @@ namespace Jester
             dracular_art = ExternalSprite.GetRaw((int)Spr.cards_colorless);
             dracular_border = ExternalSprite.GetRaw((int)Spr.cardShared_border_dracula);
 
-            dracula_deck = new ExternalDeck("EWanderer.Demomod.DraculaDeck", System.Drawing.Color.Crimson, System.Drawing.Color.Purple, dracular_art ?? throw new NullReferenceException(), dracular_border ?? throw new NullReferenceException(), null);
+            JesterDeck = new ExternalDeck("rft.Jester.JesterDeck", System.Drawing.Color.HotPink, System.Drawing.Color.Black, dracular_art ?? throw new NullReferenceException(), dracular_border ?? throw new NullReferenceException(), null);
 
-            if (!registry.RegisterDeck(dracula_deck))
+            if (!registry.RegisterDeck(JesterDeck))
                 return;
         }
 
         public void LoadManifest(ICardRegistry registry)
         {
+            // ReSharper disable InconsistentNaming
             if (card_art_sprite == null)
                 return;
+            
+            // common
+            var j0o = new ExternalCard("rft.Jester.Joker0Offensive", typeof(Joker0Offensive), card_art_sprite, JesterDeck);
+            j0o.AddLocalisation("Joker 0 Offensive");
+            registry.RegisterCard(j0o);
+            
+            var j0d = new ExternalCard("rft.Jester.Joker0Defensive", typeof(Joker0Defensive), card_art_sprite, JesterDeck);
+            j0d.AddLocalisation("Joker 0 Defensive");
+            registry.RegisterCard(j0d);
+            
+            var j0u = new ExternalCard("rft.Jester.Joker0Utility", typeof(Joker0Utility), card_art_sprite, JesterDeck);
+            j0u.AddLocalisation("Joker 0 Utility");
+            registry.RegisterCard(j0u);
+            
+            var j1o = new ExternalCard("rft.Jester.Joker1Offensive", typeof(Joker1Offensive), card_art_sprite, JesterDeck);
+            j1o.AddLocalisation("Joker 1 Offensive");
+            registry.RegisterCard(j1o);
+            
+            var j1d = new ExternalCard("rft.Jester.Joker1Defensive", typeof(Joker1Defensive), card_art_sprite, JesterDeck);
+            j1d.AddLocalisation("Joker 1 Defensive");
+            registry.RegisterCard(j1d);
+            
+            var j1u = new ExternalCard("rft.Jester.Joker1Utility", typeof(Joker1Utility), card_art_sprite, JesterDeck);
+            j1u.AddLocalisation("Joker 1 Utility");
+            registry.RegisterCard(j1u);
+            
+            var j2o = new ExternalCard("rft.Jester.Joker2Offensive", typeof(Joker2Offensive), card_art_sprite, JesterDeck);
+            j2o.AddLocalisation("Joker 2 Offensive");
+            registry.RegisterCard(j2o);
+            
+            var j2d = new ExternalCard("rft.Jester.Joker2Defensive", typeof(Joker2Defensive), card_art_sprite, JesterDeck);
+            j2d.AddLocalisation("Joker 2 Defensive");
+            registry.RegisterCard(j2d);
+            
+            var j2u = new ExternalCard("rft.Jester.Joker2Utility", typeof(Joker2Utility), card_art_sprite, JesterDeck);
+            j2u.AddLocalisation("Joker 2 Utility");
+            registry.RegisterCard(j2u);
+            
+            // uncommon
+            var j3o = new ExternalCard("rft.Jester.Joker3Offensive", typeof(Joker3Offensive), card_art_sprite, JesterDeck);
+            j3o.AddLocalisation("Joker 3 Offensive");
+            registry.RegisterCard(j3o);
+            
+            var j3d = new ExternalCard("rft.Jester.Joker3Defensive", typeof(Joker3Defensive), card_art_sprite, JesterDeck);
+            j3d.AddLocalisation("Joker 3 Defensive");
+            registry.RegisterCard(j3d);
+            
+            var j3u = new ExternalCard("rft.Jester.Joker3Utility", typeof(Joker3Utility), card_art_sprite, JesterDeck);
+            j3u.AddLocalisation("Joker 3 Utility");
+            registry.RegisterCard(j3u);
 
-            var joker = new ExternalCard("rft.Jester.Joker", typeof(Joker), card_art_sprite, null);
-            joker.AddLocalisation("Joker");
-            registry.RegisterCard(joker);
+            var encore = new ExternalCard("rft.Jester.Encore", typeof(Encore), card_art_sprite, JesterDeck);
+            encore.AddLocalisation("Encore");
+            registry.RegisterCard(encore);
+
+            var smokeAndMirrors = new ExternalCard("rft.Jester.SmokeAndMirrors", typeof(SmokeAndMirrors), card_art_sprite, JesterDeck);
+            smokeAndMirrors.AddLocalisation("Smoke and Mirrors");
+            registry.RegisterCard(smokeAndMirrors);
+
+            var madCackle = new ExternalCard("rft.Jester.MadCackle", typeof(MadCackle), card_art_sprite, JesterDeck);
+            madCackle.AddLocalisation("Mad Cackle");
+            registry.RegisterCard(madCackle);
+            
+            // rare
+            var j4o = new ExternalCard("rft.Jester.Joker4Offensive", typeof(Joker4Offensive), card_art_sprite, JesterDeck);
+            j4o.AddLocalisation("Joker 4 Offensive");
+            registry.RegisterCard(j4o);
+            
+            var j4d = new ExternalCard("rft.Jester.Joker4Defensive", typeof(Joker4Defensive), card_art_sprite, JesterDeck);
+            j4d.AddLocalisation("Joker 4 Defensive");
+            registry.RegisterCard(j4d);
+            
+            var j4u = new ExternalCard("rft.Jester.Joker4Utility", typeof(Joker4Utility), card_art_sprite, JesterDeck);
+            j4u.AddLocalisation("Joker 4 Utility");
+            registry.RegisterCard(j4u);
         }
 
         public void LoadManifest(ICardOverwriteRegistry registry)
@@ -122,12 +207,11 @@ namespace Jester
         public void LoadManifest(ICharacterRegistry registry)
         {
             var dracular_spr = ExternalSprite.GetRaw((int)Spr.panels_char_colorless);
-
-            var start_cards = new Type[] { typeof(DraculaCard), typeof(DraculaCard) };
-            var playable_dracular_character = new ExternalCharacter("EWanderer.DemoMod.DracularChar", dracula_deck ?? throw new NullReferenceException(), dracular_spr, start_cards, new Type[0], default_animation ?? throw new NullReferenceException(), mini_animation ?? throw new NullReferenceException());
-            playable_dracular_character.AddNameLocalisation("Count Dracula");
-            playable_dracular_character.AddDescLocalisation("A vampire using blood magic to invoke the powers of the void.");
-            registry.RegisterCharacter(playable_dracular_character);
+            
+            var jester = new ExternalCharacter("rft.Jester.JesterChar", JesterDeck ?? throw new NullReferenceException(), dracular_spr, Type.EmptyTypes, Type.EmptyTypes, default_animation ?? throw new NullReferenceException(), mini_animation ?? throw new NullReferenceException());
+            jester.AddNameLocalisation("Jester");
+            jester.AddDescLocalisation("A mad jester. Only supposedly knows what he's doing.");
+            registry.RegisterCharacter(jester);
         }
 
         public void LoadManifest(IGlossaryRegisty registry)

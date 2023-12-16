@@ -34,7 +34,7 @@ public class Util
             if (occupied.Contains(left))
                 continue;
             leftSkip--;
-        } while (leftSkip > 0);
+        } while (leftSkip > 0 || occupied.Contains(left));
 
         do
         {
@@ -42,12 +42,21 @@ public class Util
             if (occupied.Contains(right))
                 continue;
             rightSkip--;
-        } while (rightSkip > 0);
+        } while (rightSkip > 0 || occupied.Contains(right));
 
         return new List<int>
         {
             left,
             right
         };
+    }
+
+    public static void Shuffle<T>(List<T> list, Random rng)
+    {
+        for (var i = 0; i < list.Count - 1; i++)
+        {
+            var j = rng.Next(i, list.Count);
+            (list[i], list[j]) = (list[j], list[i]);
+        }
     }
 }

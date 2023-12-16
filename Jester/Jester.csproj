@@ -14,6 +14,7 @@
     <StartAction>Program</StartAction>
     <StartProgram>$(ModLoaderPath)\CobaltCoreModLoaderClassic.exe</StartProgram>
     <StartWorkingDirectory>$(ModLoaderPath)</StartWorkingDirectory>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
     <PackageReference Include="MSBuild.Extension.Pack" Version="1.9.1" />
+    <PackageReference Include="Shrike" Version="2.1.0" />
+    <PackageReference Include="Shrike.Harmony" Version="2.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,21 +41,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Sprites\border_over_pinker_peri.png">
+    <None Update="Sprites\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Sprites\demo_status.png">
+    <None Update="Sprites\*\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Sprites\dracula_mini_0.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Sprites\patched_cobalt_core.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Sprites\Shield.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="obj\Debug\" />
   </ItemGroup>
 
 </Project>

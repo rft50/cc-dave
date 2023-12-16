@@ -27,13 +27,15 @@ public class HalfHalfStrategy : IStrategy
         {
             request.MaxCost = points;
             options = IStrategy.GetOptionsFromProvidersFiltered(request, providers);
+            
+            if (options.Count == 0) break;
+            
             var option = Util.GetRandom(options, rng);
             option.AfterSelection(request);
             entries.Add(option);
             points -= option.GetCost();
             actionCount += option.GetActionCount();
 
-            if (options.Count == 0) break;
         } while (points > request.BasePoints / 2);
 
         if (request.FirstAction != null)
@@ -41,6 +43,8 @@ public class HalfHalfStrategy : IStrategy
             whitelist.Remove(request.FirstAction);
             blacklist.Add(request.FirstAction);
         }
+        
+        // SECOND HALF
 
         do
         {
@@ -57,6 +61,10 @@ public class HalfHalfStrategy : IStrategy
             points -= option.GetCost();
             actionCount += option.GetActionCount();
         } while (true);
+        
+        // UPGRADES
+
+        IStrategy.PerformUpgradeA(request, entries, ref points);
 
         return new JesterResult
         {

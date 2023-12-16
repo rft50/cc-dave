@@ -39,19 +39,15 @@ public class ShieldProvider : IProvider
         public HashSet<string> Tags { 
             get
             {
-                if (Shield == 1 && !Temp)
-                    return new HashSet<string>
-                    {
-                        "starter",
-                        "shield"
-                    };
                 if (!Temp)
                     return new HashSet<string>
                     {
+                        "defensive",
                         "shield"
                     };
                 return new HashSet<string>
                 {
+                    "defensive",
                     "tempShield"
                 };
             } }

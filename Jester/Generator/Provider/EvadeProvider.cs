@@ -31,24 +31,14 @@ public class EvadeProvider : IProvider
         }
 
 
-        public HashSet<string> Tags
-        {
-            get
+        public HashSet<string> Tags =>
+            new()
             {
-                if (Evade == 1)
-                    return new HashSet<string>
-                    {
-                        "starter",
-                        "evade",
-                        "move"
-                    };
-                return new HashSet<string>
-                {
-                    "evade",
-                    "move"
-                };
-            }
-        }
+                "defensive",
+                "evade",
+                "move"
+            };
+
         public IProvider Provider { get; }
         public int GetActionCount() => 1;
 

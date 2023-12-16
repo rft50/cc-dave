@@ -16,6 +16,7 @@ public class BayProvider : IProvider
                 new AttackDrone(),
                 new HashSet<string>
                 {
+                    "offensive",
                     "drone",
                     "attack"
                 }, 20, offset, true));
@@ -26,19 +27,28 @@ public class BayProvider : IProvider
                 },
                 new HashSet<string>
                 {
+                    "offensive",
                     "drone",
                     "attack"
                 }, 35, offset, true));
             entries.Add(new BayEntry(this,
-                new ShieldDrone(),
+                new ShieldDrone
+                {
+                    targetPlayer = true
+                },
                 new HashSet<string>
                 {
+                    "defensive",
                     "drone"
                 }, 18, offset, true));
             entries.Add(new BayEntry(this,
-                new EnergyDrone(),
+                new EnergyDrone
+                {
+                    targetPlayer = true
+                },
                 new HashSet<string>
                 {
+                    "utility",
                     "drone"
                 }, 50, offset, true));
             entries.Add(new BayEntry(this,
@@ -48,6 +58,7 @@ public class BayProvider : IProvider
                 },
                 new HashSet<string>
                 {
+                    "offensive",
                     "missile",
                     "attack"
                 }, 15, offset, false));
@@ -58,6 +69,7 @@ public class BayProvider : IProvider
                 },
                 new HashSet<string>
                 {
+                    "offensive",
                     "missile",
                     "attack"
                 }, 20, offset, false));
@@ -68,6 +80,7 @@ public class BayProvider : IProvider
                 },
                 new HashSet<string>
                 {
+                    "offensive",
                     "missile",
                     "attack"
                 }, 18, offset, false));
@@ -78,6 +91,7 @@ public class BayProvider : IProvider
                 },
                 new HashSet<string>
                 {
+                    "offensive",
                     "missile",
                     "attack"
                 }, 60, offset, false));
@@ -85,8 +99,9 @@ public class BayProvider : IProvider
                 new SpaceMine(),
                 new HashSet<string>
                 {
+                    "offensive",
                     "attack"
-                }, 15, offset, false));
+                }, 20, offset, false));
             entries.Add(new BayEntry(this,
                 new SpaceMine
                 {
@@ -94,8 +109,9 @@ public class BayProvider : IProvider
                 },
                 new HashSet<string>
                 {
+                    "offensive",
                     "attack"
-                }, 20, offset, false));
+                }, 30, offset, false));
         }
         
         entries.AddRange(entries.Where(e => e.Shieldable)
@@ -137,7 +153,8 @@ public class BayProvider : IProvider
         {
             new ASpawn
             {
-                thing = Payload
+                thing = Mutil.DeepCopy(Payload),
+                offset = Offset
             }
         };
 
@@ -172,6 +189,7 @@ public class BayProvider : IProvider
         public void AfterSelection(JesterRequest request)
         {
             request.Blacklist.Add("shot");
+            request.OccupiedMidrow.Add(Offset);
         }
 
         public override string? ToString()

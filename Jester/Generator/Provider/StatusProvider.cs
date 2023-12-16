@@ -7,7 +7,10 @@ public class StatusProvider : IProvider
         new StatusStruct
         {
             Status = Enum.Parse<Status>("maxShield"),
-            Tags = new HashSet<string>(),
+            Tags = new HashSet<string>
+            {
+                "defensive"
+            },
             Cost = 20,
             Stackable = false
         },
@@ -16,7 +19,8 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("payback"),
             Tags = new HashSet<string>
             {
-                "mustExhaust"
+                "mustExhaust",
+                "offensive"
             },
             Cost = 50,
             Stackable = false
@@ -26,7 +30,8 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("stunSource"),
             Tags = new HashSet<string>
             {
-                "mustExhaust"
+                "mustExhaust",
+                "defensive"
             },
             Cost = 80,
             Stackable = false
@@ -36,7 +41,8 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("ace"),
             Tags = new HashSet<string>
             {
-                "mustExhaust"
+                "mustExhaust",
+                "utility"
             },
             Cost = 50,
             Stackable = false
@@ -44,21 +50,30 @@ public class StatusProvider : IProvider
         new StatusStruct
         {
             Status = Enum.Parse<Status>("hermes"),
-            Tags = new HashSet<string>(),
+            Tags = new HashSet<string>
+            {
+                "utility"
+            },
             Cost = 15,
             Stackable = false
         },
         new StatusStruct
         {
             Status = Enum.Parse<Status>("drawNextTurn"),
-            Tags = new HashSet<string>(),
+            Tags = new HashSet<string>
+            {
+                "utility"
+            },
             Cost = 20,
             Stackable = false
         },
         new StatusStruct
         {
             Status = Enum.Parse<Status>("energyNextTurn"),
-            Tags = new HashSet<string>(),
+            Tags = new HashSet<string>
+            {
+                "utility"
+            },
             Cost = 30,
             Stackable = false
         },
@@ -67,7 +82,8 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("strafe"),
             Tags = new HashSet<string>
             {
-                "mustExhaust"
+                "mustExhaust",
+                "offensive"
             },
             Cost = 50,
             Stackable = false
@@ -77,7 +93,8 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("endlessMagazine"),
             Tags = new HashSet<string>
             {
-                "mustExhaust"
+                "mustExhaust",
+                "offensive"
             },
             Cost = 50,
             Stackable = false
@@ -87,7 +104,8 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("powerdrive"),
             Tags = new HashSet<string>
             {
-                "mustExhaust"
+                "mustExhaust",
+                "offensive"
             },
             Cost = 50,
             Stackable = false
@@ -97,7 +115,8 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("tableFlip"),
             Tags = new HashSet<string>
             {
-                "mustExhaust"
+                "mustExhaust",
+                "utility"
             },
             Cost = 30,
             Stackable = false
@@ -107,7 +126,8 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("cleanExhaust"),
             Tags = new HashSet<string>
             {
-                "mustExhaust"
+                "mustExhaust",
+                "utility"
             },
             Cost = 80,
             Stackable = false
@@ -135,12 +155,14 @@ public class StatusProvider : IProvider
         var alreadyPresent = request.Entries
             .Where(e => e is StatusEntry)
             .Select(e => (e as StatusEntry)!.Data.Status);
+        var isExhaust = request.Whitelist.Contains("mustExhaust") || request.CardData.exhaust;
         
         var minCost = request.MinCost;
         var maxCost = request.MaxCost;
 
         return _entries.Where(e => Util.InRange(minCost, e.GetCost(), maxCost))
             .Where(e => !alreadyPresent.Contains(e.Data.Status))
+            .Where(e => isExhaust || !e.Tags.Contains("mustExhaust"))
             .ToList<IEntry>();
     }
 

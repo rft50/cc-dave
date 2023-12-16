@@ -6,7 +6,8 @@ namespace Jester.Generator;
 
 public class JesterGenerator
 {
-    public static bool DebugMode = true;
+    public static bool DebugMode = false;
+    public static bool Display = true;
     
     public static JesterResult GenerateCard(JesterRequest request)
     {
@@ -18,10 +19,13 @@ public class JesterGenerator
                 new EvadeProvider(),
                 new ShieldProvider(),
                 new InstantMoveProvider(),
-                new BayProvider()
+                new BayProvider(),
+                new MidshiftProvider(),
+                new DroneshiftProvider(),
+                new StatusProvider()
             });
 
-        if (DebugMode)
+        if (Display)
         {
             var text = new TTText
             {
@@ -50,8 +54,10 @@ public class JesterGenerator
                     new ADummyAction()
                 }
             });
-            data.CardData.flippable = true;
         }
+        
+        if (DebugMode)
+            data.CardData.flippable = true;
         
         JesterCLI.Main();
 

@@ -51,4 +51,36 @@ public interface IStrategy
 
         return entries;
     }
+
+    protected static int PerformUpgradeA(JesterRequest request, List<IEntry> entries, ref int pts)
+    {
+        var points = pts;
+        var upgradeCount = 0;
+        var rng = new Random(request.Seed);
+        var upgradeOptions = entries.Select(e =>
+            {
+                var result = e.GetUpgradeA(request, out var cost);
+                return Tuple.Create(e, result, cost);
+            }).Where(e => e.Item2 != null && e.Item3 <= points)
+            .Select(e => e as Tuple<IEntry, IEntry, int>).ToList();
+
+        while (upgradeOptions.Any())
+        {
+            var upgrade = Util.GetRandom(upgradeOptions, rng);
+            upgradeOptions.Remove(upgrade);
+            upgradeCount++;
+
+            var idx = entries.IndexOf(upgrade.Item1);
+            entries.RemoveAt(idx);
+            entries.Insert(idx, upgrade.Item2);
+            
+            points -= upgrade.Item3;
+            var newResult = upgrade.Item2.GetUpgradeA(request, out var cost);
+            if (newResult != null && cost <= points)
+                upgradeOptions.Add(Tuple.Create(upgrade.Item2, newResult, cost));
+        }
+
+        pts = points;
+        return upgradeCount;
+    }
 }
