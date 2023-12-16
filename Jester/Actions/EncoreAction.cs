@@ -9,6 +9,8 @@ public class EncoreAction : CardAction
     
     public override Route? BeginWithRoute(G g, State s, Combat c)
     {
+        this.timer = 0;
+        
         var cards = CardPlayTracker.GetCardPlaysThisTurn(s, c)
             .Where(ca => ca.GetType() != typeof(Encore))
             .DistinctBy(ca => ca.uuid)
@@ -16,21 +18,19 @@ public class EncoreAction : CardAction
 
         if (cards.Count == 0) return null;
         
-        CardBrowsePatch.CardsToInject = cards;
-        
-        var cardBrowse = new CardBrowse
+        var cardBrowse = new ArbitraryCardBrowse
         {
             mode = CardBrowse.Mode.Browse,
             browseAction = new EncoreSubAction
             {
                 ReturnCard = ReturnCard
-            }
+            },
+            Cards = cards
         };
 
         timer = 0;
 
         return cardBrowse.GetCardList(g).Count != 0 ? cardBrowse : null;
-
     }
 }
 

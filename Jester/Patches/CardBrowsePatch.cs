@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using Jester.Actions;
 using Nanoray.Shrike;
 using Nanoray.Shrike.Harmony;
 
@@ -10,8 +11,6 @@ namespace Jester.Patches;
 [HarmonyPatch(typeof(CardBrowse))]
 public class CardBrowsePatch
 {
-    public static List<Card>? CardsToInject { get; set; }
-    
     [HarmonyTranspiler]
     [HarmonyPatch("GetCardList")]
     private static IEnumerable<CodeInstruction> GetCardListTranspiler(IEnumerable<CodeInstruction> instructions,
@@ -33,6 +32,7 @@ public class CardBrowsePatch
                 .Insert(SequenceMatcherPastBoundsDirection.After, SequenceMatcherInsertionResultingBounds.JustInsertion,
                     new List<CodeInstruction>
                     {
+                        new(OpCodes.Ldarg_0),
                         cardList,
                         new(OpCodes.Call, AccessTools.DeclaredMethod(typeof(CardBrowsePatch), nameof(InjectCards)))
                     })
@@ -46,17 +46,13 @@ public class CardBrowsePatch
         }
     }
 
-    private static void InjectCards(List<Card> cardList)
+    private static void InjectCards(CardBrowse browse, List<Card> cardList)
     {
-        if (CardsToInject == null) return;
+        if (browse is not ArbitraryCardBrowse acb) return;
+        var toInject = acb.Cards;
+        
+        if (toInject == null) return;
         cardList.Clear();
-        cardList.AddRange(CardsToInject);
-    }
-
-    [HarmonyPostfix]
-    [HarmonyPatch("OnPickCardAction")]
-    private static void OnPickCardAction()
-    {
-        CardsToInject = null;
+        cardList.AddRange(toInject);
     }
 }
