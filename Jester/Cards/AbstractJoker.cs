@@ -60,7 +60,7 @@ public abstract class AbstractJoker : Card
     {
         return _cache?.CardData ?? new CardData
         {
-            cost = 8
+            cost = Energy
         };
     }
 }

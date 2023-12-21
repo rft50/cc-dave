@@ -4,6 +4,7 @@ using CobaltCoreModding.Definitions.ModContactPoints;
 using CobaltCoreModding.Definitions.ModManifests;
 using HarmonyLib;
 using Jester.Actions;
+using Jester.Artifacts;
 using Jester.Cards;
 using Jester.External;
 using Microsoft.Extensions.Logging;
@@ -25,11 +26,24 @@ namespace Jester
         private ExternalSprite? mini_dracula_sprite;
         private ExternalSprite? pinker_per_border_over_sprite;
 
+        public static Dictionary<string, ExternalSprite> ArtifactSprites = new();
+
+        public static ExternalArtifact OpeningScript = null!;
+        public static ExternalArtifact ClosingCeremony = null!;
+
+        public static ExternalStatus OpeningFatigue = null!;
+
+        public static ExternalGlossary OpeningScriptedGlossary = null!;
+        public static ExternalGlossary JesterRandomGlossary = null!;
+
+        public static Tooltip OpeningScriptedTooltip = null!;
+        public static Tooltip JesterRandomTooltip = null!;
+
         public static IKokoroApi KokoroApi = null!;
 
         public IEnumerable<DependencyEntry> Dependencies => new DependencyEntry[]
         {
-            new DependencyEntry<IModManifest>("Shockah.Kokoro")
+            new DependencyEntry<IModManifest>("Shockah.Kokoro", false)
         };
         public DirectoryInfo? GameRootFolder { get; set; }
         public ILogger? Logger { get; set; }
@@ -85,6 +99,23 @@ namespace Jester
                 demo_status_sprite = new ExternalSprite("EWanderer.DemoMod.demo_status.sprite", new FileInfo(path));
                 if (!artRegistry.RegisterArt(demo_status_sprite))
                     throw new Exception("Cannot register sprite.");
+            }
+
+            {
+                var artifactList = new List<string>
+                {
+                    "script",
+                    "ceremony"
+                };
+                
+                foreach (var artifact in artifactList)
+                {
+                    var path = Path.Combine(ModRootFolder.FullName, "Sprites", "Artifact", Path.GetFileName($"{artifact}.png"));
+                    var sprite = new ExternalSprite($"rft.Jester.Artifact.{artifact}", new FileInfo(path));
+                    if (!artRegistry.RegisterArt(sprite))
+                        throw new Exception($"Cannot register Artifact sprite {artifact}");
+                    ArtifactSprites[artifact] = sprite;
+                }
             }
         }
 
@@ -202,6 +233,14 @@ namespace Jester
             var j4u = new ExternalCard("rft.Jester.Joker4Utility", typeof(Joker4Utility), card_art_sprite, JesterDeck);
             j4u.AddLocalisation("Joker 4 Utility");
             registry.RegisterCard(j4u);
+            
+            var openingAct = new ExternalCard("rft.Jester.OpeningAct", typeof(OpeningAct), card_art_sprite, JesterDeck);
+            openingAct.AddLocalisation("Opening Act");
+            registry.RegisterCard(openingAct);
+            
+            var finalAct = new ExternalCard("rft.Jester.FinalAct", typeof(FinalAct), card_art_sprite, JesterDeck);
+            finalAct.AddLocalisation("Final Act");
+            registry.RegisterCard(finalAct);
         }
 
         public void LoadManifest(ICardOverwriteRegistry registry)
@@ -225,14 +264,43 @@ namespace Jester
             glossary.AddLocalisation("en", "EWDemoaction", "Have all the cheesecake in the world!");
             registry.RegisterGlossary(glossary);
             EWandererDemoAction.glossary_item = glossary.Head;
+
+            OpeningScriptedGlossary = new ExternalGlossary("rft.Jester.OpeningScripted.Glossary", "OpeningScripted",
+                false, ExternalGlossary.GlossayType.cardtrait, icon);
+            OpeningScriptedGlossary.AddLocalisation("en", "Opening Scripted", "opening script desc");
+            registry.RegisterGlossary(OpeningScriptedGlossary);
+            OpeningScriptedTooltip = new TTGlossary(OpeningScriptedGlossary.Head);
+
+            JesterRandomGlossary = new ExternalGlossary("rft.Jester.JesterRandom.Glossary", "JesterRandom", false,
+                ExternalGlossary.GlossayType.cardtrait, icon);
+            JesterRandomGlossary.AddLocalisation("en", "Jester Random",
+                "The Jester's interpretation of this type of card. It's always different.");
+            registry.RegisterGlossary(JesterRandomGlossary);
+            JesterRandomTooltip = new TTGlossary(JesterRandomGlossary.Head);
         }
 
         public void LoadManifest(IArtifactRegistry registry)
         {
+            // FROM CARDS
+            {
+                OpeningScript = new ExternalArtifact("rft.Jester.OpeningScript", typeof(OpeningScript),
+                    ArtifactSprites["script"], ownerDeck: JesterDeck);
+                OpeningScript.AddLocalisation("OPENING SCRIPT", "At the start of combat, play every card on the opening script in order, then gain Opening Fatigue equal to their costs, minus their discounts.");
+                registry.RegisterArtifact(OpeningScript);
+
+                ClosingCeremony = new ExternalArtifact("rft.Jester.ClosingCeremony", typeof(ClosingCeremony),
+                    ArtifactSprites["ceremony"], ownerDeck: JesterDeck);
+                ClosingCeremony.AddLocalisation("CLOSING CEREMONY", "At the start of the next boss, add Final Act Bs to your deck. The number states how many.");
+                registry.RegisterArtifact(ClosingCeremony);
+            }
         }
 
         public void LoadManifest(IStatusRegistry statusRegistry)
         {
+            OpeningFatigue = new ExternalStatus("rft.Jester.OpeningFatigue", false, System.Drawing.Color.Red, null,
+                demo_status_sprite!, true);
+            statusRegistry.RegisterStatus(OpeningFatigue);
+            OpeningFatigue.AddLocalisation("Opening Fatigue", "At the start of the next {0} turns, lose 1 energy.");
         }
 
         public void LoadManifest(ICustomEventHub eventHub)

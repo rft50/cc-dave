@@ -22,7 +22,7 @@ public class Encore : Card
         exhaust = true,
         retain = upgrade == Upgrade.A,
         description = upgrade == Upgrade.B
-            ? "Pick a card you've played this turn. Perform its actions again. Then put it back into your hand."
-            : "Pick a card you've played this turn. Perform its actions again."
+            ? "Pick a card you've played this turn. Play it for free. Then put it back into your hand."
+            : "Pick a card you've played this turn. Play it for free."
     };
 }

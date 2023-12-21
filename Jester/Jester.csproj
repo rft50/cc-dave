@@ -22,8 +22,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
     <PackageReference Include="MSBuild.Extension.Pack" Version="1.9.1" />
-    <PackageReference Include="Shrike" Version="2.1.0" />
-    <PackageReference Include="Shrike.Harmony" Version="2.0.2" />
+    <PackageReference Include="Shrike" Version="3.0.0" />
+    <PackageReference Include="Shrike.Harmony" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>

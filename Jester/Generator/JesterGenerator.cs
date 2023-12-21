@@ -7,7 +7,7 @@ namespace Jester.Generator;
 public class JesterGenerator
 {
     public static bool DebugMode = false;
-    public static bool Display = true;
+    public static bool Display = false;
     
     public static JesterResult GenerateCard(JesterRequest request)
     {
