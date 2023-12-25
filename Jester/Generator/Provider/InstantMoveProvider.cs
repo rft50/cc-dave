@@ -11,9 +11,9 @@ public class InstantMoveProvider : IProvider
 
         for (var i = 1; i <= 5; i++)
         {
-            entries.Add(new InstantMoveEntry(this, i, false));
-            entries.Add(new InstantMoveEntry(this, -i, false));
-            entries.Add(new InstantMoveEntry(this, i, true));
+            entries.Add(new InstantMoveEntry(i, false));
+            entries.Add(new InstantMoveEntry(-i, false));
+            entries.Add(new InstantMoveEntry(i, true));
         }
 
         return entries.Where(e => Util.InRange(minCost, e.GetCost(), maxCost)).ToList();
@@ -24,9 +24,8 @@ public class InstantMoveProvider : IProvider
         private int Distance { get; }
         private bool Random { get; }
 
-        public InstantMoveEntry(IProvider provider, int distance, bool random)
+        public InstantMoveEntry(int distance, bool random)
         {
-            Provider = provider;
             Distance = distance;
             Random = random;
         }
@@ -50,7 +49,6 @@ public class InstantMoveProvider : IProvider
                 };
             }
         }
-        public IProvider Provider { get; }
         public int GetActionCount() => 1;
 
         public List<CardAction> GetActions(State s, Combat c) => new()
@@ -77,7 +75,7 @@ public class InstantMoveProvider : IProvider
 
         public IEntry GetUpgradeA(JesterRequest request, out int cost)
         {
-            var entry = new InstantMoveEntry(Provider, Math.Sign(Distance) * (Math.Abs(Distance) + 1), Random);
+            var entry = new InstantMoveEntry(Math.Sign(Distance) * (Math.Abs(Distance) + 1), Random);
             cost = entry.GetCost() - GetCost();
             return entry;
         }
@@ -90,7 +88,7 @@ public class InstantMoveProvider : IProvider
                 return null;
             }
             
-            var entry = new InstantMoveEntry(Provider, Distance, false);
+            var entry = new InstantMoveEntry(Distance, false);
             cost = entry.GetCost() - GetCost();
             return entry;
         }

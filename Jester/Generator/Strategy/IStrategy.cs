@@ -4,7 +4,11 @@ namespace Jester.Generator.Strategy;
 
 public interface IStrategy
 {
-    public JesterResult GenerateCard(JesterRequest request, List<IProvider> providers);
+    public JesterResult GenerateCard(JesterRequest request, List<IProvider> providers, int maxActions);
+
+    public double GetWeight(JesterRequest request);
+
+    public StrategyCategory GetStrategyCategory();
 
     protected static List<IEntry> GetOptionsFromProviders(JesterRequest request, IEnumerable<IProvider> providers)
     {
@@ -83,4 +87,11 @@ public interface IStrategy
         pts = points;
         return upgradeCount;
     }
+}
+
+public enum StrategyCategory
+{
+    Full,
+    Outer,
+    Inner
 }

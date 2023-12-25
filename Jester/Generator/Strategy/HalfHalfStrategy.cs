@@ -4,13 +4,12 @@ namespace Jester.Generator.Strategy;
 
 public class HalfHalfStrategy : IStrategy
 {
-    public JesterResult GenerateCard(JesterRequest request, List<IProvider> providers)
+    public JesterResult GenerateCard(JesterRequest request, List<IProvider> providers, int maxActions)
     {
         var entries = request.Entries;
         var whitelist = request.Whitelist;
         var blacklist = request.Blacklist;
-        var rng = new Random(request.Seed);
-        request.Random = rng;
+        var rng = request.Random;
         var points = request.BasePoints;
         var actionCount = 0;
         
@@ -50,7 +49,7 @@ public class HalfHalfStrategy : IStrategy
         {
             request.MaxCost = points;
             options = IStrategy.GetOptionsFromProvidersFiltered(request, providers)
-                .Where(e => e.GetActionCount() <= 5 - actionCount)
+                .Where(e => e.GetActionCount() <= maxActions - actionCount)
                 .ToList();
 
             if (options.Count == 0) break;
@@ -72,4 +71,7 @@ public class HalfHalfStrategy : IStrategy
             CardData = request.CardData
         };
     }
+
+    public double GetWeight(JesterRequest request) => 2;
+    public StrategyCategory GetStrategyCategory() => StrategyCategory.Inner;
 }

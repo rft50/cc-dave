@@ -11,8 +11,8 @@ public class MidshiftProvider : IProvider
 
         for (var i = 1; i <= 5; i++)
         {
-            entries.Add(new MidshiftEntry(this, i));
-            entries.Add(new MidshiftEntry(this, -i));
+            entries.Add(new MidshiftEntry(i));
+            entries.Add(new MidshiftEntry(-i));
         }
 
         return entries.Where(e => Util.InRange(minCost, e.GetCost(), maxCost)).ToList();
@@ -22,9 +22,8 @@ public class MidshiftProvider : IProvider
     {
         public int Distance { get; }
 
-        public MidshiftEntry(IProvider provider, int distance)
+        public MidshiftEntry(int distance)
         {
-            Provider = provider;
             Distance = distance;
         }
 
@@ -35,8 +34,6 @@ public class MidshiftProvider : IProvider
                 "midshift",
                 "flippable"
             };
-
-        public IProvider Provider { get; }
         public int GetActionCount() => 1;
 
         public List<CardAction> GetActions(State s, Combat c) => new()
@@ -54,7 +51,7 @@ public class MidshiftProvider : IProvider
 
         public IEntry GetUpgradeA(JesterRequest request, out int cost)
         {
-            var entry = new MidshiftEntry(Provider, Math.Sign(Distance) * (Math.Abs(Distance) + 1));
+            var entry = new MidshiftEntry(Math.Sign(Distance) * (Math.Abs(Distance) + 1));
             cost = entry.GetCost() - GetCost();
             return entry;
         }

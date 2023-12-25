@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Jester.External;
 using Jester.Generator.Provider;
 using Jester.Generator.Strategy;
 
@@ -8,22 +9,51 @@ public class JesterGenerator
 {
     public static bool DebugMode = false;
     public static bool Display = false;
+
+    private static readonly List<IProvider> Providers = new()
+    {
+        new AttackProvider(),
+        new EvadeProvider(),
+        new ShieldProvider(),
+        new InstantMoveProvider(),
+        new BayProvider(),
+        new MidshiftProvider(),
+        new DroneshiftProvider(),
+        new StatusProvider(),
+        
+        new StatusCostProvider(),
+        new AddCardCostProvider(),
+        new EqualsZeroCostProvider(),
+        new DiscardCardCostProvider()
+    };
+
+    private static readonly List<IStrategy> Strategies = new()
+    {
+        // inner
+        new HalfHalfStrategy(),
+        // outer
+        new PlainOuterStrategy(),
+        new ExhaustStrategy(),
+        new CostCardStrategy(),
+        new ExhaustCostCardStrategy()
+        // full
+    };
     
     public static JesterResult GenerateCard(JesterRequest request)
     {
-        var data = new HalfHalfStrategy().GenerateCard(
-            request,
-            new List<IProvider>
-            {
-                new AttackProvider(),
-                new EvadeProvider(),
-                new ShieldProvider(),
-                new InstantMoveProvider(),
-                new BayProvider(),
-                new MidshiftProvider(),
-                new DroneshiftProvider(),
-                new StatusProvider()
-            });
+        JesterResult data;
+        request.Random = new Random(request.Seed);
+
+        if (/*request.Seed % 2 == 0*/true) // change when a Full for all exists
+        {
+            data = GetStrategiesWeighted(request, StrategyCategory.Outer).Next(request.Random)
+                .GenerateCard(request, Providers, 5);
+        }
+        else
+        {
+            data = GetStrategiesWeighted(request, StrategyCategory.Full).Next(request.Random)
+                .GenerateCard(request, Providers, 5);
+        }
 
         if (Display)
         {
@@ -62,6 +92,20 @@ public class JesterGenerator
         JesterCLI.Main();
 
         return data;
+    }
+
+    public static JesterResult CallInnerStrategy(JesterRequest request, List<IProvider> providers, int maxActions)
+    {
+        return GetStrategiesWeighted(request, StrategyCategory.Inner).Next(request.Random).GenerateCard(request, providers, maxActions);
+    }
+
+    private static WeightedRandom<IStrategy> GetStrategiesWeighted(JesterRequest request, StrategyCategory? category = null)
+    {
+        return new WeightedRandom<IStrategy>(Strategies
+            .Where(s => category == null || s.GetStrategyCategory() == category)
+            .Select(s => new WeightedItem<IStrategy>(s.GetWeight(request), s))
+            .Where(s => s.Weight > 0)
+        );
     }
 
     private class TooltipAction : CardAction

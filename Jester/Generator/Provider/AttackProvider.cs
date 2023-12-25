@@ -12,23 +12,23 @@ public class AttackProvider : IProvider
         {
             if (Util.InRange(minCost, 4 + i * 6, maxCost))
             {
-                entries.Add(new AttackEntry(this, i, false));
+                entries.Add(new AttackEntry(i, false));
             }
             if (Util.InRange(minCost, 4 + i * 10, maxCost))
             {
-                entries.Add(new AttackEntry(this, i, true));
+                entries.Add(new AttackEntry(i, true));
             }
         }
 
         if (Util.InRange(minCost, 10, maxCost))
         {
-            entries.Add(new AttackEntry(this, 1, false));
-            entries.Add(new AttackEntry(this, 1, false));
+            entries.Add(new AttackEntry(1, false));
+            entries.Add(new AttackEntry(1, false));
         }
         
         if (Util.InRange(minCost, 16, maxCost))
         {
-            entries.Add(new AttackEntry(this, 2, false));
+            entries.Add(new AttackEntry(2, false));
         }
 
         return entries;
@@ -39,9 +39,8 @@ public class AttackProvider : IProvider
         private int Damage { get; }
         private bool Piercing { get; }
 
-        public AttackEntry(IProvider provider, int damage, bool piercing)
+        public AttackEntry(int damage, bool piercing)
         {
-            Provider = provider;
             Damage = damage;
             Piercing = piercing;
         }
@@ -53,8 +52,6 @@ public class AttackProvider : IProvider
                 "attack",
                 "shot"
             };
-
-        public IProvider Provider { get; }
         public int GetActionCount() => 1;
 
         public List<CardAction> GetActions(State s, Combat c) => new()
@@ -73,7 +70,7 @@ public class AttackProvider : IProvider
 
         public IEntry GetUpgradeA(JesterRequest request, out int cost)
         {
-            var entry = new AttackEntry(Provider, Damage + 1, Piercing);
+            var entry = new AttackEntry(Damage + 1, Piercing);
             cost = entry.GetCost() - GetCost();
             return entry;
         }
@@ -85,7 +82,7 @@ public class AttackProvider : IProvider
                 cost = 0;
                 return null;
             }
-            var entry = new AttackEntry(Provider, Damage, true);
+            var entry = new AttackEntry(Damage, true);
             cost = entry.GetCost() - GetCost();
             return entry;
         }

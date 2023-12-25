@@ -2,7 +2,7 @@
 
 namespace Jester.Artifacts;
 
-[ArtifactMeta(unremovable = true)]
+[ArtifactMeta(unremovable = true, pools = new [] { ArtifactPool.EventOnly })]
 public class OpeningScript : Artifact
 {
     public List<Tuple<int, bool>> CardData = new();

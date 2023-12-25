@@ -12,16 +12,14 @@ public class BayProvider : IProvider
         
         foreach (var offset in offsets)
         {
-            entries.Add(new BayEntry(this,
-                new AttackDrone(),
+            entries.Add(new BayEntry(new AttackDrone(),
                 new HashSet<string>
                 {
                     "offensive",
                     "drone",
                     "attack"
                 }, 20, offset, true));
-            entries.Add(new BayEntry(this,
-                new AttackDrone
+            entries.Add(new BayEntry(new AttackDrone
                 {
                     upgraded = true
                 },
@@ -31,8 +29,7 @@ public class BayProvider : IProvider
                     "drone",
                     "attack"
                 }, 35, offset, true));
-            entries.Add(new BayEntry(this,
-                new ShieldDrone
+            entries.Add(new BayEntry(new ShieldDrone
                 {
                     targetPlayer = true
                 },
@@ -41,8 +38,7 @@ public class BayProvider : IProvider
                     "defensive",
                     "drone"
                 }, 18, offset, true));
-            entries.Add(new BayEntry(this,
-                new EnergyDrone
+            entries.Add(new BayEntry(new EnergyDrone
                 {
                     targetPlayer = true
                 },
@@ -51,8 +47,7 @@ public class BayProvider : IProvider
                     "utility",
                     "drone"
                 }, 50, offset, true));
-            entries.Add(new BayEntry(this,
-                new Missile
+            entries.Add(new BayEntry(new Missile
                 {
                     missileType = Enum.Parse<MissileType>("normal")
                 },
@@ -62,8 +57,7 @@ public class BayProvider : IProvider
                     "missile",
                     "attack"
                 }, 15, offset, false));
-            entries.Add(new BayEntry(this,
-                new Missile
+            entries.Add(new BayEntry(new Missile
                 {
                     missileType = Enum.Parse<MissileType>("heavy")
                 },
@@ -73,8 +67,7 @@ public class BayProvider : IProvider
                     "missile",
                     "attack"
                 }, 20, offset, false));
-            entries.Add(new BayEntry(this,
-                new Missile
+            entries.Add(new BayEntry(new Missile
                 {
                     missileType = Enum.Parse<MissileType>("seeker")
                 },
@@ -84,8 +77,7 @@ public class BayProvider : IProvider
                     "missile",
                     "attack"
                 }, 18, offset, false));
-            entries.Add(new BayEntry(this,
-                new Missile
+            entries.Add(new BayEntry(new Missile
                 {
                     missileType = Enum.Parse<MissileType>("corrode")
                 },
@@ -95,15 +87,13 @@ public class BayProvider : IProvider
                     "missile",
                     "attack"
                 }, 60, offset, false));
-            entries.Add(new BayEntry(this,
-                new SpaceMine(),
+            entries.Add(new BayEntry(new SpaceMine(),
                 new HashSet<string>
                 {
                     "offensive",
                     "attack"
                 }, 20, offset, false));
-            entries.Add(new BayEntry(this,
-                new SpaceMine
+            entries.Add(new BayEntry(new SpaceMine
                 {
                     bigMine = true
                 },
@@ -118,7 +108,7 @@ public class BayProvider : IProvider
             .Select(e =>
             {
                 var clone = Mutil.DeepCopy(e.Payload);
-                return new BayEntry(this, clone, e.Tags, e.Cost + 12, e.Offset, true);
+                return new BayEntry(clone, e.Tags, e.Cost + 12, e.Offset, true);
             }).ToList());
         
         return entries.Where(e => Util.InRange(minCost, e.GetCost(), maxCost)).ToList<IEntry>();
@@ -131,9 +121,8 @@ public class BayProvider : IProvider
         public int Offset { get; }
         public bool Shieldable { get; }
 
-        public BayEntry(IProvider provider, StuffBase payload, HashSet<string> tags, int cost, int offset, bool shieldable)
+        public BayEntry(StuffBase payload, HashSet<string> tags, int cost, int offset, bool shieldable)
         {
-            Provider = provider;
             Payload = payload;
             Tags = tags;
             Cost = cost;
@@ -146,7 +135,6 @@ public class BayProvider : IProvider
         }
         
         public HashSet<string> Tags { get; }
-        public IProvider Provider { get; }
         public int GetActionCount() => 1;
 
         public List<CardAction> GetActions(State s, Combat c) => new()
@@ -168,7 +156,7 @@ public class BayProvider : IProvider
                 
             var clone = Mutil.DeepCopy(drone);
             clone.upgraded = true;
-            return new BayEntry(Provider, clone, Tags, Cost + cost, Offset, Shieldable);
+            return new BayEntry(clone, Tags, Cost + cost, Offset, Shieldable);
         }
 
         public IEntry? GetUpgradeB(JesterRequest request, out int cost)
@@ -179,7 +167,7 @@ public class BayProvider : IProvider
                 
                 var clone = Mutil.DeepCopy(Payload);
                 clone.bubbleShield = true;
-                return new BayEntry(Provider, clone, Tags, Cost + cost, Offset, true);
+                return new BayEntry(clone, Tags, Cost + cost, Offset, true);
             }
 
             cost = 0;

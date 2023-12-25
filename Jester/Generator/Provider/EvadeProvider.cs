@@ -13,7 +13,7 @@ public class EvadeProvider : IProvider
         {
             if (Util.InRange(minCost, i * 10, maxCost))
             {
-                entries.Add(new EvadeEntry(this, i));
+                entries.Add(new EvadeEntry(i));
             }
         }
 
@@ -24,9 +24,8 @@ public class EvadeProvider : IProvider
     {
         private int Evade { get; }
 
-        public EvadeEntry(IProvider provider, int evade)
+        public EvadeEntry(int evade)
         {
-            Provider = provider;
             Evade = evade;
         }
 
@@ -35,11 +34,10 @@ public class EvadeProvider : IProvider
             new()
             {
                 "defensive",
+                "status",
                 "evade",
                 "move"
             };
-
-        public IProvider Provider { get; }
         public int GetActionCount() => 1;
 
         public List<CardAction> GetActions(State s, Combat c) => new()
@@ -60,7 +58,7 @@ public class EvadeProvider : IProvider
         public IEntry GetUpgradeA(JesterRequest request, out int cost)
         {
             cost = 10;
-            return new EvadeEntry(Provider, Evade + 1);
+            return new EvadeEntry(Evade + 1);
         }
 
         public IEntry? GetUpgradeB(JesterRequest request, out int cost)

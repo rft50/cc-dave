@@ -13,7 +13,7 @@ public class DroneshiftProvider : IProvider
         {
             if (Util.InRange(minCost, i * 10, maxCost))
             {
-                entries.Add(new DroneshiftEntry(this, i));
+                entries.Add(new DroneshiftEntry(i));
             }
         }
 
@@ -24,9 +24,8 @@ public class DroneshiftProvider : IProvider
     {
         private int Droneshift { get; }
 
-        public DroneshiftEntry(IProvider provider, int droneshift)
+        public DroneshiftEntry(int droneshift)
         {
-            Provider = provider;
             Droneshift = droneshift;
         }
 
@@ -35,11 +34,10 @@ public class DroneshiftProvider : IProvider
             new()
             {
                 "defensive",
+                "status",
                 "droneshift",
                 "move"
             };
-
-        public IProvider Provider { get; }
         public int GetActionCount() => 1;
 
         public List<CardAction> GetActions(State s, Combat c) => new()
@@ -60,7 +58,7 @@ public class DroneshiftProvider : IProvider
         public IEntry GetUpgradeA(JesterRequest request, out int cost)
         {
             cost = 8;
-            return new DroneshiftEntry(Provider, Droneshift + 1);
+            return new DroneshiftEntry(Droneshift + 1);
         }
 
         public IEntry? GetUpgradeB(JesterRequest request, out int cost)

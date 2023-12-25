@@ -2,6 +2,11 @@
 
 public class StatusProvider : IProvider
 {
+    private const int CostOne = 40;
+    private const int CostTwo = 60;
+    private const int CostThree = 80;
+    private const int CostFour = 100;
+    
     private static List<StatusStruct> _stats = new()
     {
         new StatusStruct
@@ -9,6 +14,7 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("maxShield"),
             Tags = new HashSet<string>
             {
+                "status",
                 "defensive"
             },
             Cost = 20,
@@ -19,10 +25,11 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("payback"),
             Tags = new HashSet<string>
             {
+                "status",
                 "mustExhaust",
                 "offensive"
             },
-            Cost = 50,
+            Cost = CostFour,
             Stackable = false
         },
         new StatusStruct
@@ -30,10 +37,11 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("stunSource"),
             Tags = new HashSet<string>
             {
+                "status",
                 "mustExhaust",
                 "defensive"
             },
-            Cost = 80,
+            Cost = CostFour,
             Stackable = false
         },
         new StatusStruct
@@ -41,10 +49,11 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("ace"),
             Tags = new HashSet<string>
             {
+                "status",
                 "mustExhaust",
                 "utility"
             },
-            Cost = 50,
+            Cost = CostThree,
             Stackable = false
         },
         new StatusStruct
@@ -52,6 +61,7 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("hermes"),
             Tags = new HashSet<string>
             {
+                "status",
                 "utility"
             },
             Cost = 15,
@@ -62,7 +72,9 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("drawNextTurn"),
             Tags = new HashSet<string>
             {
-                "utility"
+                "status",
+                "utility",
+                "drawNext"
             },
             Cost = 20,
             Stackable = false
@@ -72,7 +84,9 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("energyNextTurn"),
             Tags = new HashSet<string>
             {
-                "utility"
+                "status",
+                "utility",
+                "energyNext"
             },
             Cost = 30,
             Stackable = false
@@ -82,10 +96,11 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("strafe"),
             Tags = new HashSet<string>
             {
+                "status",
                 "mustExhaust",
                 "offensive"
             },
-            Cost = 50,
+            Cost = CostFour,
             Stackable = false
         },
         new StatusStruct
@@ -93,10 +108,11 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("endlessMagazine"),
             Tags = new HashSet<string>
             {
+                "status",
                 "mustExhaust",
                 "offensive"
             },
-            Cost = 50,
+            Cost = CostTwo,
             Stackable = false
         },
         new StatusStruct
@@ -104,10 +120,11 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("powerdrive"),
             Tags = new HashSet<string>
             {
+                "status",
                 "mustExhaust",
                 "offensive"
             },
-            Cost = 50,
+            Cost = CostTwo,
             Stackable = false
         },
         new StatusStruct
@@ -115,10 +132,11 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("tableFlip"),
             Tags = new HashSet<string>
             {
+                "status",
                 "mustExhaust",
                 "utility"
             },
-            Cost = 30,
+            Cost = CostOne,
             Stackable = false
         },
         new StatusStruct
@@ -126,10 +144,11 @@ public class StatusProvider : IProvider
             Status = Enum.Parse<Status>("cleanExhaust"),
             Tags = new HashSet<string>
             {
+                "status",
                 "mustExhaust",
                 "utility"
             },
-            Cost = 80,
+            Cost = CostFour,
             Stackable = false
         }
     };
@@ -142,7 +161,7 @@ public class StatusProvider : IProvider
         {
             for (var i = 1; i <= 3; i++)
             {
-                _entries.Add(new StatusEntry(this, stat, i));
+                _entries.Add(new StatusEntry(stat, i));
                 
                 if (!stat.Stackable)
                     break;
@@ -179,15 +198,13 @@ public class StatusProvider : IProvider
         public StatusStruct Data { get; }
         public int Amount { get; }
 
-        public StatusEntry(IProvider provider, StatusStruct data, int amount)
+        public StatusEntry(StatusStruct data, int amount)
         {
-            Provider = provider;
             Data = data;
             Amount = amount;
         }
 
         public HashSet<string> Tags => Data.Tags;
-        public IProvider Provider { get; }
         public int GetActionCount() => 1;
 
         public List<CardAction> GetActions(State s, Combat c) => new()
@@ -211,7 +228,7 @@ public class StatusProvider : IProvider
             }
 
             cost = Data.Cost;
-            return new StatusEntry(Provider, Data, Amount + 1);
+            return new StatusEntry(Data, Amount + 1);
         }
 
         public IEntry? GetUpgradeB(JesterRequest request, out int cost)

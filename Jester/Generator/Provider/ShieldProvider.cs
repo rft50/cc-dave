@@ -13,11 +13,11 @@ public class ShieldProvider : IProvider
         {
             if (Util.InRange(minCost, i * 10, maxCost))
             {
-                entries.Add(new ShieldEntry(this, i, false));
+                entries.Add(new ShieldEntry(i, false));
             }
             if (Util.InRange(minCost, i * 8, maxCost))
             {
-                entries.Add(new ShieldEntry(this, i, true));
+                entries.Add(new ShieldEntry(i, true));
             }
         }
 
@@ -29,9 +29,8 @@ public class ShieldProvider : IProvider
         public int Shield { get; }
         public bool Temp { get; }
 
-        public ShieldEntry(IProvider provider, int shield, bool temp)
+        public ShieldEntry(int shield, bool temp)
         {
-            Provider = provider;
             Shield = shield;
             Temp = temp;
         }
@@ -51,7 +50,6 @@ public class ShieldProvider : IProvider
                     "tempShield"
                 };
             } }
-        public IProvider Provider { get; }
         public int GetActionCount() => 1;
 
         public List<CardAction> GetActions(State s, Combat c) => new()
@@ -71,7 +69,7 @@ public class ShieldProvider : IProvider
 
         public IEntry GetUpgradeA(JesterRequest request, out int cost)
         {
-            var entry = new ShieldEntry(Provider, Shield + 1, Temp);
+            var entry = new ShieldEntry(Shield + 1, Temp);
             cost = entry.GetCost() - GetCost();
             return entry;
         }
@@ -84,7 +82,7 @@ public class ShieldProvider : IProvider
                 return null;
             }
             
-            var entry = new ShieldEntry(Provider, Shield, false);
+            var entry = new ShieldEntry(Shield, false);
             cost = entry.GetCost() - GetCost();
             return entry;
         }

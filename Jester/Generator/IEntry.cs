@@ -5,8 +5,6 @@ namespace Jester.Generator;
 public interface IEntry
 {
     public HashSet<string> Tags { get; }
-    
-    public IProvider Provider { get; }
 
     public int GetActionCount();
 
