@@ -1,10 +1,11 @@
-﻿using Jester.Generator.Provider;
+﻿using Jester.Api;
+using Jester.Generator.Provider;
 
 namespace Jester.Generator.Strategy;
 
 public class HalfHalfStrategy : IStrategy
 {
-    public JesterResult GenerateCard(JesterRequest request, List<IProvider> providers, int maxActions)
+    public IJesterResult GenerateCard(IJesterRequest request, IList<IProvider> providers, int maxActions)
     {
         var entries = request.Entries;
         var whitelist = request.Whitelist;
@@ -20,16 +21,16 @@ public class HalfHalfStrategy : IStrategy
         if (request.FirstAction != null)
             whitelist.Add(request.FirstAction);
 
-        List<IEntry> options;
+        IList<IEntry> options;
 
         do
         {
             request.MaxCost = points;
-            options = IStrategy.GetOptionsFromProvidersFiltered(request, providers);
+            options = ModManifest.JesterApi.GetOptionsFromProvidersFiltered(request, providers);
             
             if (options.Count == 0) break;
             
-            var option = Util.GetRandom(options, rng);
+            var option = ModManifest.JesterApi.GetJesterUtil().GetRandom(options, rng);
             option.AfterSelection(request);
             entries.Add(option);
             points -= option.GetCost();
@@ -48,13 +49,13 @@ public class HalfHalfStrategy : IStrategy
         do
         {
             request.MaxCost = points;
-            options = IStrategy.GetOptionsFromProvidersFiltered(request, providers)
+            options = ModManifest.JesterApi.GetOptionsFromProvidersFiltered(request, providers)
                 .Where(e => e.GetActionCount() <= maxActions - actionCount)
                 .ToList();
 
             if (options.Count == 0) break;
             
-            var option = Util.GetRandom(options, rng);
+            var option = ModManifest.JesterApi.GetJesterUtil().GetRandom(options, rng);
             option.AfterSelection(request);
             entries.Add(option);
             points -= option.GetCost();
@@ -63,7 +64,7 @@ public class HalfHalfStrategy : IStrategy
         
         // UPGRADES
 
-        IStrategy.PerformUpgradeA(request, entries, ref points);
+        ModManifest.JesterApi.PerformUpgradeA(request, entries, ref points);
 
         return new JesterResult
         {
@@ -72,6 +73,6 @@ public class HalfHalfStrategy : IStrategy
         };
     }
 
-    public double GetWeight(JesterRequest request) => 2;
+    public double GetWeight(IJesterRequest request) => 2;
     public StrategyCategory GetStrategyCategory() => StrategyCategory.Inner;
 }

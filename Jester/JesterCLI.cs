@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Jester.Api;
 using Jester.Generator;
 
 namespace Jester;
@@ -13,7 +14,7 @@ public class JesterCLI
         
         generated = true;
         
-        var cards = new List<JesterResult>();
+        var cards = new List<IJesterResult>();
 
         var watch = Stopwatch.StartNew();
         

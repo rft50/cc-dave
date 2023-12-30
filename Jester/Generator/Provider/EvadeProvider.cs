@@ -1,8 +1,10 @@
-﻿namespace Jester.Generator.Provider;
+﻿using Jester.Api;
+
+namespace Jester.Generator.Provider;
 
 public class EvadeProvider : IProvider
 {
-    public List<IEntry> GetEntries(JesterRequest request)
+    public IList<IEntry> GetEntries(IJesterRequest request)
     {
         var entries = new List<IEntry>();
 
@@ -11,7 +13,7 @@ public class EvadeProvider : IProvider
 
         for (var i = 1; i <= 3; i++)
         {
-            if (Util.InRange(minCost, i * 10, maxCost))
+            if (ModManifest.JesterApi.GetJesterUtil().InRange(minCost, i * 10, maxCost))
             {
                 entries.Add(new EvadeEntry(i));
             }
@@ -30,8 +32,7 @@ public class EvadeProvider : IProvider
         }
 
 
-        public HashSet<string> Tags =>
-            new()
+        public ISet<string> Tags => new HashSet<string>
             {
                 "defensive",
                 "status",
@@ -40,7 +41,7 @@ public class EvadeProvider : IProvider
             };
         public int GetActionCount() => 1;
 
-        public List<CardAction> GetActions(State s, Combat c) => new()
+        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AStatus
             {
@@ -55,19 +56,19 @@ public class EvadeProvider : IProvider
             return Evade * 10;
         }
 
-        public IEntry GetUpgradeA(JesterRequest request, out int cost)
+        public IEntry GetUpgradeA(IJesterRequest request, out int cost)
         {
             cost = 10;
             return new EvadeEntry(Evade + 1);
         }
 
-        public IEntry? GetUpgradeB(JesterRequest request, out int cost)
+        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
         {
             cost = 0;
             return null;
         }
 
-        public void AfterSelection(JesterRequest request)
+        public void AfterSelection(IJesterRequest request)
         {
             request.Blacklist.Add("evade");
         }

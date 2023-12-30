@@ -1,10 +1,11 @@
-﻿using Jester.Generator;
+﻿using Jester.Api;
+using Jester.Generator;
 
 namespace Jester.Cards;
 
 public abstract class AbstractJoker : Card
 {
-    private JesterResult? _cache;
+    private IJesterResult? _cache;
     public int? Seed;
     public int Points;
     public int Energy;

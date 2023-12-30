@@ -13,12 +13,12 @@ public class Util
         return mustContain.All(source.Contains);
     }
 
-    public static T GetRandom<T>(List<T> source, Random rng)
+    public static T GetRandom<T>(IList<T> source, Random rng)
     {
         return source[rng.Next(source.Count)];
     }
 
-    public static List<int> GetDeployOptions(HashSet<int> occupied, int offset = 0, int skip = 0)
+    public static IList<int> GetDeployOptions(ISet<int> occupied, int offset = 0, int skip = 0)
     {
         if (!occupied.Contains(offset))
             return new List<int> { offset };
@@ -51,7 +51,7 @@ public class Util
         };
     }
 
-    public static void Shuffle<T>(List<T> list, Random rng)
+    public static void Shuffle<T>(IList<T> list, Random rng)
     {
         for (var i = 0; i < list.Count - 1; i++)
         {

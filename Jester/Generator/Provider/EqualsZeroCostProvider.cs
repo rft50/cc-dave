@@ -1,8 +1,10 @@
-﻿namespace Jester.Generator.Provider;
+﻿using Jester.Api;
+
+namespace Jester.Generator.Provider;
 
 public class EqualsZeroCostProvider : IProvider
 {
-    public List<IEntry> GetEntries(JesterRequest request)
+    public IList<IEntry> GetEntries(IJesterRequest request)
     {
         if (!request.Whitelist.Contains("cost")) return new List<IEntry>();
         
@@ -13,7 +15,7 @@ public class EqualsZeroCostProvider : IProvider
         {
             new EqualsZeroCostEntry(Enum.Parse<Status>("shield"), "shield", 30),
             new EqualsZeroCostEntry(Enum.Parse<Status>("evade"), "evade", 30)
-        }.Where(e => Util.InRange(minCost, e.GetCost(), maxCost))
+        }.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
         .ToList();
     }
     
@@ -30,7 +32,7 @@ public class EqualsZeroCostProvider : IProvider
             Cost = cost;
         }
 
-        public HashSet<string> Tags => new()
+        public ISet<string> Tags => new HashSet<string>
         {
             "cost",
             Tag
@@ -38,7 +40,7 @@ public class EqualsZeroCostProvider : IProvider
 
         public int GetActionCount() => 1;
 
-        public List<CardAction> GetActions(State s, Combat c) => new()
+        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AStatus
             {
@@ -51,19 +53,19 @@ public class EqualsZeroCostProvider : IProvider
 
         public int GetCost() => Cost;
 
-        public IEntry? GetUpgradeA(JesterRequest request, out int cost)
+        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
         {
             cost = 0;
             return null;
         }
 
-        public IEntry? GetUpgradeB(JesterRequest request, out int cost)
+        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
         {
             cost = 0;
             return null;
         }
 
-        public void AfterSelection(JesterRequest request)
+        public void AfterSelection(IJesterRequest request)
         {
             request.Blacklist.Add(Tag);
         }

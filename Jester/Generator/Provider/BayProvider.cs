@@ -1,13 +1,15 @@
-﻿namespace Jester.Generator.Provider;
+﻿using Jester.Api;
+
+namespace Jester.Generator.Provider;
 
 public class BayProvider : IProvider
 {
-    public List<IEntry> GetEntries(JesterRequest request)
+    public IList<IEntry> GetEntries(IJesterRequest request)
     {
         var minCost = request.MinCost;
         var maxCost = request.MaxCost;
 
-        var offsets = Util.GetDeployOptions(request.OccupiedMidrow);
+        var offsets = ModManifest.JesterApi.GetJesterUtil().GetDeployOptions(request.OccupiedMidrow);
         var entries = new List<BayEntry>();
         
         foreach (var offset in offsets)
@@ -111,7 +113,7 @@ public class BayProvider : IProvider
                 return new BayEntry(clone, e.Tags, e.Cost + 12, e.Offset, true);
             }).ToList());
         
-        return entries.Where(e => Util.InRange(minCost, e.GetCost(), maxCost)).ToList<IEntry>();
+        return entries.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost)).ToList<IEntry>();
     }
 
     public class BayEntry : IEntry
@@ -121,7 +123,7 @@ public class BayProvider : IProvider
         public int Offset { get; }
         public bool Shieldable { get; }
 
-        public BayEntry(StuffBase payload, HashSet<string> tags, int cost, int offset, bool shieldable)
+        public BayEntry(StuffBase payload, ISet<string> tags, int cost, int offset, bool shieldable)
         {
             Payload = payload;
             Tags = tags;
@@ -134,10 +136,10 @@ public class BayProvider : IProvider
                 tags.Add("flippable");
         }
         
-        public HashSet<string> Tags { get; }
+        public ISet<string> Tags { get; }
         public int GetActionCount() => 1;
 
-        public List<CardAction> GetActions(State s, Combat c) => new()
+        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new ASpawn
             {
@@ -148,7 +150,7 @@ public class BayProvider : IProvider
 
         public int GetCost() => Cost;
 
-        public IEntry? GetUpgradeA(JesterRequest request, out int cost)
+        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
         {
             if (Payload is not AttackDrone drone || drone.upgraded) return GetUpgradeB(request, out cost);
             
@@ -159,7 +161,7 @@ public class BayProvider : IProvider
             return new BayEntry(clone, Tags, Cost + cost, Offset, Shieldable);
         }
 
-        public IEntry? GetUpgradeB(JesterRequest request, out int cost)
+        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
         {
             if (Shieldable && !Payload.bubbleShield)
             {
@@ -174,7 +176,7 @@ public class BayProvider : IProvider
             return null;
         }
 
-        public void AfterSelection(JesterRequest request)
+        public void AfterSelection(IJesterRequest request)
         {
             request.Blacklist.Add("shot");
             request.OccupiedMidrow.Add(Offset);

@@ -1,8 +1,10 @@
-﻿namespace Jester.Generator.Provider;
+﻿using Jester.Api;
+
+namespace Jester.Generator.Provider;
 
 public class MidshiftProvider : IProvider
 {
-    public List<IEntry> GetEntries(JesterRequest request)
+    public IList<IEntry> GetEntries(IJesterRequest request)
     {
         var entries = new List<IEntry>();
         
@@ -15,7 +17,7 @@ public class MidshiftProvider : IProvider
             entries.Add(new MidshiftEntry(-i));
         }
 
-        return entries.Where(e => Util.InRange(minCost, e.GetCost(), maxCost)).ToList();
+        return entries.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost)).ToList();
     }
     
     public class MidshiftEntry : IEntry
@@ -27,8 +29,7 @@ public class MidshiftProvider : IProvider
             Distance = distance;
         }
 
-        public HashSet<string> Tags =>
-            new()
+        public ISet<string> Tags => new HashSet<string>
             {
                 "utility",
                 "midshift",
@@ -36,7 +37,7 @@ public class MidshiftProvider : IProvider
             };
         public int GetActionCount() => 1;
 
-        public List<CardAction> GetActions(State s, Combat c) => new()
+        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new ADroneMove
             {
@@ -49,20 +50,20 @@ public class MidshiftProvider : IProvider
             return Distance * 7;
         }
 
-        public IEntry GetUpgradeA(JesterRequest request, out int cost)
+        public IEntry GetUpgradeA(IJesterRequest request, out int cost)
         {
             var entry = new MidshiftEntry(Math.Sign(Distance) * (Math.Abs(Distance) + 1));
             cost = entry.GetCost() - GetCost();
             return entry;
         }
 
-        public IEntry? GetUpgradeB(JesterRequest request, out int cost)
+        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
         {
             cost = 0;
             return null;
         }
 
-        public void AfterSelection(JesterRequest request)
+        public void AfterSelection(IJesterRequest request)
         {
             request.Blacklist.Add("midshift");
             request.OccupiedMidrow = request.OccupiedMidrow.Select(e => e + Distance).ToHashSet();

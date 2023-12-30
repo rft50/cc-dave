@@ -1,8 +1,10 @@
-﻿namespace Jester.Generator.Provider;
+﻿using Jester.Api;
+
+namespace Jester.Generator.Provider;
 
 public class InstantMoveProvider : IProvider
 {
-    public List<IEntry> GetEntries(JesterRequest request)
+    public IList<IEntry> GetEntries(IJesterRequest request)
     {
         var entries = new List<IEntry>();
         
@@ -16,7 +18,7 @@ public class InstantMoveProvider : IProvider
             entries.Add(new InstantMoveEntry(i, true));
         }
 
-        return entries.Where(e => Util.InRange(minCost, e.GetCost(), maxCost)).ToList();
+        return entries.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost)).ToList();
     }
 
     public class InstantMoveEntry : IEntry
@@ -30,7 +32,7 @@ public class InstantMoveProvider : IProvider
             Random = random;
         }
 
-        public HashSet<string> Tags
+        public ISet<string> Tags
         {
             get
             {
@@ -51,7 +53,7 @@ public class InstantMoveProvider : IProvider
         }
         public int GetActionCount() => 1;
 
-        public List<CardAction> GetActions(State s, Combat c) => new()
+        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AMove
             {
@@ -73,14 +75,14 @@ public class InstantMoveProvider : IProvider
             return Distance * (7 + Distance) / 2;
         }
 
-        public IEntry GetUpgradeA(JesterRequest request, out int cost)
+        public IEntry GetUpgradeA(IJesterRequest request, out int cost)
         {
             var entry = new InstantMoveEntry(Math.Sign(Distance) * (Math.Abs(Distance) + 1), Random);
             cost = entry.GetCost() - GetCost();
             return entry;
         }
 
-        public IEntry? GetUpgradeB(JesterRequest request, out int cost)
+        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
         {
             if (!Random)
             {
@@ -93,7 +95,7 @@ public class InstantMoveProvider : IProvider
             return entry;
         }
 
-        public void AfterSelection(JesterRequest request)
+        public void AfterSelection(IJesterRequest request)
         {
             request.Blacklist.Add("move");
             if (Random)

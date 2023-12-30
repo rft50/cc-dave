@@ -1,8 +1,10 @@
-﻿namespace Jester.Generator.Provider;
+﻿using Jester.Api;
+
+namespace Jester.Generator.Provider;
 
 public class StatusCostProvider : IProvider
 {
-    public List<IEntry> GetEntries(JesterRequest request)
+    public IList<IEntry> GetEntries(IJesterRequest request)
     {
         if (!request.Whitelist.Contains("cost")) return new List<IEntry>();
         
@@ -15,7 +17,7 @@ public class StatusCostProvider : IProvider
             new StatusCostEntry(Enum.Parse<Status>("drawLessNextTurn"), 2, -15, "drawNext"),
             new StatusCostEntry(Enum.Parse<Status>("energyLessNextTurn"), 1, -20, "energyNext"),
             new StatusCostEntry(Enum.Parse<Status>("energyLessNextTurn"), 2, -20, "energyNext")
-        }.Where(e => Util.InRange(minCost, e.GetCost(), maxCost))
+        }.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
         .ToList();
     }
     
@@ -34,7 +36,7 @@ public class StatusCostProvider : IProvider
             Tag = tag;
         }
         
-        public HashSet<string> Tags => new()
+        public ISet<string> Tags => new HashSet<string>
         {
             "status",
             "cost",
@@ -42,7 +44,7 @@ public class StatusCostProvider : IProvider
         };
         public int GetActionCount() => 1;
 
-        public List<CardAction> GetActions(State s, Combat c) => new()
+        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AStatus
             {
@@ -54,7 +56,7 @@ public class StatusCostProvider : IProvider
 
         public int GetCost() => Amount * Cost;
 
-        public IEntry? GetUpgradeA(JesterRequest request, out int cost)
+        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
         {
             if (Amount <= 1)
             {
@@ -66,13 +68,13 @@ public class StatusCostProvider : IProvider
             return new StatusCostEntry(Status, Amount - 1, Cost, Tag);
         }
 
-        public IEntry? GetUpgradeB(JesterRequest request, out int cost)
+        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
         {
             cost = 0;
             return null;
         }
 
-        public void AfterSelection(JesterRequest request)
+        public void AfterSelection(IJesterRequest request)
         {
             request.Blacklist.Add(Tag);
         }

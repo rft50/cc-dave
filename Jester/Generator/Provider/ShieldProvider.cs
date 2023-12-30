@@ -1,8 +1,10 @@
-﻿namespace Jester.Generator.Provider;
+﻿using Jester.Api;
+
+namespace Jester.Generator.Provider;
 
 public class ShieldProvider : IProvider
 {
-    public List<IEntry> GetEntries(JesterRequest request)
+    public IList<IEntry> GetEntries(IJesterRequest request)
     {
         var entries = new List<IEntry>();
 
@@ -11,11 +13,11 @@ public class ShieldProvider : IProvider
 
         for (var i = 1; i <= 3; i++)
         {
-            if (Util.InRange(minCost, i * 10, maxCost))
+            if (ModManifest.JesterApi.GetJesterUtil().InRange(minCost, i * 10, maxCost))
             {
                 entries.Add(new ShieldEntry(i, false));
             }
-            if (Util.InRange(minCost, i * 8, maxCost))
+            if (ModManifest.JesterApi.GetJesterUtil().InRange(minCost, i * 8, maxCost))
             {
                 entries.Add(new ShieldEntry(i, true));
             }
@@ -35,7 +37,7 @@ public class ShieldProvider : IProvider
             Temp = temp;
         }
         
-        public HashSet<string> Tags { 
+        public ISet<string> Tags { 
             get
             {
                 if (!Temp)
@@ -52,7 +54,7 @@ public class ShieldProvider : IProvider
             } }
         public int GetActionCount() => 1;
 
-        public List<CardAction> GetActions(State s, Combat c) => new()
+        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AStatus
             {
@@ -67,16 +69,16 @@ public class ShieldProvider : IProvider
             return Shield * (Temp ? 8 : 10);
         }
 
-        public IEntry GetUpgradeA(JesterRequest request, out int cost)
+        public IEntry GetUpgradeA(IJesterRequest request, out int cost)
         {
             var entry = new ShieldEntry(Shield + 1, Temp);
             cost = entry.GetCost() - GetCost();
             return entry;
         }
 
-        public IEntry? GetUpgradeB(JesterRequest request, out int cost)
+        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
         {
-            if (request.Entries.Find(e => e is ShieldEntry { Temp: false }) != null)
+            if (request.Entries.Any(e => e is ShieldEntry))
             {
                 cost = 0;
                 return null;
@@ -87,7 +89,7 @@ public class ShieldProvider : IProvider
             return entry;
         }
 
-        public void AfterSelection(JesterRequest request)
+        public void AfterSelection(IJesterRequest request)
         {
             request.Blacklist.Add(Temp ? "tempShield" : "shield");
         }

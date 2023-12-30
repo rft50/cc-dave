@@ -1,8 +1,10 @@
-﻿namespace Jester.Generator.Provider;
+﻿using Jester.Api;
+
+namespace Jester.Generator.Provider;
 
 public class DiscardCardCostProvider : IProvider
 {
-    public List<IEntry> GetEntries(JesterRequest request)
+    public IList<IEntry> GetEntries(IJesterRequest request)
     {
         if (!request.Whitelist.Contains("cost")) return new List<IEntry>();
 
@@ -11,7 +13,7 @@ public class DiscardCardCostProvider : IProvider
         
         return new List<int> { 1, 2, 3, 4, 5 }
             .Select(i => new DiscardCardCostEntry(i))
-            .Where(e => Util.InRange(minCost, e.GetCost(), maxCost))
+            .Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
             .ToList<IEntry>();
     }
     
@@ -24,14 +26,14 @@ public class DiscardCardCostProvider : IProvider
             Amount = amount;
         }
 
-        public HashSet<string> Tags => new()
+        public ISet<string> Tags => new HashSet<string>
         {
             "cost"
         };
 
         public int GetActionCount() => 1;
 
-        public List<CardAction> GetActions(State s, Combat c) => new()
+        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new ADiscard
             {
@@ -42,7 +44,7 @@ public class DiscardCardCostProvider : IProvider
 
         public int GetCost() => Amount * -10;
 
-        public IEntry? GetUpgradeA(JesterRequest request, out int cost)
+        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
         {
             if (Amount <= 1)
             {
@@ -54,13 +56,13 @@ public class DiscardCardCostProvider : IProvider
             return new DiscardCardCostEntry(Amount - 1);
         }
 
-        public IEntry? GetUpgradeB(JesterRequest request, out int cost)
+        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
         {
             cost = 0;
             return null;
         }
 
-        public void AfterSelection(JesterRequest request)
+        public void AfterSelection(IJesterRequest request)
         {
         }
     }

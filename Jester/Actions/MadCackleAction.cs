@@ -19,7 +19,7 @@ public class MadCackleAction : CardAction
         if (OfferCount > cards.Count)
             OfferCount = cards.Count;
         
-        Util.Shuffle(cards, new Random(s.rngCardOfferings.NextInt()));
+        ModManifest.JesterApi.GetJesterUtil().Shuffle(cards, new Random(s.rngCardOfferings.NextInt()));
 
         var offers = cards.Take(OfferCount)
             .Select(Activator.CreateInstance)
@@ -37,8 +37,7 @@ public class MadCackleAction : CardAction
         return new CardReward
         {
             canSkip = false,
-            cards = offers,
-            
+            cards = offers
         };
     }
 }

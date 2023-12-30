@@ -1,16 +1,19 @@
-﻿using Jester.Generator.Provider;
+﻿using Jester.Api;
+using Jester.Generator.Provider;
 
 namespace Jester.Generator.Strategy;
 
 public class ExhaustStrategy : IStrategy
 {
-    public JesterResult GenerateCard(JesterRequest request, List<IProvider> providers, int maxActions)
+    public IJesterResult GenerateCard(IJesterRequest request, IList<IProvider> providers, int maxActions)
     {
-        request.CardData.exhaust = true;
+        var data = request.CardData;
+        data.exhaust = true;
+        request.CardData = data;
         request.BasePoints += 20;
-        return JesterGenerator.CallInnerStrategy(request, providers, maxActions);
+        return ModManifest.JesterApi.CallInnerStrategy(request, providers, maxActions);
     }
 
-    public double GetWeight(JesterRequest request) => 1;
+    public double GetWeight(IJesterRequest request) => 1;
     public StrategyCategory GetStrategyCategory() => StrategyCategory.Outer;
 }

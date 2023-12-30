@@ -1,4 +1,6 @@
-﻿namespace Jester.Generator.Provider;
+﻿using Jester.Api;
+
+namespace Jester.Generator.Provider;
 
 public class StatusProvider : IProvider
 {
@@ -169,7 +171,7 @@ public class StatusProvider : IProvider
         }
     }
     
-    public List<IEntry> GetEntries(JesterRequest request)
+    public IList<IEntry> GetEntries(IJesterRequest request)
     {
         var alreadyPresent = request.Entries
             .Where(e => e is StatusEntry)
@@ -179,7 +181,7 @@ public class StatusProvider : IProvider
         var minCost = request.MinCost;
         var maxCost = request.MaxCost;
 
-        return _entries.Where(e => Util.InRange(minCost, e.GetCost(), maxCost))
+        return _entries.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
             .Where(e => !alreadyPresent.Contains(e.Data.Status))
             .Where(e => isExhaust || !e.Tags.Contains("mustExhaust"))
             .ToList<IEntry>();
@@ -204,10 +206,10 @@ public class StatusProvider : IProvider
             Amount = amount;
         }
 
-        public HashSet<string> Tags => Data.Tags;
+        public ISet<string> Tags => Data.Tags;
         public int GetActionCount() => 1;
 
-        public List<CardAction> GetActions(State s, Combat c) => new()
+        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AStatus
             {
@@ -219,7 +221,7 @@ public class StatusProvider : IProvider
 
         public int GetCost() => Amount * Data.Cost;
 
-        public IEntry? GetUpgradeA(JesterRequest request, out int cost)
+        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
         {
             if (!Data.Stackable)
             {
@@ -231,13 +233,13 @@ public class StatusProvider : IProvider
             return new StatusEntry(Data, Amount + 1);
         }
 
-        public IEntry? GetUpgradeB(JesterRequest request, out int cost)
+        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
         {
             cost = 0;
             return null;
         }
 
-        public void AfterSelection(JesterRequest request)
+        public void AfterSelection(IJesterRequest request)
         {
         }
     }

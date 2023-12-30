@@ -1,21 +1,23 @@
-﻿namespace Jester.Generator;
+﻿using Jester.Api;
 
-public class JesterRequest
+namespace Jester.Generator;
+
+public class JesterRequest : IJesterRequest
 {
     // provided by caller
-    public int Seed;
-    public string? FirstAction;
-    public State State = null!;
-    public int BasePoints;
-    public CardData CardData;
+    public int Seed { get; set; }
+    public string? FirstAction { get; set; }
+    public State State { get; set; } = null!;
+    public int BasePoints { get; set; }
+    public CardData CardData { get; set; }
 
     // calculation
-    public Random Random = null!;
-    public List<IEntry> Entries = new();
-    public HashSet<string> Blacklist = new();
-    public HashSet<string> Whitelist = new();
-    public HashSet<int> OccupiedMidrow = new();
-    public int MinCost;
-    public int MaxCost;
-    public HashSet<object> Data = new(); // misc data for your magical needs
+    public Random Random { get; set; } = null!;
+    public IList<IEntry> Entries { get; set; } = new List<IEntry>();
+    public ISet<string> Blacklist { get; set; } = new HashSet<string>();
+    public ISet<string> Whitelist { get; set; } = new HashSet<string>();
+    public ISet<int> OccupiedMidrow { get; set; } = new HashSet<int>();
+    public int MinCost { get; set; }
+    public int MaxCost { get; set; }
+    public IDictionary<string, object> Data { get; set; } = new Dictionary<string, object>(); // misc data for your magical needs
 }

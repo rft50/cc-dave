@@ -1,7 +1,9 @@
-﻿namespace Jester.Generator;
+﻿using Jester.Api;
 
-public class JesterResult
+namespace Jester.Generator;
+
+public class JesterResult : IJesterResult
 {
-    public List<IEntry> Entries;
-    public CardData CardData;
+    public IList<IEntry> Entries { get; set; } = null!;
+    public CardData CardData { get; set; }
 }
