@@ -21,11 +21,13 @@ public class JesterGenerator
         new MidshiftProvider(),
         new DroneshiftProvider(),
         new StatusProvider(),
+        new HealProvider(),
         
         new StatusCostProvider(),
         new AddCardCostProvider(),
         new EqualsZeroCostProvider(),
-        new DiscardCardCostProvider()
+        new DiscardCardCostProvider(),
+        new HurtCostProvider()
     };
 
     public static readonly List<IStrategy> Strategies = new()

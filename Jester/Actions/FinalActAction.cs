@@ -15,7 +15,7 @@ public class FinalActAction : CardAction
         var cardBrowse = new ArbitraryCardBrowse
         {
             mode = CardBrowse.Mode.Browse,
-            browseAction = new ClosingActSubAction
+            browseAction = new FinalActSubAction
             {
                 Upgrade = Upgrade
             },
@@ -26,9 +26,14 @@ public class FinalActAction : CardAction
 
         return cardBrowse.GetCardList(g).Count != 0 ? cardBrowse : null;
     }
+
+    public override List<Tooltip> GetTooltips(State s) => new()
+    {
+        new TTGlossary(ModManifest.OpeningFatigue.GlobalName)
+    };
 }
 
-public class ClosingActSubAction : CardAction
+public class FinalActSubAction : CardAction
 {
     public Upgrade Upgrade;
     

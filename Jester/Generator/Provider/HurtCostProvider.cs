@@ -2,7 +2,7 @@
 
 namespace Jester.Generator.Provider;
 
-public class EqualsZeroCostProvider : IProvider
+public class HurtCostProvider : IProvider
 {
     public IList<IEntry> GetEntries(IJesterRequest request)
     {
@@ -10,48 +10,33 @@ public class EqualsZeroCostProvider : IProvider
         
         var minCost = request.MinCost;
         var maxCost = request.MaxCost;
-
+        
         return new List<IEntry>
         {
-            new EqualsZeroCostEntry(Enum.Parse<Status>("shield"), "shield", -30),
-            new EqualsZeroCostEntry(Enum.Parse<Status>("evade"), "evade", -30)
+            
         }.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
         .ToList();
     }
     
-    public class EqualsZeroCostEntry : IEntry
+    public class HurtEntry : IEntry
     {
-        public Status Status { get; }
-        public string Tag { get; }
-        public int Cost { get; }
-
-        public EqualsZeroCostEntry(Status status, string tag, int cost)
-        {
-            Status = status;
-            Tag = tag;
-            Cost = cost;
-        }
-
         public ISet<string> Tags => new HashSet<string>
         {
             "cost",
-            Tag
+            "hurt"
         };
-
         public int GetActionCount() => 1;
 
         public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
-            new AStatus
+            new AHurt
             {
-                status = Status,
-                statusAmount = 0,
-                mode = AStatusMode.Set,
-                targetPlayer = true
+                targetPlayer = true,
+                hurtShieldsFirst = false
             }
         };
 
-        public int GetCost() => Cost;
+        public int GetCost() => -30;
 
         public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
         {
@@ -67,7 +52,6 @@ public class EqualsZeroCostProvider : IProvider
 
         public void AfterSelection(IJesterRequest request)
         {
-            request.Blacklist.Add(Tag);
         }
     }
 }

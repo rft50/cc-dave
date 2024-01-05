@@ -26,7 +26,9 @@ public class HalfHalfStrategy : IStrategy
         do
         {
             request.MaxCost = points;
-            options = ModManifest.JesterApi.GetOptionsFromProvidersFiltered(request, providers);
+            options = ModManifest.JesterApi.GetOptionsFromProvidersFiltered(request, providers)
+                .Where(e => e.GetActionCount() <= maxActions - actionCount)
+                .ToList();;
             
             if (options.Count == 0) break;
             

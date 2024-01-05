@@ -25,9 +25,9 @@ public class OpeningAct : Card
         return upgrade switch
         {
             Upgrade.B =>
-                "Select a card non-Opening Acted card in hand. It will be played at the start of all future battles while in your deck. You will gain Opening Fatigue equal to its cost minus one.",
+                "Select a card non-Opening Acted card in hand. Apply Opening Act to it. Gain one less Opening Fatigue for it.",
             _ =>
-                "Select a card non-Opening Acted card in hand. It will be played at the start of all future battles while in your deck. You will gain Opening Fatigue equal to its cost."
+                "Select a card non-Opening Acted card in hand. Apply Opening Act to it."
         };
     }
 }

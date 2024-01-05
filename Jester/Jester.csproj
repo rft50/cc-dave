@@ -47,10 +47,17 @@
     <None Update="Sprites\*\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Sprites\Card\Question.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Sprites\Card\Question.pdn">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="obj\Debug\" />
+    <Folder Include="Sprites\Character\" />
   </ItemGroup>
 
 </Project>

@@ -12,11 +12,12 @@ public class AddCardCostProvider : IProvider
         var maxCost = request.MaxCost;
         
         var entries = new List<IEntry>();
+        var limit = request.CardData.cost >= 4 ? 2 : 1;
         
-        for (var i = 1; i <= 3; i++)
+        for (var i = 1; i <= limit; i++)
         {
-            entries.Add(new AddCardCostEntry(new TrashFumes(), i, -15));
-            entries.Add(new AddCardCostEntry(new ColorlessTrash(), i, -35));
+            entries.Add(new AddCardCostEntry(new TrashFumes(), i, -10));
+            entries.Add(new AddCardCostEntry(new ColorlessTrash(), i, -20));
         }
 
         return entries.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))

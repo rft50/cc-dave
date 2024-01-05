@@ -9,42 +9,31 @@ public class AttackProvider : IProvider
         var minCost = request.MinCost;
         var maxCost = request.MaxCost;
         var entries = new List<IEntry>();
+        var existingShotCount = request.Entries
+            .Count(e => e.Tags.Contains("shot"));
 
         for (var i = 1; i <= 5; i++)
         {
-            if (ModManifest.JesterApi.GetJesterUtil().InRange(minCost, 4 + i * 6, maxCost))
-            {
-                entries.Add(new AttackEntry(i, false));
-            }
-            if (ModManifest.JesterApi.GetJesterUtil().InRange(minCost, 4 + i * 10, maxCost))
-            {
-                entries.Add(new AttackEntry(i, true));
-            }
+            entries.Add(new AttackEntry(i, false, existingShotCount));
+            entries.Add(new AttackEntry(i, true, existingShotCount));
         }
 
-        if (ModManifest.JesterApi.GetJesterUtil().InRange(minCost, 10, maxCost))
-        {
-            entries.Add(new AttackEntry(1, false));
-            entries.Add(new AttackEntry(1, false));
-        }
-        
-        if (ModManifest.JesterApi.GetJesterUtil().InRange(minCost, 16, maxCost))
-        {
-            entries.Add(new AttackEntry(2, false));
-        }
-
-        return entries;
+        return entries
+            .Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
+            .ToList();
     }
 
     public class AttackEntry : IEntry
     {
-        private int Damage { get; }
-        private bool Piercing { get; }
+        public int Damage { get; }
+        public bool Piercing { get; }
+        public int ExistingShotCount { get; }
 
-        public AttackEntry(int damage, bool piercing)
+        public AttackEntry(int damage, bool piercing, int existingShotCount)
         {
             Damage = damage;
             Piercing = piercing;
+            ExistingShotCount = existingShotCount;
         }
 
         public ISet<string> Tags => new HashSet<string>
@@ -66,12 +55,12 @@ public class AttackProvider : IProvider
 
         public int GetCost()
         {
-            return 4 + Damage * (6 + (Piercing ? 4 : 0));
+            return Damage * (Piercing ? 13 : 10) + ExistingShotCount * 5;
         }
 
         public IEntry GetUpgradeA(IJesterRequest request, out int cost)
         {
-            var entry = new AttackEntry(Damage + 1, Piercing);
+            var entry = new AttackEntry(Damage + 1, Piercing, ExistingShotCount);
             cost = entry.GetCost() - GetCost();
             return entry;
         }
@@ -83,7 +72,7 @@ public class AttackProvider : IProvider
                 cost = 0;
                 return null;
             }
-            var entry = new AttackEntry(Damage, true);
+            var entry = new AttackEntry(Damage, true, ExistingShotCount);
             cost = entry.GetCost() - GetCost();
             return entry;
         }

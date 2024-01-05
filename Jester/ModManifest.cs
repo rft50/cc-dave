@@ -21,13 +21,14 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
     private ExternalSprite? demo_status_sprite;
     private ExternalSprite? DemoAttackSprite;
     public static ExternalDeck? JesterDeck;
-    private ExternalSprite? dracular_art;
-    private ExternalSprite? dracular_border;
-    private ExternalAnimation? mini_animation;
-    private ExternalSprite? mini_dracula_sprite;
-    private ExternalSprite? pinker_per_border_over_sprite;
+    public static ExternalSprite CardFrame = null!;
+    public static ExternalAnimation MiniAnimation = null!;
+    public static ExternalSprite JesterMini = null!;
+
+    public static ExternalSprite BellSprite = null!;
 
     public static Dictionary<string, ExternalSprite> ArtifactSprites = new();
+    public static Dictionary<string, ExternalSprite> CharacterSprites = new();
 
     public static ExternalArtifact OpeningScript = null!;
     public static ExternalArtifact ClosingCeremony = null!;
@@ -61,6 +62,11 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
         KokoroApi.RegisterTypeForExtensionData(typeof(Combat));
 
         JesterApi = new JesterApi();
+        
+        JesterApi.RegisterCardFlag("exhaust", request => request.Whitelist.Contains("mustExhaust") || request.CardData.exhaust);
+        
+        JesterApi.RegisterCharacterFlag("heat", Deck.eunice);
+        JesterApi.RegisterCharacterFlag("shard", Deck.shard);
             
         var harmony = new Harmony("Jester");
         harmony.PatchAll();
@@ -70,32 +76,31 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
     {
         if (ModRootFolder == null)
             throw new Exception("No root folder set!");
-        {
-            var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("patched_cobalt_core.png"));
-            var sprite = new ExternalSprite("EWanderer.DemoMod.Patched_Cobalt_Core", new FileInfo(path));
-            artRegistry.RegisterArt(sprite, (int)Spr.cockpit_cobalt_core);
-        }
 
         {
-            var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("border_over_pinker_peri.png"));
-            pinker_per_border_over_sprite = new ExternalSprite("EWanderer.DemoMod.PinkerPeri.BorderOver", new FileInfo(path));
-            if (!artRegistry.RegisterArt(pinker_per_border_over_sprite))
-                throw new Exception("Cannot register sprite.");
-        }
-
-        {
-            var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("Question.png"));
-            card_art_sprite = new ExternalSprite("EWanderer.DemoMod.DemoCardArt", new FileInfo(path));
+            var path = Path.Combine(ModRootFolder.FullName, "Sprites", "Card", Path.GetFileName("Question.png"));
+            card_art_sprite = new ExternalSprite("rft.Jester.Question", new FileInfo(path));
             if (!artRegistry.RegisterArt(card_art_sprite))
                 throw new Exception("Cannot register sprite.");
             EWandererDemoCard.card_sprite = (Spr)(card_art_sprite.Id ?? throw new NullReferenceException());
         }
         {
-            var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("dracula_mini_0.png"));
-            mini_dracula_sprite = new ExternalSprite("EWanderer.DemoMod.dracular.mini", new FileInfo(path));
-            if (!artRegistry.RegisterArt(mini_dracula_sprite))
+            var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("jester_frame.png"));
+            CardFrame = new ExternalSprite("rft.Jester.Frame", new FileInfo(path));
+            if (!artRegistry.RegisterArt(CardFrame))
                 throw new Exception("Cannot register sprite.");
-            EWandererDemoCard.card_sprite = (Spr)(mini_dracula_sprite.Id ?? throw new NullReferenceException());
+        }
+        {
+            var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("jester_mini_calm.png"));
+            JesterMini = new ExternalSprite("rft.Jester.mini", new FileInfo(path));
+            if (!artRegistry.RegisterArt(JesterMini))
+                throw new Exception("Cannot register sprite.");
+        }
+        {
+            var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("bell.png"));
+            BellSprite = new ExternalSprite("rft.Jester.Bell", new FileInfo(path));
+            if (!artRegistry.RegisterArt(BellSprite))
+                throw new Exception("Cannot register sprite.");
         }
 
         {
@@ -121,33 +126,51 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
                 ArtifactSprites[artifact] = sprite;
             }
         }
+
+        {
+            var frames = new List<int> { 1, 2, 3, 4 };
+            
+            var characterList = new List<string>
+            {
+                "calm_neutral",
+                "calm_squint",
+                "hat",
+                "insane_neutral",
+                "insane_squint"
+            }.SelectMany(s => frames.Select(i => s + i))
+            .AddItem("HAT");
+            
+                
+            foreach (var character in characterList)
+            {
+                var path = Path.Combine(ModRootFolder.FullName, "Sprites", "Character", Path.GetFileName($"jester_squirre_{character}.png"));
+                var sprite = new ExternalSprite($"rft.Jester.Character.{character}", new FileInfo(path));
+                if (!artRegistry.RegisterArt(sprite))
+                    throw new Exception($"Cannot register Character sprite {character}");
+                CharacterSprites[character] = sprite;
+            }
+        }
     }
 
     public void LoadManifest(IAnimationRegistry registry)
     {
-        default_animation = new ExternalAnimation("ewanderer.demomod.dracula.neutral", JesterDeck ?? throw new NullReferenceException(), "neutral", false, new ExternalSprite[] {
-            ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_0),
-            ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_1),
-            ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_2),
-            ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_3),
-            ExternalSprite.GetRaw((int)Spr.characters_dracula_dracula_neutral_4),
+        default_animation = new ExternalAnimation("rft.Jester.Anim.neutral", JesterDeck ?? throw new NullReferenceException(), "neutral", false, new ExternalSprite[] {
+            CharacterSprites["insane_neutral1"],
+            CharacterSprites["insane_neutral2"],
+            CharacterSprites["insane_neutral3"],
+            CharacterSprites["insane_neutral4"]
         });
 
         registry.RegisterAnimation(default_animation);
-        if (mini_dracula_sprite == null)
-            throw new Exception();
 
-        mini_animation = new ExternalAnimation("ewanderer.demomod.dracula.mini", JesterDeck, "mini", false, new ExternalSprite[] { mini_dracula_sprite });
+        MiniAnimation = new ExternalAnimation("rft.Jester.Anim.mini", JesterDeck, "mini", false, new ExternalSprite[] { JesterMini });
 
-        registry.RegisterAnimation(mini_animation);
+        registry.RegisterAnimation(MiniAnimation);
     }
 
     public void LoadManifest(IDeckRegistry registry)
     {
-        dracular_art = ExternalSprite.GetRaw((int)Spr.cards_colorless);
-        dracular_border = ExternalSprite.GetRaw((int)Spr.cardShared_border_dracula);
-
-        JesterDeck = new ExternalDeck("rft.Jester.JesterDeck", System.Drawing.Color.HotPink, System.Drawing.Color.Black, dracular_art ?? throw new NullReferenceException(), dracular_border ?? throw new NullReferenceException(), null);
+        JesterDeck = new ExternalDeck("rft.Jester.JesterDeck", System.Drawing.Color.HotPink, System.Drawing.Color.Black, card_art_sprite ?? throw new NullReferenceException(), CardFrame ?? throw new NullReferenceException(), null);
 
         if (!registry.RegisterDeck(JesterDeck))
             return;
@@ -255,7 +278,7 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
     {
         var dracular_spr = ExternalSprite.GetRaw((int)Spr.panels_char_colorless);
             
-        var jester = new ExternalCharacter("rft.Jester.JesterChar", JesterDeck ?? throw new NullReferenceException(), dracular_spr, Type.EmptyTypes, Type.EmptyTypes, default_animation ?? throw new NullReferenceException(), mini_animation ?? throw new NullReferenceException());
+        var jester = new ExternalCharacter("rft.Jester.JesterChar", JesterDeck ?? throw new NullReferenceException(), dracular_spr, Type.EmptyTypes, Type.EmptyTypes, default_animation ?? throw new NullReferenceException(), MiniAnimation ?? throw new NullReferenceException());
         jester.AddNameLocalisation("Jester");
         jester.AddDescLocalisation("A mad jester. Only supposedly knows what he's doing.");
         registry.RegisterCharacter(jester);
@@ -271,12 +294,12 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
 
         OpeningScriptedGlossary = new ExternalGlossary("rft.Jester.OpeningScripted.Glossary", "OpeningScripted",
             false, ExternalGlossary.GlossayType.cardtrait, icon);
-        OpeningScriptedGlossary.AddLocalisation("en", "Opening Scripted", "opening script desc");
+        OpeningScriptedGlossary.AddLocalisation("en", "Opening Scripted", "Plays itself at the start of each combat, as long as it remains in your deck. Gain Opening Fatigue equal to its cost.");
         registry.RegisterGlossary(OpeningScriptedGlossary);
         OpeningScriptedTooltip = new TTGlossary(OpeningScriptedGlossary.Head);
 
         JesterRandomGlossary = new ExternalGlossary("rft.Jester.JesterRandom.Glossary", "JesterRandom", false,
-            ExternalGlossary.GlossayType.cardtrait, icon);
+            ExternalGlossary.GlossayType.cardtrait, BellSprite);
         JesterRandomGlossary.AddLocalisation("en", "Jester Random",
             "The Jester's interpretation of this type of card. It's always different.");
         registry.RegisterGlossary(JesterRandomGlossary);

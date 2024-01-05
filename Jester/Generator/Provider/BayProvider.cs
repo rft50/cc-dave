@@ -94,7 +94,7 @@ public class BayProvider : IProvider
                 {
                     "offensive",
                     "attack"
-                }, 20, offset, false));
+                }, 20, offset, true));
             entries.Add(new BayEntry(new SpaceMine
                 {
                     bigMine = true
@@ -103,7 +103,7 @@ public class BayProvider : IProvider
                 {
                     "offensive",
                     "attack"
-                }, 30, offset, false));
+                }, 30, offset, true));
         }
         
         entries.AddRange(entries.Where(e => e.Shieldable)

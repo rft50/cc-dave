@@ -78,7 +78,7 @@ public class StatusProvider : IProvider
                 "utility",
                 "drawNext"
             },
-            Cost = 20,
+            Cost = 10,
             Stackable = false
         },
         new StatusStruct
@@ -90,7 +90,7 @@ public class StatusProvider : IProvider
                 "utility",
                 "energyNext"
             },
-            Cost = 30,
+            Cost = 15,
             Stackable = false
         },
         new StatusStruct
@@ -126,7 +126,7 @@ public class StatusProvider : IProvider
                 "mustExhaust",
                 "offensive"
             },
-            Cost = CostTwo,
+            Cost = CostThree,
             Stackable = false
         },
         new StatusStruct
@@ -176,7 +176,7 @@ public class StatusProvider : IProvider
         var alreadyPresent = request.Entries
             .Where(e => e is StatusEntry)
             .Select(e => (e as StatusEntry)!.Data.Status);
-        var isExhaust = request.Whitelist.Contains("mustExhaust") || request.CardData.exhaust;
+        var isExhaust = ModManifest.JesterApi.HasCardFlag("exhaust", request);
         
         var minCost = request.MinCost;
         var maxCost = request.MaxCost;

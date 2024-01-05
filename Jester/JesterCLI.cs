@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Jester.Api;
 using Jester.Generator;
+using Jester.Generator.Provider;
 
 namespace Jester;
 
@@ -23,12 +24,16 @@ public class JesterCLI
                 new JesterRequest
                 {
                     Seed = i,
-                    FirstAction = "attack",
                     State = new State(),
-                    BasePoints = 20 + new Random(i).Next(0, 8),
+                    BasePoints = 60 + new Random(i).Next(0, 24),
                     CardData = new CardData
                     {
-                        cost = 1
+                        cost = 3
+                    },
+                    Whitelist = new HashSet<string>
+                    {
+                        "attack",
+                        "shot"
                     }
                 }));
         
@@ -37,6 +42,9 @@ public class JesterCLI
         var firstEntries = new Dictionary<string, int>();
         var secondEntries = new Dictionary<string, int>();
         var thirdEntryCount = 0;
+
+        var rawDamage = 0;
+        var pierceDamage = 0;
 
         foreach (var card in cards)
         {
@@ -67,6 +75,17 @@ public class JesterCLI
             
             if (entries.Count >= 3)
                 thirdEntryCount++;
+            
+            foreach (var entry in entries)
+            {
+                if (entry is AttackProvider.AttackEntry e)
+                {
+                    if (e.Piercing)
+                        pierceDamage += e.Damage;
+                    else
+                        rawDamage += e.Damage;
+                }
+            }
         }
 
         var firstData = firstEntries.Keys
@@ -81,5 +100,7 @@ public class JesterCLI
         Console.WriteLine(firstData);
         Console.WriteLine(secondData);
         Console.WriteLine(thirdEntryCount);
+        Console.WriteLine(rawDamage);
+        Console.WriteLine(pierceDamage);
     }
 }

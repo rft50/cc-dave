@@ -10,19 +10,23 @@ public class DiscardCardCostProvider : IProvider
 
         var minCost = request.MinCost;
         var maxCost = request.MaxCost;
+        var costBase = 8 - request.CardData.cost;
         
         return new List<int> { 1, 2, 3, 4, 5 }
-            .Select(i => new DiscardCardCostEntry(i))
+            .Select(i => new DiscardCardCostEntry(costBase, i))
             .Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
             .ToList<IEntry>();
     }
     
     public class DiscardCardCostEntry : IEntry
     {
+        public int CostBase { get; }
+        
         public int Amount { get; }
 
-        public DiscardCardCostEntry(int amount)
+        public DiscardCardCostEntry(int costBase, int amount)
         {
+            CostBase = costBase;
             Amount = amount;
         }
 
@@ -42,7 +46,7 @@ public class DiscardCardCostProvider : IProvider
             }
         };
 
-        public int GetCost() => Amount * -10;
+        public int GetCost() => -Amount * CostBase;
 
         public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
         {
@@ -52,8 +56,8 @@ public class DiscardCardCostProvider : IProvider
                 return null;
             }
 
-            cost = 10;
-            return new DiscardCardCostEntry(Amount - 1);
+            cost = CostBase;
+            return new DiscardCardCostEntry(CostBase, Amount - 1);
         }
 
         public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
