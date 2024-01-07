@@ -1,6 +1,6 @@
 ﻿namespace Jester.Cards;
 
-[CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+[CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[]{})]
 public class Joker0Defensive : AbstractJoker
 {
     public Joker0Defensive()
@@ -10,7 +10,7 @@ public class Joker0Defensive : AbstractJoker
     }
 }
 
-[CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+[CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[]{})]
 public class Joker1Defensive : AbstractJoker
 {
     public Joker1Defensive()
@@ -20,7 +20,7 @@ public class Joker1Defensive : AbstractJoker
     }
 }
 
-[CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+[CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[]{})]
 public class Joker2Defensive : AbstractJoker
 {
     public Joker2Defensive()
@@ -30,7 +30,7 @@ public class Joker2Defensive : AbstractJoker
     }
 }
 
-[CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+[CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[]{})]
 public class Joker3Defensive : AbstractJoker
 {
     public Joker3Defensive()
@@ -40,7 +40,7 @@ public class Joker3Defensive : AbstractJoker
     }
 }
 
-[CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
+[CardMeta(rarity = Rarity.rare, upgradesTo = new Upgrade[]{})]
 public class Joker4Defensive : AbstractJoker
 {
     public Joker4Defensive()
