@@ -14,6 +14,7 @@ public class OpeningActAction : CardAction
 
         var cards = c.hand
             .Where(ca => !scriptIds.Contains(ca.uuid))
+            .Where(ca => ca.singleUseOverride == false || ca.singleUseOverride == null && !ca.GetData(s).singleUse)
             .ToList();
 
         if (cards.Count == 0) return null;
@@ -32,6 +33,11 @@ public class OpeningActAction : CardAction
 
         return cardBrowse.GetCardList(g).Count != 0 ? cardBrowse : null;
     }
+
+    public override List<Tooltip> GetTooltips(State s) => new()
+    {
+        new TTGlossary("status." + ModManifest.OpeningFatigue.GlobalName)
+    };
 
     public static OpeningScript GetOpeningScript(State s, Combat c)
     {

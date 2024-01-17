@@ -5,13 +5,14 @@ namespace Jester.Generator.Strategy;
 
 public class HalfHalfStrategy : IStrategy
 {
-    public IJesterResult GenerateCard(IJesterRequest request, IList<IProvider> providers, int maxActions)
+    public IJesterResult GenerateCard(IJesterRequest request, IList<IProvider> providers)
     {
         var entries = request.Entries;
         var whitelist = request.Whitelist;
         var blacklist = request.Blacklist;
         var rng = request.Random;
         var points = request.BasePoints;
+        var maxActions = request.ActionLimit;
         var actionCount = 0;
         
         // FIRST HALF
@@ -71,7 +72,8 @@ public class HalfHalfStrategy : IStrategy
         return new JesterResult
         {
             Entries = entries,
-            CardData = request.CardData
+            CardData = request.CardData,
+            SparePoints = points
         };
     }
 

@@ -24,14 +24,13 @@ public class DroneshiftProvider : IProvider
     
     public class DroneshiftEntry : IEntry
     {
-        private int Droneshift { get; }
+        public int Droneshift { get; }
 
         public DroneshiftEntry(int droneshift)
         {
             Droneshift = droneshift;
         }
-
-
+        
         public ISet<string> Tags => new HashSet<string>
             {
                 "defensive",

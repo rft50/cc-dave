@@ -24,7 +24,7 @@ public class EvadeProvider : IProvider
     
     public class EvadeEntry : IEntry
     {
-        private int Evade { get; }
+        public int Evade { get; }
 
         public EvadeEntry(int evade)
         {

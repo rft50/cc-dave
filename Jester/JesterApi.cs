@@ -17,11 +17,14 @@ public class JesterApi : IJesterApi
     public IList<IEntry> GetOptionsFromProvidersFiltered(IJesterRequest request, IEnumerable<IProvider> providers) =>
         StrategyUtil.GetOptionsFromProvidersFiltered(request, providers);
 
-    public int PerformUpgradeA(IJesterRequest request, IList<IEntry> entries, ref int pts) =>
-        StrategyUtil.PerformUpgradeA(request, entries, ref pts);
+    public int PerformUpgradeA(IJesterRequest request, IList<IEntry> entries, ref int pts, int upgradeLimit) =>
+        StrategyUtil.PerformUpgradeA(request, entries, ref pts, upgradeLimit);
+    
+    public int PerformUpgradeB(IJesterRequest request, IList<IEntry> entries, ref int pts, int upgradeLimit) =>
+        StrategyUtil.PerformUpgradeB(request, entries, ref pts, upgradeLimit);
 
-    public IJesterResult CallInnerStrategy(IJesterRequest request, IList<IProvider> providers, int maxActions) =>
-        JesterGenerator.CallInnerStrategy(request, providers, maxActions);
+    public IJesterResult CallInnerStrategy(IJesterRequest request, IList<IProvider> providers) =>
+        JesterGenerator.CallInnerStrategy(request, providers);
 
     public void RegisterProvider(IProvider provider) => JesterGenerator.Providers.Add(provider);
     

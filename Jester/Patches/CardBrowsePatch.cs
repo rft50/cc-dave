@@ -52,7 +52,9 @@ public class CardBrowsePatch
         var toInject = acb.Cards;
         
         if (toInject == null) return;
+        var allCards = StateExt.Instance!.GetAllCards();
         cardList.Clear();
-        cardList.AddRange(toInject);
+        cardList.AddRange(toInject
+            .Select(c => allCards.FirstOrDefault(c2 => c2.uuid == c.uuid, c)));
     }
 }

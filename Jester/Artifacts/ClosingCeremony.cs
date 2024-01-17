@@ -30,7 +30,7 @@ public class ClosingCeremony : Artifact
         return Count == 0 ? null : Count;
     }
 
-    public override List<Tooltip>? GetExtraTooltips() => new()
+    public override List<Tooltip> GetExtraTooltips() => new()
     {
         new TTCard
         {

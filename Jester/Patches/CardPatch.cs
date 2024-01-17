@@ -44,9 +44,7 @@ public class CardPatch
                 .Anchors().PointerMatcher(findAnchor)
                 .Insert(
                     SequenceMatcherPastBoundsDirection.Before, SequenceMatcherInsertionResultingBounds.IncludingInsertion,
-                    new CodeInstruction(OpCodes.Ldarg_1).WithLabels(labels),
-                    new CodeInstruction(OpCodes.Ldarg_3),
-                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Ldarg_0).WithLabels(labels),
                     ldlocaCardTraitIndex,
                     ldlocVec,
                     new CodeInstruction(OpCodes.Call, AccessTools.DeclaredMethod(typeof(CardPatch), nameof(RenderJesterCardTraits)))
@@ -61,10 +59,9 @@ public class CardPatch
         }
     }
 
-    private static void RenderJesterCardTraits(G g, State? state, Card card, ref int cardTraitIndex, Vec vec)
+    private static void RenderJesterCardTraits(Card card, ref int cardTraitIndex, Vec vec)
     {
-        state ??= g.state;
-        var scripted = GetOpeningScriptedCards(state);
+        var scripted = GetOpeningScriptedCards();
 
         if (scripted.Contains(card.uuid) && ModManifest.OpeningScriptedGlossary != null)
             Draw.Sprite((Spr)ModManifest.OpeningScriptedGlossary.Icon.Id!, vec.x, vec.y - 8 * cardTraitIndex++);
@@ -72,20 +69,20 @@ public class CardPatch
             Draw.Sprite((Spr)ModManifest.JesterRandomGlossary.Icon.Id!, vec.x, vec.y - 8 * cardTraitIndex++);
     }
 
-    private static List<int> GetOpeningScriptedCards(State state)
+    private static List<int> GetOpeningScriptedCards()
     {
-        var script = (OpeningScript?)state.EnumerateAllArtifacts().Find(a => a is OpeningScript);
+        var script = (OpeningScript?)StateExt.Instance?.EnumerateAllArtifacts().Find(a => a is OpeningScript);
         return script == null ? new List<int>() : script.CardData.Select(d => d.Item1).ToList();
     }
 
     [HarmonyPostfix]
     [HarmonyPatch(nameof(Card.GetAllTooltips))]
-    private static void GetAllTooltipsPostfix(Card __instance, State s, bool showCardTraits,
+    private static void GetAllTooltipsPostfix(Card __instance, bool showCardTraits,
         ref IEnumerable<Tooltip> __result)
     {
         if (!showCardTraits) return;
         
-        var needShowScripted = GetOpeningScriptedCards(s).Contains(__instance.uuid);
+        var needShowScripted = GetOpeningScriptedCards().Contains(__instance.uuid);
         var needShowRandom = __instance is AbstractJoker;
         
         if (!needShowScripted && !needShowRandom) return;

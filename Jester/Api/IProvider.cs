@@ -37,6 +37,8 @@ public interface IJesterRequest
     public State State { get; set; }
     public int BasePoints { get; set; }
     public CardData CardData { get; set; }
+    public int ActionLimit { get; set; }
+    public bool SingleUse { get; set; }
 
     // calculation
     public Random Random { get; set; }

@@ -9,7 +9,7 @@ public class HealProvider : IProvider
         var cost = 35;
         if (!ModManifest.JesterApi.HasCardFlag("exhaust", request)) cost *= 2;
 
-        if (!ModManifest.JesterApi.GetJesterUtil().InRange(request.MinCost, cost, request.MaxCost))
+        if (!ModManifest.JesterApi.GetJesterUtil().InRange(request.MinCost, cost, request.MaxCost) || ModManifest.JesterApi.HasCardFlag("singleUse", request))
             return new List<IEntry>();
 
         return new List<IEntry>

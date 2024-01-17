@@ -10,6 +10,8 @@ public class JesterRequest : IJesterRequest
     public State State { get; set; } = null!;
     public int BasePoints { get; set; }
     public CardData CardData { get; set; }
+    public int ActionLimit { get; set; }
+    public bool SingleUse { get; set; }
 
     // calculation
     public Random Random { get; set; } = null!;

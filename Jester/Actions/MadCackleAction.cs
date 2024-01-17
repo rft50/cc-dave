@@ -23,13 +23,13 @@ public class MadCackleAction : CardAction
 
         var offers = cards.Take(OfferCount)
             .Select(Activator.CreateInstance)
-            .Select(o => (o as Card)!)
+            .OfType<AbstractJoker>()
             .ToList();
 
         foreach (var card in offers)
         {
             card.temporaryOverride = true;
-            card.singleUseOverride = true;
+            card.SingleUse = true;
         }
         
         timer = 0;
@@ -37,7 +37,7 @@ public class MadCackleAction : CardAction
         return new CardReward
         {
             canSkip = false,
-            cards = offers
+            cards = offers.OfType<Card>().ToList()
         };
     }
 }

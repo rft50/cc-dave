@@ -17,16 +17,21 @@ public partial interface IJesterApi
     public IList<IEntry> GetOptionsFromProvidersFiltered(IJesterRequest request, IEnumerable<IProvider> providers);
 
     // Attempt to spend as many points as possible on the given entries
-    // Return value is total points spent
-    public int PerformUpgradeA(IJesterRequest request, IList<IEntry> entries, ref int pts);
+    // Return value is upgrades applied
+    public int PerformUpgradeA(IJesterRequest request, IList<IEntry> entries, ref int pts, int upgradeLimit = int.MaxValue);
+
+    // Attempt to spend as many points as possible on the given entries
+    // Will defer to A upgrades if B upgrades run dry
+    // Return value is upgrades applied
+    public int PerformUpgradeB(IJesterRequest request, IList<IEntry> entries, ref int pts, int upgradeLimit = int.MaxValue);
 
     // Important if you are an Outer strategy trying to call an Inner strategy
-    public IJesterResult CallInnerStrategy(IJesterRequest request, IList<IProvider> providers, int maxActions);
+    public IJesterResult CallInnerStrategy(IJesterRequest request, IList<IProvider> providers);
 }
 
 public interface IStrategy
 {
-    public IJesterResult GenerateCard(IJesterRequest request, IList<IProvider> providers, int maxActions);
+    public IJesterResult GenerateCard(IJesterRequest request, IList<IProvider> providers);
 
     public double GetWeight(IJesterRequest request);
 
@@ -37,6 +42,7 @@ public interface IJesterResult
 {
     public IList<IEntry> Entries { get; set; }
     public CardData CardData { get; set; }
+    public int SparePoints { get; set; }
 }
 
 public enum StrategyCategory

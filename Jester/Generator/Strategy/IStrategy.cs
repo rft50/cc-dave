@@ -51,11 +51,11 @@ public static class StrategyUtil
         return entries;
     }
 
-    public static int PerformUpgradeA(IJesterRequest request, IList<IEntry> entries, ref int pts)
+    public static int PerformUpgradeA(IJesterRequest request, IList<IEntry> entries, ref int pts, int upgradeLimit)
     {
         var points = pts;
         var upgradeCount = 0;
-        var rng = new Random(request.Seed);
+        var rng = new Random(request.Seed + pts);
         var upgradeOptions = entries.Select(e =>
             {
                 var result = e.GetUpgradeA(request, out var cost);
@@ -63,10 +63,12 @@ public static class StrategyUtil
             }).Where(e => e.Item2 != null && e.Item3 <= points)
             .Select(e => e as Tuple<IEntry, IEntry, int>).ToList();
 
-        while (upgradeOptions.Any())
+        while (upgradeOptions.Any() && upgradeCount < upgradeLimit)
         {
             var upgrade = ModManifest.JesterApi.GetJesterUtil().GetRandom(upgradeOptions, rng);
             upgradeOptions.Remove(upgrade);
+            if (upgrade.Item3 > points)
+                continue;
             upgradeCount++;
 
             var idx = entries.IndexOf(upgrade.Item1);
@@ -80,6 +82,44 @@ public static class StrategyUtil
         }
 
         pts = points;
+        return upgradeCount;
+    }
+
+    public static int PerformUpgradeB(IJesterRequest request, IList<IEntry> entries, ref int pts, int upgradeLimit)
+    {
+        var points = pts;
+        var upgradeCount = 0;
+        var rng = new Random(request.Seed + pts);
+        var upgradeOptions = entries.Select(e =>
+            {
+                var result = e.GetUpgradeB(request, out var cost);
+                return Tuple.Create(e, result, cost);
+            }).Where(e => e.Item2 != null && e.Item3 <= points)
+            .Select(e => e as Tuple<IEntry, IEntry, int>).ToList();
+
+        while (upgradeOptions.Any() && upgradeCount < upgradeLimit)
+        {
+            var upgrade = ModManifest.JesterApi.GetJesterUtil().GetRandom(upgradeOptions, rng);
+            upgradeOptions.Remove(upgrade);
+            if (upgrade.Item3 > points)
+                continue;
+            upgradeCount++;
+
+            var idx = entries.IndexOf(upgrade.Item1);
+            entries.RemoveAt(idx);
+            entries.Insert(idx, upgrade.Item2);
+            
+            points -= upgrade.Item3;
+            var newResult = upgrade.Item2.GetUpgradeA(request, out var cost);
+            if (newResult != null && cost <= points)
+                upgradeOptions.Add(Tuple.Create(upgrade.Item2, newResult, cost));
+        }
+
+        pts = points;
+        
+        var aUps = PerformUpgradeA(request, entries, ref pts, upgradeLimit - upgradeCount);
+        upgradeCount += aUps;
+        
         return upgradeCount;
     }
 }

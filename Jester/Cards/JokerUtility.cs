@@ -1,6 +1,6 @@
 ﻿namespace Jester.Cards;
 
-[CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[]{})]
+[CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
 public class Joker0Utility : AbstractJoker
 {
     public Joker0Utility()
@@ -10,7 +10,7 @@ public class Joker0Utility : AbstractJoker
     }
 }
 
-[CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[]{})]
+[CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
 public class Joker1Utility : AbstractJoker
 {
     public Joker1Utility()
@@ -20,7 +20,7 @@ public class Joker1Utility : AbstractJoker
     }
 }
 
-[CardMeta(rarity = Rarity.common, upgradesTo = new Upgrade[]{})]
+[CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
 public class Joker2Utility : AbstractJoker
 {
     public Joker2Utility()
@@ -30,7 +30,7 @@ public class Joker2Utility : AbstractJoker
     }
 }
 
-[CardMeta(rarity = Rarity.uncommon, upgradesTo = new Upgrade[]{})]
+[CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
 public class Joker3Utility : AbstractJoker
 {
     public Joker3Utility()
@@ -40,7 +40,7 @@ public class Joker3Utility : AbstractJoker
     }
 }
 
-[CardMeta(rarity = Rarity.rare, upgradesTo = new Upgrade[]{})]
+[CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
 public class Joker4Utility : AbstractJoker
 {
     public Joker4Utility()

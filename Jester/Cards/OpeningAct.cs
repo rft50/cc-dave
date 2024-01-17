@@ -25,9 +25,9 @@ public class OpeningAct : Card
         return upgrade switch
         {
             Upgrade.B =>
-                "Select a card non-Opening Acted card in hand. Apply Opening Act to it. Gain one less Opening Fatigue for it.",
+                "Grant Opening Act to a non-temp card in hand without that trait. Gain one less Opening Fatigue for it.",
             _ =>
-                "Select a card non-Opening Acted card in hand. Apply Opening Act to it."
+                "Grant Opening Act to a non-temp card in hand without that trait."
         };
     }
 }

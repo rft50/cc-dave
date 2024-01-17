@@ -1,4 +1,5 @@
-﻿using CobaltCoreModding.Definitions;
+﻿using System.Reflection.Emit;
+using CobaltCoreModding.Definitions;
 using CobaltCoreModding.Definitions.ExternalItems;
 using CobaltCoreModding.Definitions.ModContactPoints;
 using CobaltCoreModding.Definitions.ModManifests;
@@ -9,17 +10,16 @@ using Jester.Artifacts;
 using Jester.Cards;
 using Jester.External;
 using Microsoft.Extensions.Logging;
+using Nanoray.Shrike.Harmony;
 
 namespace Jester;
 
 public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, IDeckManifest, ICardManifest, ICardOverwriteManifest, ICharacterManifest, IGlossaryManifest, IArtifactManifest, IStatusManifest, ICustomEventManifest, IApiProviderManifest
 {
-    public static ExternalStatus? demo_status;
     public static ICustomEventHub? EventHub;
     private ExternalSprite? card_art_sprite;
     private ExternalAnimation? default_animation;
     private ExternalSprite? demo_status_sprite;
-    private ExternalSprite? DemoAttackSprite;
     public static ExternalDeck? JesterDeck;
     public static ExternalSprite CardFrame = null!;
     public static ExternalAnimation MiniAnimation = null!;
@@ -63,7 +63,8 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
 
         JesterApi = new JesterApi();
         
-        JesterApi.RegisterCardFlag("exhaust", request => request.Whitelist.Contains("mustExhaust") || request.CardData.exhaust);
+        JesterApi.RegisterCardFlag("singleUse", request => request.CardData.singleUse);
+        JesterApi.RegisterCardFlag("exhaust", request => request.Whitelist.Contains("mustExhaust") || request.CardData.exhaust || JesterApi.HasCardFlag("singleUse", request));
         
         JesterApi.RegisterCharacterFlag("heat", Deck.eunice);
         JesterApi.RegisterCharacterFlag("shard", Deck.shard);
@@ -82,16 +83,15 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
             card_art_sprite = new ExternalSprite("rft.Jester.Question", new FileInfo(path));
             if (!artRegistry.RegisterArt(card_art_sprite))
                 throw new Exception("Cannot register sprite.");
-            EWandererDemoCard.card_sprite = (Spr)(card_art_sprite.Id ?? throw new NullReferenceException());
         }
         {
-            var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("jester_frame.png"));
+            var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("sorwest_frame.png"));
             CardFrame = new ExternalSprite("rft.Jester.Frame", new FileInfo(path));
             if (!artRegistry.RegisterArt(CardFrame))
                 throw new Exception("Cannot register sprite.");
         }
         {
-            var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("jester_mini_calm.png"));
+            var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("jester_mini_insane.png"));
             JesterMini = new ExternalSprite("rft.Jester.mini", new FileInfo(path));
             if (!artRegistry.RegisterArt(JesterMini))
                 throw new Exception("Cannot register sprite.");
@@ -170,7 +170,7 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
 
     public void LoadManifest(IDeckRegistry registry)
     {
-        JesterDeck = new ExternalDeck("rft.Jester.JesterDeck", System.Drawing.Color.HotPink, System.Drawing.Color.Black, card_art_sprite ?? throw new NullReferenceException(), CardFrame ?? throw new NullReferenceException(), null);
+        JesterDeck = new ExternalDeck("rft.Jester.JesterDeck", System.Drawing.Color.FromArgb(159, 0, 40), System.Drawing.Color.Black, card_art_sprite ?? throw new NullReferenceException(), CardFrame ?? throw new NullReferenceException(), null);
 
         if (!registry.RegisterDeck(JesterDeck))
             return;
@@ -276,9 +276,9 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
 
     public void LoadManifest(ICharacterRegistry registry)
     {
-        var dracular_spr = ExternalSprite.GetRaw((int)Spr.panels_char_colorless);
+        var jester_panel = ExternalSprite.GetRaw((int)Spr.panels_char_colorless);
             
-        var jester = new ExternalCharacter("rft.Jester.JesterChar", JesterDeck ?? throw new NullReferenceException(), dracular_spr, Type.EmptyTypes, Type.EmptyTypes, default_animation ?? throw new NullReferenceException(), MiniAnimation ?? throw new NullReferenceException());
+        var jester = new ExternalCharacter("rft.Jester.JesterChar", JesterDeck ?? throw new NullReferenceException(), jester_panel, Type.EmptyTypes, Type.EmptyTypes, default_animation ?? throw new NullReferenceException(), MiniAnimation ?? throw new NullReferenceException());
         jester.AddNameLocalisation("Jester");
         jester.AddDescLocalisation("A mad jester. Only supposedly knows what he's doing.");
         registry.RegisterCharacter(jester);
@@ -287,10 +287,6 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
     public void LoadManifest(IGlossaryRegisty registry)
     {
         var icon = ExternalSprite.GetRaw((int)Spr.icons_ace);
-        var glossary = new ExternalGlossary("Ewanderer.DemoMod.DemoCard.Glossary", "ewandererdemocard", false, ExternalGlossary.GlossayType.action, icon);
-        glossary.AddLocalisation("en", "EWDemoaction", "Have all the cheesecake in the world!");
-        registry.RegisterGlossary(glossary);
-        EWandererDemoAction.glossary_item = glossary.Head;
 
         OpeningScriptedGlossary = new ExternalGlossary("rft.Jester.OpeningScripted.Glossary", "OpeningScripted",
             false, ExternalGlossary.GlossayType.cardtrait, icon);

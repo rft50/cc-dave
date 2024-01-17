@@ -10,7 +10,7 @@ public class CostCardStrategy : IStrategy
         "cost"
     };
     
-    public IJesterResult GenerateCard(IJesterRequest request, IList<IProvider> providers, int maxActions)
+    public IJesterResult GenerateCard(IJesterRequest request, IList<IProvider> providers)
     {
         var whitelist = request.Whitelist;
         request.Whitelist = Cost;
@@ -23,11 +23,11 @@ public class CostCardStrategy : IStrategy
             cost = ModManifest.JesterApi.GetJesterUtil().GetRandom(options, request.Random);
             cost.AfterSelection(request);
             request.BasePoints -= cost.GetCost();
-            maxActions -= cost.GetActionCount();
+            request.ActionLimit -= cost.GetActionCount();
         }
         request.Whitelist = whitelist;
 
-        var result = ModManifest.JesterApi.CallInnerStrategy(request, providers, maxActions);
+        var result = ModManifest.JesterApi.CallInnerStrategy(request, providers);
 
         if (cost == null) return result;
         

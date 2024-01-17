@@ -6,6 +6,8 @@ public class InstantMoveProvider : IProvider
 {
     public IList<IEntry> GetEntries(IJesterRequest request)
     {
+        if (request.Entries.Any(e => e.Tags.Contains("hermes"))) return new List<IEntry>();
+        
         var entries = new List<IEntry>();
         
         var minCost = request.MinCost;
@@ -23,8 +25,8 @@ public class InstantMoveProvider : IProvider
 
     public class InstantMoveEntry : IEntry
     {
-        private int Distance { get; }
-        private bool Random { get; }
+        public int Distance { get; }
+        public bool Random { get; }
 
         public InstantMoveEntry(int distance, bool random)
         {
@@ -75,8 +77,13 @@ public class InstantMoveProvider : IProvider
             return Distance * (7 + Distance) / 2;
         }
 
-        public IEntry GetUpgradeA(IJesterRequest request, out int cost)
+        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
         {
+            if (Distance == 0)
+            {
+                cost = 0;
+                return null;
+            }
             var entry = new InstantMoveEntry(Math.Sign(Distance) * (Math.Abs(Distance) + 1), Random);
             cost = entry.GetCost() - GetCost();
             return entry;

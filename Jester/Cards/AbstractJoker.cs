@@ -1,4 +1,5 @@
-﻿using Jester.Api;
+﻿using HarmonyLib;
+using Jester.Api;
 using Jester.Generator;
 
 namespace Jester.Cards;
@@ -6,10 +7,13 @@ namespace Jester.Cards;
 public abstract class AbstractJoker : Card
 {
     private IJesterResult? _cache;
+    private IJesterResult? _cacheA;
+    private IJesterResult? _cacheB;
     public int? Seed;
     public int Points;
     public int Energy;
     public string Category = null!;
+    public bool SingleUse = false;
 
     private void Setup(State s)
     {
@@ -32,21 +36,24 @@ public abstract class AbstractJoker : Card
                 ptsDelta *= Energy;
             }
 
-            Points = minPts + rng.Next(0, ptsDelta);
+            Points = minPts + rng.Next(0, ptsDelta) + (SingleUse ? 30 : 0);
         }
 
-        _cache = JesterGenerator.GenerateCard(
-            new JesterRequest
+        var request = new JesterRequest
+        {
+            Seed = Seed.Value,
+            FirstAction = Category,
+            State = s,
+            BasePoints = Points,
+            CardData = new CardData
             {
-                Seed = Seed.Value,
-                FirstAction = Category,
-                State = s,
-                BasePoints = Points,
-                CardData = new CardData
-                {
-                    cost = Energy
-                }
-            });
+                cost = Energy,
+                singleUse = SingleUse
+            }
+        };
+        _cache = JesterGenerator.GenerateCard(request);
+        _cacheA = JesterGenerator.UpgradeResultA(request, _cache);
+        _cacheB = JesterGenerator.UpgradeResultB(request, _cache);
     }
 
     public override List<CardAction> GetActions(State s, Combat c)
@@ -54,14 +61,27 @@ public abstract class AbstractJoker : Card
         if (_cache == null)
             Setup(s);
         
-        return _cache!.Entries.SelectMany(e => e.GetActions(s, c)).ToList();
+        return GetCache()!.Entries.SelectMany(e => e.GetActions(s, c)).ToList();
     }
 
     public override CardData GetData(State state)
     {
-        return _cache?.CardData ?? new CardData
+        return GetCache()?.CardData ?? new CardData
         {
             cost = Energy
         };
+    }
+
+    private IJesterResult? GetCache()
+    {
+        switch (upgrade)
+        {
+            case Upgrade.B:
+                return _cacheB;
+            case Upgrade.A:
+                return _cacheA;
+            default:
+                return _cache;
+        }
     }
 }

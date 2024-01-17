@@ -26,11 +26,6 @@ public class FinalActAction : CardAction
 
         return cardBrowse.GetCardList(g).Count != 0 ? cardBrowse : null;
     }
-
-    public override List<Tooltip> GetTooltips(State s) => new()
-    {
-        new TTGlossary(ModManifest.OpeningFatigue.GlobalName)
-    };
 }
 
 public class FinalActSubAction : CardAction

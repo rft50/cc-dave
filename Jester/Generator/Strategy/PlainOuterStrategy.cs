@@ -5,9 +5,9 @@ namespace Jester.Generator.Strategy;
 
 public class PlainOuterStrategy : IStrategy
 {
-    public IJesterResult GenerateCard(IJesterRequest request, IList<IProvider> providers, int maxActions)
+    public IJesterResult GenerateCard(IJesterRequest request, IList<IProvider> providers)
     {
-        return ModManifest.JesterApi.CallInnerStrategy(request, providers, maxActions);
+        return ModManifest.JesterApi.CallInnerStrategy(request, providers);
     }
 
     public double GetWeight(IJesterRequest request) => 2;

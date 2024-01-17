@@ -47,7 +47,7 @@ public class MidshiftProvider : IProvider
 
         public int GetCost()
         {
-            return Distance * 7;
+            return Math.Abs(Distance) * 7;
         }
 
         public IEntry GetUpgradeA(IJesterRequest request, out int cost)
