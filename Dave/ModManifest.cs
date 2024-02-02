@@ -5,6 +5,9 @@ using CobaltCoreModding.Definitions.ModManifests;
 using Dave.Actions;
 using Dave.Artifacts;
 using Dave.Cards;
+using Dave.External;
+using Dave.Patches;
+using Dave.Render;
 using HarmonyLib;
 using Microsoft.Extensions.Logging;
 
@@ -18,50 +21,57 @@ namespace Dave
         public static ExternalStatus? black_bias;
         public static ExternalDeck? dave_deck;
         public static ICustomEventHub EventHub;
-        private ExternalSprite? card_art_sprite;
-        private ExternalSprite? character_frame_sprite;
-        private ExternalAnimation? default_animation;
-        private ExternalAnimation? squint_animation;
-        private ExternalSprite? dave_art;
-        private ExternalSprite? dave_border;
-        private ExternalAnimation? mini_animation;
-        private ExternalAnimation? game_over_animation;
-        private ExternalSprite? mini_dave_sprite;
-        private ExternalSprite? game_over_sprite;
-        private ExternalSprite? random_move_foe_sprite;
-        private ExternalSprite? shield_hurt_sprite;
-        private ExternalSprite? red_black_sprite;
-        private ExternalSprite? red_sprite;
-        private ExternalSprite? black_sprite;
-        private ExternalSprite? red_chip_sprite;
-        private ExternalSprite? black_chip_sprite;
-        private ExternalSprite? red_clover_sprite;
-        private ExternalSprite? black_clover_sprite;
-        private Dictionary<string, ExternalSprite[]> animations = new();
-        private ExternalSprite? artifact_chip_red;
-        private ExternalSprite? artifact_chip_black;
-        private ExternalSprite? artifact_chip_both;
-        private ExternalSprite? artifact_chip_neutral;
-        private ExternalSprite? artifact_drive_refund_on;
-        private ExternalSprite? artifact_drive_refund_off;
-        private ExternalSprite? artifact_ashtray;
-        private ExternalSprite? artifact_roulette;
-        private ExternalSprite? artifact_underdrive_generator;
-        private ExternalSprite? artifact_rigged_dice;
-        private Dictionary<string, ExternalSprite> cards = new();
-        private IEnumerable<DependencyEntry> _dependencies => Array.Empty<DependencyEntry>();
-        public IEnumerable<string> Dependencies => new string[0];
+        public static ExternalSprite? card_art_sprite;
+        public static ExternalSprite? character_frame_sprite;
+        public static ExternalAnimation? default_animation;
+        public static ExternalAnimation? squint_animation;
+        public static ExternalSprite? dave_art;
+        public static ExternalSprite? dave_border;
+        public static ExternalAnimation? mini_animation;
+        public static ExternalAnimation? game_over_animation;
+        public static ExternalSprite? mini_dave_sprite;
+        public static ExternalSprite? game_over_sprite;
+        public static ExternalSprite? random_move_foe_sprite;
+        public static ExternalSprite? shield_hurt_sprite;
+        public static ExternalSprite? red_black_sprite;
+        public static ExternalSprite? red_sprite;
+        public static ExternalSprite? black_sprite;
+        public static ExternalSprite? red_chip_sprite;
+        public static ExternalSprite? black_chip_sprite;
+        public static ExternalSprite? red_clover_sprite;
+        public static ExternalSprite? black_clover_sprite;
+        public static Dictionary<string, ExternalSprite[]> animations = new();
+        public static ExternalSprite? artifact_chip_red;
+        public static ExternalSprite? artifact_chip_black;
+        public static ExternalSprite? artifact_chip_both;
+        public static ExternalSprite? artifact_chip_neutral;
+        public static ExternalSprite? artifact_drive_refund_on;
+        public static ExternalSprite? artifact_drive_refund_off;
+        public static ExternalSprite? artifact_ashtray;
+        public static ExternalSprite? artifact_roulette;
+        public static ExternalSprite? artifact_underdrive_generator;
+        public static ExternalSprite? artifact_rigged_dice;
+        public static Dictionary<string, ExternalSprite> cards = new();
+        public static IKokoroApi KokoroApi = null!;
         public ILogger? Logger { get; set; }
         public DirectoryInfo? ModRootFolder { get; set; }
 
-        IEnumerable<DependencyEntry> IManifest.Dependencies => _dependencies;
+        public IEnumerable<DependencyEntry> Dependencies => new DependencyEntry[]
+        {
+            new DependencyEntry<IModManifest>("Shockah.Kokoro", false)
+        };
 
         public DirectoryInfo? GameRootFolder { get; set; }
-        public string Name => "Dave";
+        public string Name => "rft.Dave";
 
         public void BootMod(IModLoaderContact contact)
         {
-            var harmony = new Harmony("Dave");
+            KokoroApi = contact.GetApi<IKokoroApi>("Shockah.Kokoro")!;
+
+            KokoroApi.RegisterCardRenderHook(new ZipperCardRenderManager(), 0f);
+            _ = new NegativeOverdriveManager();
+            
+            var harmony = new Harmony("rft.Dave");
             harmony.PatchAll();
         }
 
@@ -119,14 +129,12 @@ namespace Dave
                 red_sprite = new ExternalSprite("rft.Dave.red", new FileInfo(path));
                 if (!spriteRegistry.RegisterArt(red_sprite))
                     throw new Exception("Cannot register red.png.");
-                CardRenderPatch.red = (Spr) (red_sprite.Id ?? throw new NullReferenceException());
             }
             {
                 var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("black.png"));
                 black_sprite = new ExternalSprite("rft.Dave.black", new FileInfo(path));
                 if (!spriteRegistry.RegisterArt(black_sprite))
                     throw new Exception("Cannot register black.png.");
-                CardRenderPatch.black = (Spr) (black_sprite.Id ?? throw new NullReferenceException());
             }
             {
                 var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("red_chip.png"));
@@ -256,7 +264,7 @@ namespace Dave
                     if (!spriteRegistry.RegisterArt(sprite))
                         throw new Exception("Cannot register cardback " + path);
 
-                    this.cards[c] = sprite;
+                    ModManifest.cards[c] = sprite;
                 }
             }
         }

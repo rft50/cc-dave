@@ -1,36 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Version>1.1.1</Version>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PlatformTarget>x64</PlatformTarget>
     <RootNamespace>Dave</RootNamespace>
+    <IsLegacyMod>true</IsLegacyMod>
+    <EnableDllExtract>false</EnableDllExtract>
+    <GameDllPath>./CobaltCore.dll</GameDllPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lib.Harmony" Version="2.2.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\CobaltCoreModding.Definitions\CobaltCoreModding.Definitions.csproj">
-      <Private>False</Private>
-      <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
-    </ProjectReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="CobaltCore">
-      <HintPath>./CobaltCore.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MonoGame.Framework.dll">
-      <HintPath>./MonoGame.Framework.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="CobaltCoreModding.Definitions">
-      <HintPath>..\CobaltCoreModding.Definitions\bin\Debug\net6.0\CobaltCoreModding.Definitions.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Nickel.ModBuildConfig" Version="0.5.0-alpha1" />
+    <PackageReference Condition="$(IsLegacyMod)" Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" PrivateAssets="all" />
+    <PackageReference Condition="$(IsLegacyMod)" Include="Lib.Harmony" Version="2.2.2" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +25,10 @@
     <None Update="Sprites\*\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="obj\Debug\" />
   </ItemGroup>
 
 </Project>

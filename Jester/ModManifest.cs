@@ -69,7 +69,7 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
         JesterApi.RegisterCharacterFlag("heat", Deck.eunice);
         JesterApi.RegisterCharacterFlag("shard", Deck.shard);
             
-        var harmony = new Harmony("Jester");
+        var harmony = new Harmony("rft.Jester");
         harmony.PatchAll();
     }
 
