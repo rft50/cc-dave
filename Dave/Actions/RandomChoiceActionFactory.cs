@@ -38,8 +38,6 @@ public class RandomChoiceActionFactory
 
         public override void Begin(G g, State s, Combat c)
         {
-            var max = s.ship.statusEffects.Values.Max();
-            
             var isRoll = false;
                 
             var redOdds = 5f;

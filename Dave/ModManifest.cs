@@ -10,6 +10,7 @@ using Dave.Patches;
 using Dave.Render;
 using HarmonyLib;
 using Microsoft.Extensions.Logging;
+using TheJazMaster.MoreDifficulties;
 
 namespace Dave
 {
@@ -53,12 +54,14 @@ namespace Dave
         public static ExternalSprite? artifact_rigged_dice;
         public static Dictionary<string, ExternalSprite> cards = new();
         public static IKokoroApi KokoroApi = null!;
+        public static IMoreDifficultiesApi? MoreDifficultiesApi = null;
         public ILogger? Logger { get; set; }
         public DirectoryInfo? ModRootFolder { get; set; }
 
         public IEnumerable<DependencyEntry> Dependencies => new DependencyEntry[]
         {
-            new DependencyEntry<IModManifest>("Shockah.Kokoro", false)
+            new DependencyEntry<IModManifest>("Shockah.Kokoro", false),
+            new DependencyEntry<IModManifest>("TheJazMaster.MoreDifficulties", false)
         };
 
         public DirectoryInfo? GameRootFolder { get; set; }
@@ -69,8 +72,9 @@ namespace Dave
             KokoroApi = contact.GetApi<IKokoroApi>("Shockah.Kokoro")!;
 
             KokoroApi.RegisterCardRenderHook(new ZipperCardRenderManager(), 0f);
-            _ = new NegativeOverdriveManager();
             
+            MoreDifficultiesApi = contact.GetApi<IMoreDifficultiesApi>("TheJazMaster.MoreDifficulties");
+
             var harmony = new Harmony("rft.Dave");
             harmony.PatchAll();
         }
@@ -313,6 +317,19 @@ namespace Dave
             
              if (!registry.RegisterDeck(dave_deck))
                  return;
+
+             MoreDifficultiesApi?.RegisterAltStarters((Deck) dave_deck!.Id!, new StarterDeck
+             {
+                 cards = new List<Card>
+                 {
+                     new WildShotCard(),
+                     new WildStepCard()
+                 },
+                 artifacts = new List<Artifact>
+                 {
+                     new Chip()
+                 }
+             });
         }
 
         public void LoadManifest(ICardRegistry registry)
