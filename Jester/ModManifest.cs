@@ -1,16 +1,13 @@
-﻿using System.Reflection.Emit;
-using CobaltCoreModding.Definitions;
+﻿using CobaltCoreModding.Definitions;
 using CobaltCoreModding.Definitions.ExternalItems;
 using CobaltCoreModding.Definitions.ModContactPoints;
 using CobaltCoreModding.Definitions.ModManifests;
 using HarmonyLib;
-using Jester.Actions;
 using Jester.Api;
 using Jester.Artifacts;
 using Jester.Cards;
 using Jester.External;
 using Microsoft.Extensions.Logging;
-using Nanoray.Shrike.Harmony;
 
 namespace Jester;
 

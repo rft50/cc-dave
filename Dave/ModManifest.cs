@@ -6,11 +6,9 @@ using Dave.Actions;
 using Dave.Artifacts;
 using Dave.Cards;
 using Dave.External;
-using Dave.Patches;
 using Dave.Render;
 using HarmonyLib;
 using Microsoft.Extensions.Logging;
-using TheJazMaster.MoreDifficulties;
 
 namespace Dave
 {
@@ -54,14 +52,16 @@ namespace Dave
         public static ExternalSprite? artifact_rigged_dice;
         public static Dictionary<string, ExternalSprite> cards = new();
         public static IKokoroApi KokoroApi = null!;
-        public static IMoreDifficultiesApi? MoreDifficultiesApi = null;
+        public static IDraculaApi? DraculaApi;
+        public static IMoreDifficultiesApi? MoreDifficultiesApi;
         public ILogger? Logger { get; set; }
         public DirectoryInfo? ModRootFolder { get; set; }
 
         public IEnumerable<DependencyEntry> Dependencies => new DependencyEntry[]
         {
             new DependencyEntry<IModManifest>("Shockah.Kokoro", false),
-            new DependencyEntry<IModManifest>("TheJazMaster.MoreDifficulties", false)
+            new DependencyEntry<IModManifest>("Shockah.Dracula", true),
+            new DependencyEntry<IModManifest>("TheJazMaster.MoreDifficulties", true)
         };
 
         public DirectoryInfo? GameRootFolder { get; set; }
@@ -317,6 +317,8 @@ namespace Dave
             
              if (!registry.RegisterDeck(dave_deck))
                  return;
+
+             DraculaApi?.RegisterBloodTapOptionProvider(new BloodTapProvider());
 
              MoreDifficultiesApi?.RegisterAltStarters((Deck) dave_deck!.Id!, new StarterDeck
              {

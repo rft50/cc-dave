@@ -59,7 +59,7 @@ public class RandomChoiceActionFactory
 
             if (data is { isRed: false, isBlack: false })
             {
-                data.isRed = Random.NextDouble() < redOdds;
+                data.isRed = s.rngActions.Next() < redOdds;
                 data.isBlack = !data.isRed;
                 isRoll = true;
             }

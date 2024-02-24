@@ -1,6 +1,8 @@
 ﻿using CobaltCoreModding.Definitions.ExternalItems;
 using CobaltCoreModding.Definitions.ModContactPoints;
+using CobaltCoreModding.Definitions.ModManifests;
 using Dave.Artifacts;
+using Dave.External;
 
 namespace Dave;
 
@@ -19,6 +21,13 @@ public partial class ModManifest
 
         // state, combat, isRed, isBlack, isRoll
         eventHub.MakeEvent<Tuple<State, Combat, bool, bool, bool>>("Dave.RedBlackRoll");
+
+        eventHub.ConnectToEvent<Func<IManifest, IPrelaunchContactPoint>>("Nickel::OnAfterDbInitPhaseFinished", contactPointProvider =>
+        {
+            var contactPoint = contactPointProvider(this);
+            DraculaApi = contactPoint.GetApi<IDraculaApi>("Shockah.Dracula");
+            DraculaApi?.RegisterBloodTapOptionProvider(new BloodTapProvider());
+        });
     }
 
     public void LoadManifest(IArtifactRegistry registry)
