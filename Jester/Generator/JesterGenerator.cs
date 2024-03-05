@@ -2,7 +2,12 @@
 using Jester.Api;
 using Jester.External;
 using Jester.Generator.Provider;
+using Jester.Generator.Provider.Books;
+using Jester.Generator.Provider.Common;
+using Jester.Generator.Provider.Drake;
 using Jester.Generator.Strategy;
+using Jester.Generator.Strategy.Books;
+using Jester.Generator.Strategy.Common;
 
 namespace Jester.Generator;
 
@@ -13,6 +18,7 @@ public class JesterGenerator
 
     public static readonly List<IProvider> Providers = new()
     {
+        // Common Providers
         new AttackProvider(),
         new EvadeProvider(),
         new ShieldProvider(),
@@ -22,12 +28,22 @@ public class JesterGenerator
         new DroneshiftProvider(),
         new StatusProvider(),
         new HealProvider(),
+        new DrawProvider(),
         
+        // Common Costs
         new StatusCostProvider(),
         new AddCardCostProvider(),
         new EqualsZeroCostProvider(),
         new DiscardCardCostProvider(),
-        new HurtCostProvider()
+        new HurtCostProvider(),
+        
+        // Drake
+        new LessHeatProvider(),
+        new HeatCostProvider(),
+        new SerenityProvider(),
+        
+        // Books
+        new ShardProvider()
     };
 
     public static readonly List<IStrategy> Strategies = new()
@@ -38,8 +54,9 @@ public class JesterGenerator
         new PlainOuterStrategy(),
         new ExhaustStrategy(),
         new CostCardStrategy(),
-        new ExhaustCostCardStrategy()
+        new ExhaustCostCardStrategy(),
         // full
+        new BooksStrategy()
     };
 
     public static int ActionCap = 5;
@@ -47,18 +64,21 @@ public class JesterGenerator
     public static IJesterResult GenerateCard(IJesterRequest request)
     {
         IJesterResult data;
-        request.Random = new Random(request.Seed);
-        request.ActionLimit = request.Random.Next(3, ActionCap + 1);
+        request.Random = new Rand((uint) request.Seed);
+        request.ActionLimit = 3 + request.Random.NextInt() % (ActionCap - 3);
 
-        if (/*request.Seed % 2 == 0*/true) // change when a Full for all exists
         {
-            data = GetStrategiesWeighted(request, StrategyCategory.Outer).Next(request.Random)
-                .GenerateCard(request, Providers);
-        }
-        else
-        {
-            data = GetStrategiesWeighted(request, StrategyCategory.Full).Next(request.Random)
-                .GenerateCard(request, Providers);
+            var fullStrategies = GetStrategiesWeighted(request, StrategyCategory.Full);
+            if (request.Seed % 3 == 0 && fullStrategies.Items.Count > 0)
+            {
+                data = fullStrategies.Next(request.Random)
+                    .GenerateCard(request, Providers);
+            }
+            else
+            {
+                data = GetStrategiesWeighted(request, StrategyCategory.Outer).Next(request.Random)
+                    .GenerateCard(request, Providers);
+            }
         }
 
         if (Display)
@@ -149,12 +169,18 @@ public class JesterGenerator
             CardData = origReq.CardData,
             ActionLimit = origReq.ActionLimit,
             SingleUse = origReq.SingleUse,
-            Random = new Random(origReq.Random.Next()),
+            Random = origReq.Random.Offshoot(),
             Whitelist = origReq.Whitelist,
             Blacklist = origReq.Blacklist
         };
+
+        var res = new JesterResult
+        {
+            CardData = origRes.CardData,
+            Entries = origRes.Entries.ToList(),
+            SparePoints = origRes.SparePoints
+        };
         
-        var res = Mutil.DeepCopy(origRes);
         res.SparePoints += upgradeBonus;
         req.Entries = res.Entries;
         
@@ -297,7 +323,7 @@ internal static class UpgradeOptions
         if (request.Seed % JesterGenerator.ActionCap > actionCount) return false;
         request.MinCost = 1;
         request.MaxCost = result.SparePoints;
-        var options = ModManifest.JesterApi.GetOptionsFromProvidersFiltered(request, JesterGenerator.Providers)
+        var options = ModManifest.JesterApi.GetOptionsFromProvidersWeighted(request, JesterGenerator.Providers)
             .Where(e => actionCount + e.GetActionCount() <= JesterGenerator.ActionCap)
             .ToList();
             
@@ -322,7 +348,7 @@ internal static class UpgradeOptions
             };
             request.MinCost = -request.BasePoints;
             request.MaxCost = request.MinCost / 2;
-            var options = ModManifest.JesterApi.GetOptionsFromProvidersFiltered(request, JesterGenerator.Providers)
+            var options = ModManifest.JesterApi.GetOptionsFromProvidersWeighted(request, JesterGenerator.Providers)
                 .Where(e => actionCount + e.GetActionCount() <= JesterGenerator.ActionCap)
                 .ToList();
             request.Whitelist = whitelist;

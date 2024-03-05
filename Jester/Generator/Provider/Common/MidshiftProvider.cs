@@ -1,6 +1,6 @@
 ﻿using Jester.Api;
 
-namespace Jester.Generator.Provider;
+namespace Jester.Generator.Provider.Common;
 
 public class MidshiftProvider : IProvider
 {
@@ -22,19 +22,27 @@ public class MidshiftProvider : IProvider
     
     public class MidshiftEntry : IEntry
     {
-        public int Distance { get; }
+        public int Distance { get; set; }
 
+        public MidshiftEntry()
+        {
+        }
         public MidshiftEntry(int distance)
         {
             Distance = distance;
         }
 
-        public ISet<string> Tags => new HashSet<string>
+        public ISet<string> Tags
+        {
+            get => new HashSet<string>
             {
                 "utility",
                 "midshift",
                 "flippable"
             };
+            
+        }
+
         public int GetActionCount() => 1;
 
         public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>

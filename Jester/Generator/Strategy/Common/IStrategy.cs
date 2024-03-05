@@ -1,7 +1,6 @@
 ﻿using Jester.Api;
-using Jester.Generator.Provider;
 
-namespace Jester.Generator.Strategy;
+namespace Jester.Generator.Strategy.Common;
 
 public static class StrategyUtil
 {
@@ -17,6 +16,16 @@ public static class StrategyUtil
             .Where(e => ModManifest.JesterApi.GetJesterUtil().ContainsAll(e.Tags, request.Whitelist)).ToList();
     }
 
+    public static IList<IEntry> GetOptionsFromProvidersWeighted(IJesterRequest request, IEnumerable<IProvider> providers)
+    {
+        var entries = GetOptionsFromProvidersFiltered(request, providers);
+        var weighted = entries.Where(e => e.Tags.Contains("weighted")).ToList();
+
+        if (weighted.Count != 0 && request.Random.Next() < 0.2)
+            return weighted;
+        return entries;
+    }
+
     public static IList<IEntry> FilterOptionBucketBiased(IJesterRequest request, IList<IEntry> entries, int buckets, bool expensive = false)
     {
         if (buckets == 1)
@@ -27,7 +36,7 @@ public static class StrategyUtil
         buckets = Math.Min(buckets, bucketDelta);
         
         var bucketTotal = buckets * (buckets + 1) / 2;
-        var bucket = (int) Math.Floor((Math.Sqrt(request.Random.Next(bucketTotal) * 8 + 1) - 1) / 2);
+        var bucket = (int) Math.Floor((Math.Sqrt((request.Random.Next() % bucketTotal) * 8 + 1) - 1) / 2);
 
         if (!expensive)
             bucket = buckets - bucket - 1;
@@ -55,7 +64,7 @@ public static class StrategyUtil
     {
         var points = pts;
         var upgradeCount = 0;
-        var rng = new Random(request.Seed + pts);
+        var rng = new Rand((uint)(request.Seed + pts));
         var upgradeOptions = entries.Select(e =>
             {
                 var result = e.GetUpgradeA(request, out var cost);
@@ -89,7 +98,7 @@ public static class StrategyUtil
     {
         var points = pts;
         var upgradeCount = 0;
-        var rng = new Random(request.Seed + pts);
+        var rng = new Rand((uint)(request.Seed + pts));
         var upgradeOptions = entries.Select(e =>
             {
                 var result = e.GetUpgradeB(request, out var cost);

@@ -39,9 +39,10 @@ public interface IJesterRequest
     public CardData CardData { get; set; }
     public int ActionLimit { get; set; }
     public bool SingleUse { get; set; }
+    public CardMeta CardMeta { get; set; }
 
     // calculation
-    public Random Random { get; set; }
+    public Rand Random { get; set; }
     public IList<IEntry> Entries { get; set; }
     public ISet<string> Blacklist { get; set; }
     public ISet<string> Whitelist { get; set; }

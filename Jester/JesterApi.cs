@@ -1,6 +1,7 @@
 ﻿using Jester.Api;
 using Jester.Generator;
 using Jester.Generator.Strategy;
+using Jester.Generator.Strategy.Common;
 
 namespace Jester;
 
@@ -16,6 +17,9 @@ public class JesterApi : IJesterApi
 
     public IList<IEntry> GetOptionsFromProvidersFiltered(IJesterRequest request, IEnumerable<IProvider> providers) =>
         StrategyUtil.GetOptionsFromProvidersFiltered(request, providers);
+
+    public IList<IEntry> GetOptionsFromProvidersWeighted(IJesterRequest request, IEnumerable<IProvider> providers) =>
+        StrategyUtil.GetOptionsFromProvidersWeighted(request, providers);
 
     public int PerformUpgradeA(IJesterRequest request, IList<IEntry> entries, ref int pts, int upgradeLimit) =>
         StrategyUtil.PerformUpgradeA(request, entries, ref pts, upgradeLimit);
@@ -38,12 +42,12 @@ public class JesterApi : IJesterApi
         public bool ContainsAll<T>(IEnumerable<T> source, IEnumerable<T> mustContain) =>
             Util.ContainsAll(source, mustContain);
 
-        public T GetRandom<T>(IList<T> source, Random rng) => Util.GetRandom(source, rng);
+        public T GetRandom<T>(IList<T> source, Rand rng) => Util.GetRandom(source, rng);
 
         public IList<int> GetDeployOptions(ISet<int> occupied, int offset = 0, int skip = 0) =>
             Util.GetDeployOptions(occupied, offset, skip);
 
-        public void Shuffle<T>(IList<T> list, Random rng) => Util.Shuffle(list, rng);
+        public void Shuffle<T>(IList<T> list, Rand rng) => Util.Shuffle(list, rng);
     }
 
     private readonly Dictionary<string, Func<IJesterRequest, bool>> _cardFlagCalculators = new();
@@ -60,9 +64,10 @@ public class JesterApi : IJesterApi
 
     private readonly Dictionary<string, List<Deck>> _characterFlags = new();
 
-    public bool HasCharacterFlag(string flag, State s)
+    public bool HasCharacterFlag(string flag)
     {
-        return _characterFlags.TryGetValue(flag, out var list) && s.characters.Any(c => list.Contains(c.deckType.GetValueOrDefault()));
+        return _characterFlags.TryGetValue(flag, out var list)
+               && (StateExt.Instance?.characters.Any(c => list.Contains(c.deckType.GetValueOrDefault()))).GetValueOrDefault(false);
     }
 
     public void RegisterCharacterFlag(string flag, Deck deck)

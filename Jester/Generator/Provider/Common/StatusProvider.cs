@@ -1,6 +1,6 @@
 ﻿using Jester.Api;
 
-namespace Jester.Generator.Provider;
+namespace Jester.Generator.Provider.Common;
 
 public class StatusProvider : IProvider
 {
@@ -9,7 +9,7 @@ public class StatusProvider : IProvider
     private const int CostThree = 80;
     private const int CostFour = 100;
     
-    private static List<StatusStruct> _stats = new()
+    private static readonly List<StatusStruct> Stats = new()
     {
         new StatusStruct
         {
@@ -20,7 +20,7 @@ public class StatusProvider : IProvider
                 "defensive"
             },
             Cost = 20,
-            Stackable = false
+            Stackable = true
         },
         new StatusStruct
         {
@@ -79,7 +79,7 @@ public class StatusProvider : IProvider
                 "drawNext"
             },
             Cost = 10,
-            Stackable = false
+            Stackable = true
         },
         new StatusStruct
         {
@@ -91,7 +91,7 @@ public class StatusProvider : IProvider
                 "energyNext"
             },
             Cost = 15,
-            Stackable = false
+            Stackable = true
         },
         new StatusStruct
         {
@@ -159,7 +159,7 @@ public class StatusProvider : IProvider
     
     public StatusProvider()
     {
-        foreach (var stat in _stats)
+        foreach (var stat in Stats)
         {
             for (var i = 1; i <= 3; i++)
             {
@@ -197,8 +197,12 @@ public class StatusProvider : IProvider
 
     public class StatusEntry : IEntry
     {
-        public StatusStruct Data { get; }
-        public int Amount { get; }
+        public StatusStruct Data { get; set; }
+        public int Amount { get; set; }
+        
+        public StatusEntry()
+        {
+        }
 
         public StatusEntry(StatusStruct data, int amount)
         {
@@ -206,7 +210,12 @@ public class StatusProvider : IProvider
             Amount = amount;
         }
 
-        public ISet<string> Tags => Data.Tags;
+        public ISet<string> Tags
+        {
+            get => Data.Tags;
+            
+        }
+
         public int GetActionCount() => 1;
 
         public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>

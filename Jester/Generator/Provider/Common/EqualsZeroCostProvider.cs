@@ -1,6 +1,6 @@
 ﻿using Jester.Api;
 
-namespace Jester.Generator.Provider;
+namespace Jester.Generator.Provider.Common;
 
 public class EqualsZeroCostProvider : IProvider
 {
@@ -21,10 +21,14 @@ public class EqualsZeroCostProvider : IProvider
     
     public class EqualsZeroCostEntry : IEntry
     {
-        public Status Status { get; }
-        public string Tag { get; }
-        public int Cost { get; }
+        public Status Status { get; set; }
+        public string Tag { get; set; } = null!;
+        public int Cost { get; set; }
 
+        public EqualsZeroCostEntry()
+        {
+            
+        }
         public EqualsZeroCostEntry(Status status, string tag, int cost)
         {
             Status = status;
@@ -32,11 +36,15 @@ public class EqualsZeroCostProvider : IProvider
             Cost = cost;
         }
 
-        public ISet<string> Tags => new HashSet<string>
+        public ISet<string> Tags
         {
-            "cost",
-            Tag
-        };
+            get => new HashSet<string>
+            {
+                "cost",
+                Tag
+            };
+            
+        }
 
         public int GetActionCount() => 1;
 

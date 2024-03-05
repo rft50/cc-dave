@@ -23,6 +23,7 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
     public static ExternalSprite JesterMini = null!;
 
     public static ExternalSprite BellSprite = null!;
+    public static ExternalSprite CharacterFrame = null!;
 
     public static Dictionary<string, ExternalSprite> ArtifactSprites = new();
     public static Dictionary<string, ExternalSprite> CharacterSprites = new();
@@ -40,6 +41,7 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
 
     public static IKokoroApi KokoroApi = null!;
     public static IJesterApi JesterApi = null!;
+    public static ILogger Logr = null!;
 
     public IEnumerable<DependencyEntry> Dependencies => new DependencyEntry[]
     {
@@ -50,10 +52,17 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
     public DirectoryInfo? ModRootFolder { get; set; }
     public string Name => "rft.Jester";
 
+    public static void Log(string @in)
+    {
+        Logr.Log(LogLevel.Information, new EventId(0), @in, null, (str, _) => str);
+    }
+
     public void BootMod(IModLoaderContact contact)
     {
         ReflectionExt.CurrentAssemblyLoadContext.LoadFromAssemblyPath(Path.Combine(ModRootFolder!.FullName, "Shrike.dll"));
         ReflectionExt.CurrentAssemblyLoadContext.LoadFromAssemblyPath(Path.Combine(ModRootFolder!.FullName, "Shrike.Harmony.dll"));
+        
+        Logr = Logger!;
 
         KokoroApi = contact.GetApi<IKokoroApi>("Shockah.Kokoro")!;
         KokoroApi.RegisterTypeForExtensionData(typeof(Combat));
@@ -97,6 +106,12 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
             var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("bell.png"));
             BellSprite = new ExternalSprite("rft.Jester.Bell", new FileInfo(path));
             if (!artRegistry.RegisterArt(BellSprite))
+                throw new Exception("Cannot register sprite.");
+        }
+        {
+            var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("char_frame_jester.png"));
+            CharacterFrame = new ExternalSprite("rft.Jester.CharFrame", new FileInfo(path));
+            if (!artRegistry.RegisterArt(CharacterFrame))
                 throw new Exception("Cannot register sprite.");
         }
 
@@ -273,8 +288,8 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
 
     public void LoadManifest(ICharacterRegistry registry)
     {
-        var jester_panel = ExternalSprite.GetRaw((int)Spr.panels_char_colorless);
-            
+        var jester_panel = CharacterFrame;
+        
         var jester = new ExternalCharacter("rft.Jester.JesterChar", JesterDeck ?? throw new NullReferenceException(), jester_panel, Type.EmptyTypes, Type.EmptyTypes, default_animation ?? throw new NullReferenceException(), MiniAnimation ?? throw new NullReferenceException());
         jester.AddNameLocalisation("Jester");
         jester.AddDescLocalisation("A mad jester. Only supposedly knows what he's doing.");

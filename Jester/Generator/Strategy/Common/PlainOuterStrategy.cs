@@ -1,7 +1,6 @@
 ﻿using Jester.Api;
-using Jester.Generator.Provider;
 
-namespace Jester.Generator.Strategy;
+namespace Jester.Generator.Strategy.Common;
 
 public class PlainOuterStrategy : IStrategy
 {

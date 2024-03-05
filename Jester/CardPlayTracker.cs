@@ -1,33 +1,30 @@
-﻿namespace Jester;
+﻿using System.Runtime.CompilerServices;
+using Mono.Collections.Generic;
+
+namespace Jester;
 
 public static class CardPlayTracker
 {
-    private static bool _loaded = false;
-
-    private static readonly List<Card> CardsPlayedThisTurn = new();
 
     public static IEnumerable<Card> GetCardPlaysThisTurn(State s, Combat c)
     {
-        if (!_loaded)
-            Load(s, c);
-        return CardsPlayedThisTurn;
+        return Load(s, c);
     }
 
-    public static void RegisterCardPlay(Card card)
+    public static void RegisterCardPlay(Card card, State s, Combat c)
     {
-        CardsPlayedThisTurn.Add(card);
-        Save();
+        var cards = Load(s, c).ToList();
+        cards.Add(card);
+        Save(cards, s);
     }
 
-    public static void ClearCardPlays()
+    public static void ClearCardPlays(State s)
     {
-        CardsPlayedThisTurn.Clear();
-        Save();
+        Save(new List<Card>(), s);
     }
     
-    private static void Load(State s, Combat c)
+    private static IEnumerable<Card> Load(State s, Combat c)
     {
-        _loaded = true;
         var ids = ModManifest.KokoroApi.ObtainExtensionData<List<int>>(c, "CardTracking.Ids");
         var singleCards = ModManifest.KokoroApi.ObtainExtensionData<List<Card>>(c, "CardTracking.SingleCards");
 
@@ -41,23 +38,21 @@ public static class CardPlayTracker
         
         var cards = ids
             .Select(id => allCards.FirstOrDefault(ca => ca.uuid == id))
-            .Where(ca => ca != null);
-        
-        CardsPlayedThisTurn.InsertRange(0, cards!);
+            .Where(ca => ca != null)
+            .Cast<Card>();
+
+        return cards;
     }
 
-    private static void Save()
+    private static void Save(IEnumerable<Card> cards, State state)
     {
-        var state = StateExt.Instance;
         if (state?.route is not Combat combat) return;
-        
-        if (!_loaded)
-            Load(state, combat);
 
-        var ids = CardsPlayedThisTurn
+        var enumerable = cards.ToList();
+        var ids = enumerable
             .Select(c => c.uuid)
             .ToList();
-        var singleUse = CardsPlayedThisTurn
+        var singleUse = enumerable
             .Where(c => c.singleUseOverride == true || c.GetData(state).singleUse)
             .ToList();
         

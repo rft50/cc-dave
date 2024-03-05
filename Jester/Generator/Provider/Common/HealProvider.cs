@@ -1,6 +1,6 @@
 ﻿using Jester.Api;
 
-namespace Jester.Generator.Provider;
+namespace Jester.Generator.Provider.Common;
 
 public class HealProvider : IProvider
 {
@@ -20,19 +20,26 @@ public class HealProvider : IProvider
     
     public class HealEntry : IEntry
     {
-        public int Cost { get; }
+        public int Cost { get; set; }
+        
+        public HealEntry()
+        {
+        }
 
         public HealEntry(int cost)
         {
             Cost = cost;
         }
         
-        public ISet<string> Tags =>
-            new HashSet<string>
+        public ISet<string> Tags
+        {
+            get => new HashSet<string>
             {
                 "defensive",
                 "heal"
             };
+            
+        }
 
         public int GetActionCount() => 1;
 

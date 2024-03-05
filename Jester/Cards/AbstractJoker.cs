@@ -1,5 +1,4 @@
-﻿using HarmonyLib;
-using Jester.Api;
+﻿using Jester.Api;
 using Jester.Generator;
 
 namespace Jester.Cards;
@@ -19,8 +18,8 @@ public abstract class AbstractJoker : Card
     {
         if (Seed == null)
         {
-            Seed = Random.Shared.Next();
-            var rng  = new Random(Seed.Value);
+            Seed = s.rngActions.NextInt();
+            var rng  = new Rand((uint)Seed);
 
             var minPts = 20;
             var ptsDelta = 8;
@@ -36,7 +35,7 @@ public abstract class AbstractJoker : Card
                 ptsDelta *= Energy;
             }
 
-            Points = minPts + rng.Next(0, ptsDelta) + (SingleUse ? 30 : 0);
+            Points = minPts + rng.NextInt() % ptsDelta + (SingleUse ? 30 : 0);
         }
 
         var request = new JesterRequest
@@ -49,7 +48,8 @@ public abstract class AbstractJoker : Card
             {
                 cost = Energy,
                 singleUse = SingleUse
-            }
+            },
+            CardMeta = GetMeta()
         };
         _cache = JesterGenerator.GenerateCard(request);
         _cacheA = JesterGenerator.UpgradeResultA(request, _cache);

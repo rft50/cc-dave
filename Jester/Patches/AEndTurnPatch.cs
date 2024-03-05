@@ -29,12 +29,11 @@ public class AEndTurnPatch
     
     [HarmonyPostfix]
     [HarmonyPatch("Begin")]
-    public static void BeginPostfix(IEnumerable<Card>? __state)
+    public static void BeginPostfix(IEnumerable<Card>? __state, State s)
     {
-        CardPlayTracker.ClearCardPlays();
+        CardPlayTracker.ClearCardPlays(s);
 
-        var state = StateExt.Instance;
-        if (state?.route is not Combat combat) return;
+        if (s.route is not Combat combat) return;
 
         if (__state == null) return;
         foreach (var card in __state)
@@ -43,7 +42,7 @@ public class AEndTurnPatch
             {
                 new AAttack
                 {
-                    damage = card.GetDmg(state, 1)
+                    damage = card.GetDmg(s, 1)
                 }
             });
         }

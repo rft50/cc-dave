@@ -1,6 +1,6 @@
 ﻿using Jester.Api;
 
-namespace Jester.Generator.Provider;
+namespace Jester.Generator.Provider.Common;
 
 public class StatusCostProvider : IProvider
 {
@@ -23,11 +23,14 @@ public class StatusCostProvider : IProvider
     
     public class StatusCostEntry : IEntry
     {
-        public Status Status { get; }
-        public int Amount { get; }
-        public int Cost { get; }
-        public string Tag { get; }
+        public Status Status { get; set; }
+        public int Amount { get; set; }
+        public int Cost { get; set; }
+        public string Tag { get; set; } = null!;
 
+        public StatusCostEntry()
+        {
+        }
         public StatusCostEntry(Status status, int amount, int cost, string tag)
         {
             Status = status;
@@ -36,12 +39,17 @@ public class StatusCostProvider : IProvider
             Tag = tag;
         }
         
-        public ISet<string> Tags => new HashSet<string>
+        public ISet<string> Tags
         {
-            "status",
-            "cost",
-            Tag
-        };
+            get => new HashSet<string>
+            {
+                "status",
+                "cost",
+                Tag
+            };
+            
+        }
+
         public int GetActionCount() => 1;
 
         public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>

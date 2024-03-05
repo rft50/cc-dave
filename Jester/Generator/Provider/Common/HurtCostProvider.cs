@@ -1,6 +1,6 @@
 ﻿using Jester.Api;
 
-namespace Jester.Generator.Provider;
+namespace Jester.Generator.Provider.Common;
 
 public class HurtCostProvider : IProvider
 {
@@ -20,11 +20,16 @@ public class HurtCostProvider : IProvider
     
     public class HurtEntry : IEntry
     {
-        public ISet<string> Tags => new HashSet<string>
+        public ISet<string> Tags
         {
-            "cost",
-            "hurt"
-        };
+            get => new HashSet<string>
+            {
+                "cost",
+                "hurt"
+            };
+            
+        }
+
         public int GetActionCount() => 1;
 
         public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>

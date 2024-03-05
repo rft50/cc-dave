@@ -15,6 +15,9 @@ public partial interface IJesterApi
 
     // Get all legal entries for the given costs and blacklist/whitelist
     public IList<IEntry> GetOptionsFromProvidersFiltered(IJesterRequest request, IEnumerable<IProvider> providers);
+    
+    // Get all legal entries for the given costs and blacklist/whitelist, with bias given to weighted actions
+    public IList<IEntry> GetOptionsFromProvidersWeighted(IJesterRequest request, IEnumerable<IProvider> providers);
 
     // Attempt to spend as many points as possible on the given entries
     // Return value is upgrades applied

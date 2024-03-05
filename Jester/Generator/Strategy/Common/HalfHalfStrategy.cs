@@ -1,7 +1,6 @@
 ﻿using Jester.Api;
-using Jester.Generator.Provider;
 
-namespace Jester.Generator.Strategy;
+namespace Jester.Generator.Strategy.Common;
 
 public class HalfHalfStrategy : IStrategy
 {
@@ -27,7 +26,7 @@ public class HalfHalfStrategy : IStrategy
         do
         {
             request.MaxCost = points;
-            options = ModManifest.JesterApi.GetOptionsFromProvidersFiltered(request, providers)
+            options = ModManifest.JesterApi.GetOptionsFromProvidersWeighted(request, providers)
                 .Where(e => e.GetActionCount() <= maxActions - actionCount)
                 .ToList();;
             
@@ -52,7 +51,7 @@ public class HalfHalfStrategy : IStrategy
         do
         {
             request.MaxCost = points;
-            options = ModManifest.JesterApi.GetOptionsFromProvidersFiltered(request, providers)
+            options = ModManifest.JesterApi.GetOptionsFromProvidersWeighted(request, providers)
                 .Where(e => e.GetActionCount() <= maxActions - actionCount)
                 .ToList();
 

@@ -6,7 +6,7 @@ public partial interface IJesterApi
 
     public void RegisterCardFlag(string flag, Func<IJesterRequest, bool> calculator);
 
-    public bool HasCharacterFlag(string flag, State s);
+    public bool HasCharacterFlag(string flag);
 
     public void RegisterCharacterFlag(string flag, Deck deck);
 }

@@ -1,6 +1,6 @@
 ﻿using Jester.Api;
 
-namespace Jester.Generator.Provider;
+namespace Jester.Generator.Provider.Common;
 
 public class BayProvider : IProvider
 {
@@ -118,10 +118,15 @@ public class BayProvider : IProvider
 
     public class BayEntry : IEntry
     {
-        public StuffBase Payload { get; }
-        public int Cost { get; }
-        public int Offset { get; }
-        public bool Shieldable { get; }
+        public StuffBase Payload { get; set; } = null!;
+        public int Cost { get; set; }
+        public int Offset { get; set; }
+        public bool Shieldable { get; set; }
+
+        public BayEntry()
+        {
+            
+        }
 
         public BayEntry(StuffBase payload, ISet<string> tags, int cost, int offset, bool shieldable)
         {
@@ -136,7 +141,7 @@ public class BayProvider : IProvider
                 tags.Add("flippable");
         }
         
-        public ISet<string> Tags { get; }
+        public ISet<string> Tags { get; } = null!;
         public int GetActionCount() => 1;
 
         public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>

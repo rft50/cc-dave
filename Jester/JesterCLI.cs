@@ -2,6 +2,7 @@
 using Jester.Api;
 using Jester.Generator;
 using Jester.Generator.Provider;
+using Jester.Generator.Provider.Common;
 
 namespace Jester;
 

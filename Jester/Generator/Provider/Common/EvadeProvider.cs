@@ -1,6 +1,6 @@
 ﻿using Jester.Api;
 
-namespace Jester.Generator.Provider;
+namespace Jester.Generator.Provider.Common;
 
 public class EvadeProvider : IProvider
 {
@@ -24,7 +24,11 @@ public class EvadeProvider : IProvider
     
     public class EvadeEntry : IEntry
     {
-        public int Evade { get; }
+        public int Evade { get; set; }
+        
+        public EvadeEntry()
+        {
+        }
 
         public EvadeEntry(int evade)
         {
@@ -32,13 +36,18 @@ public class EvadeProvider : IProvider
         }
 
 
-        public ISet<string> Tags => new HashSet<string>
+        public ISet<string> Tags
+        {
+            get => new HashSet<string>
             {
                 "defensive",
                 "status",
                 "evade",
                 "move"
             };
+            
+        }
+
         public int GetActionCount() => 1;
 
         public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>

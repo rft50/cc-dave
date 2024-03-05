@@ -1,6 +1,6 @@
 ﻿using Jester.Api;
 
-namespace Jester.Generator.Provider;
+namespace Jester.Generator.Provider.Common;
 
 public class AttackProvider : IProvider
 {
@@ -25,9 +25,13 @@ public class AttackProvider : IProvider
 
     public class AttackEntry : IEntry
     {
-        public int Damage { get; }
-        public bool Piercing { get; }
-        public int ExistingShotCount { get; }
+        public int Damage { get; set; }
+        public bool Piercing { get; set; }
+        public int ExistingShotCount { get; set; }
+        
+        public AttackEntry()
+        {
+        }
 
         public AttackEntry(int damage, bool piercing, int existingShotCount)
         {
@@ -36,12 +40,17 @@ public class AttackProvider : IProvider
             ExistingShotCount = existingShotCount;
         }
 
-        public ISet<string> Tags => new HashSet<string>
+        public ISet<string> Tags
+        {
+            get => new HashSet<string>
             {
                 "offensive",
                 "attack",
                 "shot"
             };
+            
+        }
+
         public int GetActionCount() => 1;
 
         public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>

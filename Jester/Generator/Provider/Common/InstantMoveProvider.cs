@@ -1,6 +1,6 @@
 ﻿using Jester.Api;
 
-namespace Jester.Generator.Provider;
+namespace Jester.Generator.Provider.Common;
 
 public class InstantMoveProvider : IProvider
 {
@@ -25,8 +25,12 @@ public class InstantMoveProvider : IProvider
 
     public class InstantMoveEntry : IEntry
     {
-        public int Distance { get; }
-        public bool Random { get; }
+        public int Distance { get; set; }
+        public bool Random { get; set; }
+        
+        public InstantMoveEntry()
+        {
+        }
 
         public InstantMoveEntry(int distance, bool random)
         {
@@ -52,7 +56,9 @@ public class InstantMoveProvider : IProvider
                     "flippable"
                 };
             }
+            
         }
+
         public int GetActionCount() => 1;
 
         public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>

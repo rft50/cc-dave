@@ -13,9 +13,9 @@ public class Util
         return mustContain.All(source.Contains);
     }
 
-    public static T GetRandom<T>(IList<T> source, Random rng)
+    public static T GetRandom<T>(IList<T> source, Rand rng)
     {
-        return source[rng.Next(source.Count)];
+        return source[rng.NextInt() % source.Count];
     }
 
     public static IList<int> GetDeployOptions(ISet<int> occupied, int offset = 0, int skip = 0)
@@ -51,11 +51,11 @@ public class Util
         };
     }
 
-    public static void Shuffle<T>(IList<T> list, Random rng)
+    public static void Shuffle<T>(IList<T> list, Rand rng)
     {
         for (var i = 0; i < list.Count - 1; i++)
         {
-            var j = rng.Next(i, list.Count);
+            var j = rng.NextInt() % (list.Count - i) + i;
             (list[i], list[j]) = (list[j], list[i]);
         }
     }

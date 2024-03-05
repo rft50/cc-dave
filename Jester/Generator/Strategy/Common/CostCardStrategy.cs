@@ -1,7 +1,6 @@
 ﻿using Jester.Api;
-using Jester.Generator.Provider;
 
-namespace Jester.Generator.Strategy;
+namespace Jester.Generator.Strategy.Common;
 
 public class CostCardStrategy : IStrategy
 {
@@ -15,8 +14,8 @@ public class CostCardStrategy : IStrategy
         var whitelist = request.Whitelist;
         request.Whitelist = Cost;
         request.MinCost = -request.BasePoints;
-        request.MaxCost = request.MinCost / 2;
-        var options = ModManifest.JesterApi.GetOptionsFromProvidersFiltered(request, providers);
+        request.MaxCost = request.MinCost / 4;
+        var options = ModManifest.JesterApi.GetOptionsFromProvidersWeighted(request, providers);
         IEntry? cost = null;
         if (options.Count > 0)
         {

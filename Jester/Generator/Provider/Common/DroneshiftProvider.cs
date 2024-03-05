@@ -1,6 +1,6 @@
 ﻿using Jester.Api;
 
-namespace Jester.Generator.Provider;
+namespace Jester.Generator.Provider.Common;
 
 public class DroneshiftProvider : IProvider
 {
@@ -24,20 +24,29 @@ public class DroneshiftProvider : IProvider
     
     public class DroneshiftEntry : IEntry
     {
-        public int Droneshift { get; }
+        public int Droneshift { get; set; }
+        
+        public DroneshiftEntry()
+        {
+        }
 
         public DroneshiftEntry(int droneshift)
         {
             Droneshift = droneshift;
         }
         
-        public ISet<string> Tags => new HashSet<string>
+        public ISet<string> Tags
+        {
+            get => new HashSet<string>
             {
                 "defensive",
                 "status",
                 "droneshift",
                 "move"
             };
+            
+        }
+
         public int GetActionCount() => 1;
 
         public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>

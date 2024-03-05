@@ -1,6 +1,6 @@
 ﻿using Jester.Api;
 
-namespace Jester.Generator.Provider;
+namespace Jester.Generator.Provider.Common;
 
 public class ShieldProvider : IProvider
 {
@@ -28,8 +28,12 @@ public class ShieldProvider : IProvider
 
     class ShieldEntry : IEntry
     {
-        public int Shield { get; }
-        public bool Temp { get; }
+        public int Shield { get; set; }
+        public bool Temp { get; set; }
+        
+        public ShieldEntry()
+        {
+        }
 
         public ShieldEntry(int shield, bool temp)
         {
@@ -37,7 +41,8 @@ public class ShieldProvider : IProvider
             Temp = temp;
         }
         
-        public ISet<string> Tags { 
+        public ISet<string> Tags
+        {
             get
             {
                 if (!Temp)
@@ -51,7 +56,10 @@ public class ShieldProvider : IProvider
                     "defensive",
                     "tempShield"
                 };
-            } }
+            }
+            
+        }
+
         public int GetActionCount() => 1;
 
         public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
@@ -78,15 +86,15 @@ public class ShieldProvider : IProvider
 
         public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
         {
-            if (request.Entries.Any(e => e is ShieldEntry))
+            if (Temp && !request.Entries.Any(e => e is ShieldEntry))
             {
-                cost = 0;
-                return null;
+                var entry = new ShieldEntry(Shield, false);
+                cost = entry.GetCost() - GetCost();
+                return entry;
             }
-            
-            var entry = new ShieldEntry(Shield, false);
-            cost = entry.GetCost() - GetCost();
-            return entry;
+
+            cost = 0;
+            return null;
         }
 
         public void AfterSelection(IJesterRequest request)

@@ -12,9 +12,10 @@ public class JesterRequest : IJesterRequest
     public CardData CardData { get; set; }
     public int ActionLimit { get; set; }
     public bool SingleUse { get; set; }
+    public CardMeta CardMeta { get; set; } = null!;
 
     // calculation
-    public Random Random { get; set; } = null!;
+    public Rand Random { get; set; } = null!;
     public IList<IEntry> Entries { get; set; } = new List<IEntry>();
     public ISet<string> Blacklist { get; set; } = new HashSet<string>();
     public ISet<string> Whitelist { get; set; } = new HashSet<string>();

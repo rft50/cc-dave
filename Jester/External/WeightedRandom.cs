@@ -32,7 +32,7 @@ internal sealed class WeightedRandom<T>
 		WeightSum += item.Weight;
 	}
 
-	public T Next(Random random, bool consume = false)
+	public T Next(Rand random, bool consume = false)
 	{
 		if (ItemStorage.Count == 0)
 			throw new IndexOutOfRangeException("Cannot choose a random element, as the list is empty.");
@@ -47,7 +47,7 @@ internal sealed class WeightedRandom<T>
 			return result;
 		}
 
-		double weightedRandom = random.NextDouble() * WeightSum;
+		double weightedRandom = random.Next() * WeightSum;
 		for (int i = 0; i < ItemStorage.Count; i++)
 		{
 			var item = ItemStorage[i];
@@ -102,7 +102,7 @@ internal sealed class WeightedRandom<T>
 
 internal static class WeightedRandomClassExt
 {
-	public static T? NextOrNull<T>(this WeightedRandom<T> weightedRandom, Random random, bool consume = false)
+	public static T? NextOrNull<T>(this WeightedRandom<T> weightedRandom, Rand random, bool consume = false)
 		where T : class
 	{
 		if (weightedRandom.Items.Count == 0)

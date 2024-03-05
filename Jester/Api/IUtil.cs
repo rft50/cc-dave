@@ -11,7 +11,7 @@ public partial interface IJesterApi
 
         public bool ContainsAll<T>(IEnumerable<T> source, IEnumerable<T> mustContain);
 
-        public T GetRandom<T>(IList<T> source, Random rng);
+        public T GetRandom<T>(IList<T> source, Rand rng);
 
         // Generates a list of legal positions to deploy midrow objects
         // They are legal in the sense that they would not collide with another deployment on the card
@@ -21,6 +21,6 @@ public partial interface IJesterApi
         public IList<int> GetDeployOptions(ISet<int> occupied, int offset = 0, int skip = 0);
 
         // Fisher-Yates Shuffle
-        public void Shuffle<T>(IList<T> list, Random rng);
+        public void Shuffle<T>(IList<T> list, Rand rng);
     }
 }

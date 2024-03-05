@@ -1,6 +1,6 @@
 ﻿using Jester.Api;
 
-namespace Jester.Generator.Provider;
+namespace Jester.Generator.Provider.Common;
 
 public class AddCardCostProvider : IProvider
 {
@@ -26,9 +26,13 @@ public class AddCardCostProvider : IProvider
 
     public class AddCardCostEntry : IEntry
     {
-        public Card Card;
+        public Card Card = null!;
         public int Amount;
         public int Cost;
+
+        public AddCardCostEntry()
+        {
+        }
 
         public AddCardCostEntry(Card card, int amount, int cost)
         {
@@ -37,11 +41,15 @@ public class AddCardCostProvider : IProvider
             Cost = cost;
         }
 
-        public ISet<string> Tags => new HashSet<string>
+        public ISet<string> Tags
         {
-            "cost",
-            "addCard"
-        };
+            get => new HashSet<string>
+            {
+                "cost",
+                "addCard"
+            };
+            
+        }
 
         public int GetActionCount() => 1;
 

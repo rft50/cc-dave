@@ -14,10 +14,10 @@ public class CombatPatch
     
     [HarmonyPostfix]
     [HarmonyPatch("TryPlayCard")]
-    public static void TryPlayCardPostfix(Card card, bool __result)
+    public static void TryPlayCardPostfix(Card card, State s, Combat __instance, bool __result)
     {
         if (__result)
-            CardPlayTracker.RegisterCardPlay(card);
+            CardPlayTracker.RegisterCardPlay(card, s, __instance);
         
         DoCardCheck = true;
         DoCardDisposal = true;
