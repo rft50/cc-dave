@@ -12,9 +12,9 @@ public class MadCackleAction : CardAction
     {
         var cards = new List<Type>
         {
-            typeof(Joker0Offensive), typeof(Joker1Offensive), typeof(Joker2Offensive), typeof(Joker3Offensive), typeof(Joker4Offensive),
-            typeof(Joker0Defensive), typeof(Joker1Defensive), typeof(Joker2Defensive), typeof(Joker3Defensive), typeof(Joker4Defensive),
-            typeof(Joker0Utility), typeof(Joker1Utility), typeof(Joker2Utility), typeof(Joker3Utility), typeof(Joker4Utility)
+            typeof(CommonOffensiveJoker), typeof(CommonOffensiveJoker), typeof(CommonOffensiveJoker), typeof(UncommonOffensiveJoker), typeof(UncommonOffensiveJoker), typeof(RareOffensiveJoker),
+            typeof(CommonDefensiveJoker), typeof(CommonDefensiveJoker), typeof(CommonDefensiveJoker), typeof(UncommonDefensiveJoker), typeof(UncommonDefensiveJoker), typeof(RareDefensiveJoker),
+            typeof(CommonUtilityJoker), typeof(CommonUtilityJoker), typeof(CommonUtilityJoker), typeof(UncommonUtilityJoker), typeof(UncommonUtilityJoker), typeof(RareUtilityJoker)
         };
         if (OfferCount > cards.Count)
             OfferCount = cards.Count;

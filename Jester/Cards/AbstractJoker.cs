@@ -10,7 +10,7 @@ public abstract class AbstractJoker : Card
     private IJesterResult? _cacheB;
     public int? Seed;
     public int Points;
-    public int Energy;
+    public int? Energy;
     public string Category = null!;
     public bool SingleUse = false;
 
@@ -18,24 +18,42 @@ public abstract class AbstractJoker : Card
     {
         if (Seed == null)
         {
+            var metadata = GetMeta();
+            var rarity = metadata.rarity;
             Seed = s.rngActions.NextInt();
             var rng  = new Rand((uint)Seed);
+            Energy ??= rng.NextInt() % (rarity == Rarity.common ? 4 : 5);
 
-            var minPts = 20;
-            var ptsDelta = 8;
+            int ptsBase;
+            int ptsStep;
+
+            switch (rarity)
+            {
+                case Rarity.common:
+                    ptsBase = 5;
+                    ptsStep = 15;
+                    break;
+                case Rarity.uncommon:
+                    ptsBase = 10;
+                    ptsStep = 20;
+                    break;
+                case Rarity.rare:
+                    ptsBase = 10;
+                    ptsStep = 25;
+                    break;
+                default:
+                    ptsBase = 10;
+                    ptsStep = 10;
+                    break;
+            }
 
             if (Energy == 0)
-            {
-                minPts /= 2;
-                ptsDelta /= 2;
-            }
+                Points = ptsBase + 5;
             else
-            {
-                minPts *= Energy;
-                ptsDelta *= Energy;
-            }
+                Points = ptsBase + ptsStep * Energy.Value;
 
-            Points = minPts + rng.NextInt() % ptsDelta + (SingleUse ? 30 : 0);
+            if (SingleUse)
+                Points += 25;
         }
 
         var request = new JesterRequest
@@ -46,7 +64,7 @@ public abstract class AbstractJoker : Card
             BasePoints = Points,
             CardData = new CardData
             {
-                cost = Energy,
+                cost = Energy!.Value,
                 singleUse = SingleUse
             },
             CardMeta = GetMeta()
@@ -68,7 +86,7 @@ public abstract class AbstractJoker : Card
     {
         return GetCache()?.CardData ?? new CardData
         {
-            cost = Energy
+            cost = Energy ?? 0
         };
     }
 

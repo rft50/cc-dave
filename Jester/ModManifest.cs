@@ -195,54 +195,30 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
             return;
             
         // common
-        var j0o = new ExternalCard("rft.Jester.Joker0Offensive", typeof(Joker0Offensive), card_art_sprite, JesterDeck);
-        j0o.AddLocalisation("Joker 0 Offensive");
-        registry.RegisterCard(j0o);
+        var jco = new ExternalCard("rft.Jester.CommonOffensiveJoker", typeof(CommonOffensiveJoker), card_art_sprite, JesterDeck);
+        jco.AddLocalisation("Common Offensive Joker");
+        registry.RegisterCard(jco);
             
-        var j0d = new ExternalCard("rft.Jester.Joker0Defensive", typeof(Joker0Defensive), card_art_sprite, JesterDeck);
-        j0d.AddLocalisation("Joker 0 Defensive");
-        registry.RegisterCard(j0d);
+        var jcd = new ExternalCard("rft.Jester.CommonDefensiveJoker", typeof(CommonDefensiveJoker), card_art_sprite, JesterDeck);
+        jcd.AddLocalisation("Common Defensive Joker");
+        registry.RegisterCard(jcd);
             
-        var j0u = new ExternalCard("rft.Jester.Joker0Utility", typeof(Joker0Utility), card_art_sprite, JesterDeck);
-        j0u.AddLocalisation("Joker 0 Utility");
-        registry.RegisterCard(j0u);
-            
-        var j1o = new ExternalCard("rft.Jester.Joker1Offensive", typeof(Joker1Offensive), card_art_sprite, JesterDeck);
-        j1o.AddLocalisation("Joker 1 Offensive");
-        registry.RegisterCard(j1o);
-            
-        var j1d = new ExternalCard("rft.Jester.Joker1Defensive", typeof(Joker1Defensive), card_art_sprite, JesterDeck);
-        j1d.AddLocalisation("Joker 1 Defensive");
-        registry.RegisterCard(j1d);
-            
-        var j1u = new ExternalCard("rft.Jester.Joker1Utility", typeof(Joker1Utility), card_art_sprite, JesterDeck);
-        j1u.AddLocalisation("Joker 1 Utility");
-        registry.RegisterCard(j1u);
-            
-        var j2o = new ExternalCard("rft.Jester.Joker2Offensive", typeof(Joker2Offensive), card_art_sprite, JesterDeck);
-        j2o.AddLocalisation("Joker 2 Offensive");
-        registry.RegisterCard(j2o);
-            
-        var j2d = new ExternalCard("rft.Jester.Joker2Defensive", typeof(Joker2Defensive), card_art_sprite, JesterDeck);
-        j2d.AddLocalisation("Joker 2 Defensive");
-        registry.RegisterCard(j2d);
-            
-        var j2u = new ExternalCard("rft.Jester.Joker2Utility", typeof(Joker2Utility), card_art_sprite, JesterDeck);
-        j2u.AddLocalisation("Joker 2 Utility");
-        registry.RegisterCard(j2u);
+        var jcu = new ExternalCard("rft.Jester.CommonUtilityJoker", typeof(CommonUtilityJoker), card_art_sprite, JesterDeck);
+        jcu.AddLocalisation("Common Utility Joker");
+        registry.RegisterCard(jcu);
             
         // uncommon
-        var j3o = new ExternalCard("rft.Jester.Joker3Offensive", typeof(Joker3Offensive), card_art_sprite, JesterDeck);
-        j3o.AddLocalisation("Joker 3 Offensive");
-        registry.RegisterCard(j3o);
+        var juo = new ExternalCard("rft.Jester.UncommonOffensiveJoker", typeof(UncommonOffensiveJoker), card_art_sprite, JesterDeck);
+        juo.AddLocalisation("Uncommon Offensive Joker");
+        registry.RegisterCard(juo);
             
-        var j3d = new ExternalCard("rft.Jester.Joker3Defensive", typeof(Joker3Defensive), card_art_sprite, JesterDeck);
-        j3d.AddLocalisation("Joker 3 Defensive");
-        registry.RegisterCard(j3d);
+        var jud = new ExternalCard("rft.Jester.UncommonDefensiveJoker", typeof(UncommonDefensiveJoker), card_art_sprite, JesterDeck);
+        jud.AddLocalisation("Uncommon Defensive Joker");
+        registry.RegisterCard(jud);
             
-        var j3u = new ExternalCard("rft.Jester.Joker3Utility", typeof(Joker3Utility), card_art_sprite, JesterDeck);
-        j3u.AddLocalisation("Joker 3 Utility");
-        registry.RegisterCard(j3u);
+        var juu = new ExternalCard("rft.Jester.UncommonUtilityJoker", typeof(UncommonUtilityJoker), card_art_sprite, JesterDeck);
+        juu.AddLocalisation("Uncommon Utility Joker");
+        registry.RegisterCard(juu);
 
         var encore = new ExternalCard("rft.Jester.Encore", typeof(Encore), card_art_sprite, JesterDeck);
         encore.AddLocalisation("Encore");
@@ -261,17 +237,17 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
         registry.RegisterCard(madCackle);
             
         // rare
-        var j4o = new ExternalCard("rft.Jester.Joker4Offensive", typeof(Joker4Offensive), card_art_sprite, JesterDeck);
-        j4o.AddLocalisation("Joker 4 Offensive");
-        registry.RegisterCard(j4o);
+        var jro = new ExternalCard("rft.Jester.RareOffensiveJoker", typeof(RareOffensiveJoker), card_art_sprite, JesterDeck);
+        jro.AddLocalisation("Rare Joker Offensive");
+        registry.RegisterCard(jro);
             
-        var j4d = new ExternalCard("rft.Jester.Joker4Defensive", typeof(Joker4Defensive), card_art_sprite, JesterDeck);
-        j4d.AddLocalisation("Joker 4 Defensive");
-        registry.RegisterCard(j4d);
+        var jrd = new ExternalCard("rft.Jester.RareDefensiveJoker", typeof(RareDefensiveJoker), card_art_sprite, JesterDeck);
+        jrd.AddLocalisation("Rare Joker Defensive");
+        registry.RegisterCard(jrd);
             
-        var j4u = new ExternalCard("rft.Jester.Joker4Utility", typeof(Joker4Utility), card_art_sprite, JesterDeck);
-        j4u.AddLocalisation("Joker 4 Utility");
-        registry.RegisterCard(j4u);
+        var jru = new ExternalCard("rft.Jester.RareUtilityJoker", typeof(RareUtilityJoker), card_art_sprite, JesterDeck);
+        jru.AddLocalisation("Rare Joker Utility");
+        registry.RegisterCard(jru);
             
         var openingAct = new ExternalCard("rft.Jester.OpeningAct", typeof(OpeningAct), card_art_sprite, JesterDeck);
         openingAct.AddLocalisation("Opening Act");

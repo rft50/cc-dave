@@ -16,10 +16,10 @@ public class StatePatch
 
         if (__instance.characters.All(c => c.deckType != jesterDeck)) return;
         
-        __instance.SendCardToDeck(new Joker1Offensive());
+        __instance.SendCardToDeck(new CommonOffensiveJoker());
         if (Random.Shared.NextDouble() <= 0.5)
-            __instance.SendCardToDeck(new Joker1Defensive());
+            __instance.SendCardToDeck(new CommonDefensiveJoker());
         else
-            __instance.SendCardToDeck(new Joker1Utility());
+            __instance.SendCardToDeck(new CommonUtilityJoker());
     }
 }
