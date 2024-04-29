@@ -1,32 +1,36 @@
-﻿using Jester.Api;
+﻿using Jester.External;
 
 namespace Jester.Generator.Strategy.Common;
 
+using IJesterRequest = Jester.Api.IJesterApi.IJesterRequest;
+using IEntry = Jester.Api.IJesterApi.IEntry;
+using IProvider = Jester.Api.IJesterApi.IProvider;
+
 public static class StrategyUtil
 {
-    public static IList<IEntry> GetOptionsFromProviders(IJesterRequest request, IEnumerable<IProvider> providers)
+    public static IEnumerable<(double, IEntry)> GetOptionsFromProviders(IJesterRequest request, IEnumerable<IProvider> providers)
     {
-        return providers.SelectMany(p => p.GetEntries(request)).ToList();
+        return providers
+            .SelectMany(p => p.GetEntries(request))
+            .Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(request.MinCost, e.Item2.GetCost(), request.MaxCost))
+            .Where(e => !e.Item2.Tags.Overlaps(request.Blacklist))
+            .Where(e => ModManifest.JesterApi.GetJesterUtil().ContainsAll(e.Item2.Tags, request.Whitelist));
     }
 
-    public static IList<IEntry> GetOptionsFromProvidersFiltered(IJesterRequest request, IEnumerable<IProvider> providers)
+    public static IEntry? GetRandomEntry(IJesterRequest request, IEnumerable<IProvider> providers, int actionCountLimit)
     {
-        return providers.SelectMany(p => p.GetEntries(request))
-            .Where(e => !e.Tags.Overlaps(request.Blacklist))
-            .Where(e => ModManifest.JesterApi.GetJesterUtil().ContainsAll(e.Tags, request.Whitelist)).ToList();
+        var entries = GetOptionsFromProviders(request, providers);
+
+        var random = new WeightedRandom<IEntry>(
+            entries
+                .Where(e => e.Item2.GetActions(DB.fakeState, DB.fakeCombat).Count() <= actionCountLimit)
+                .Select(e => new WeightedItem<IEntry>(e.Item1, e.Item2))
+        );
+
+        return random.WeightSum == 0 ? null : random.Next(request.Random);
     }
 
-    public static IList<IEntry> GetOptionsFromProvidersWeighted(IJesterRequest request, IEnumerable<IProvider> providers)
-    {
-        var entries = GetOptionsFromProvidersFiltered(request, providers);
-        var weighted = entries.Where(e => e.Tags.Contains("weighted")).ToList();
-
-        if (weighted.Count != 0 && request.Random.Next() < 0.2)
-            return weighted;
-        return entries;
-    }
-
-    public static IList<IEntry> FilterOptionBucketBiased(IJesterRequest request, IList<IEntry> entries, int buckets, bool expensive = false)
+    public static IEnumerable<IEntry> FilterOptionBucketBiased(IJesterRequest request, IList<IEntry> entries, int buckets, bool expensive = false)
     {
         if (buckets == 1)
             return entries;
@@ -60,75 +64,43 @@ public static class StrategyUtil
         return entries;
     }
 
-    public static int PerformUpgradeA(IJesterRequest request, IList<IEntry> entries, ref int pts, int upgradeLimit)
+    public static int PerformUpgrade(IJesterRequest request, ref int pts, Upgrade upDir, int upgradeLimit)
     {
         var points = pts;
+        var entries = request.Entries;
         var upgradeCount = 0;
-        var rng = new Rand((uint)(request.Seed + pts));
-        var upgradeOptions = entries.Select(e =>
-            {
-                var result = e.GetUpgradeA(request, out var cost);
-                return Tuple.Create(e, result, cost);
-            }).Where(e => e.Item2 != null && e.Item3 <= points)
-            .Select(e => e as Tuple<IEntry, IEntry, int>).ToList();
+        var rng = new Rand((uint)(request.Random.seed + points + (int)upDir));
+        var actionHardcap = JesterGenerator.ActionCap;
+        var currentActions = entries.Select(e => e.GetActions(DB.fakeState, DB.fakeCombat).Count()).Sum();
 
-        while (upgradeOptions.Any() && upgradeCount < upgradeLimit)
+        while (upgradeCount < upgradeLimit)
         {
-            var upgrade = ModManifest.JesterApi.GetJesterUtil().GetRandom(upgradeOptions, rng);
-            upgradeOptions.Remove(upgrade);
-            if (upgrade.Item3 > points)
-                continue;
-            upgradeCount++;
-
+            var points1 = points;
+            var options = entries
+                .SelectMany(e => e.GetUpgradeOptions(request, upDir)
+                    .Select(u => Tuple.Create(u.Item1, e, u.Item2)
+                    ).Where(d =>
+                        d.Item3.GetActions(DB.fakeState, DB.fakeCombat).Count() -
+                        d.Item2.GetActions(DB.fakeState, DB.fakeCombat).Count() + currentActions <= actionHardcap))
+                .Where(d => d.Item3.GetCost() - d.Item2.GetCost() <= points1);
+            
+            if (!options.Any())
+                break;
+            
+            var upgrade = new WeightedRandom<(IEntry, IEntry)>(options
+                .Select(d => new WeightedItem<(IEntry, IEntry)>(d.Item1, (d.Item2, d.Item3))))
+                .Next(rng);
+            
             var idx = entries.IndexOf(upgrade.Item1);
             entries.RemoveAt(idx);
             entries.Insert(idx, upgrade.Item2);
             
-            points -= upgrade.Item3;
-            var newResult = upgrade.Item2.GetUpgradeA(request, out var cost);
-            if (newResult != null && cost <= points)
-                upgradeOptions.Add(Tuple.Create(upgrade.Item2, newResult, cost));
-        }
-
-        pts = points;
-        return upgradeCount;
-    }
-
-    public static int PerformUpgradeB(IJesterRequest request, IList<IEntry> entries, ref int pts, int upgradeLimit)
-    {
-        var points = pts;
-        var upgradeCount = 0;
-        var rng = new Rand((uint)(request.Seed + pts));
-        var upgradeOptions = entries.Select(e =>
-            {
-                var result = e.GetUpgradeB(request, out var cost);
-                return Tuple.Create(e, result, cost);
-            }).Where(e => e.Item2 != null && e.Item3 <= points)
-            .Select(e => e as Tuple<IEntry, IEntry, int>).ToList();
-
-        while (upgradeOptions.Any() && upgradeCount < upgradeLimit)
-        {
-            var upgrade = ModManifest.JesterApi.GetJesterUtil().GetRandom(upgradeOptions, rng);
-            upgradeOptions.Remove(upgrade);
-            if (upgrade.Item3 > points)
-                continue;
+            points -= upgrade.Item2.GetCost() - upgrade.Item1.GetCost();
             upgradeCount++;
-
-            var idx = entries.IndexOf(upgrade.Item1);
-            entries.RemoveAt(idx);
-            entries.Insert(idx, upgrade.Item2);
-            
-            points -= upgrade.Item3;
-            var newResult = upgrade.Item2.GetUpgradeA(request, out var cost);
-            if (newResult != null && cost <= points)
-                upgradeOptions.Add(Tuple.Create(upgrade.Item2, newResult, cost));
         }
 
         pts = points;
-        
-        var aUps = PerformUpgradeA(request, entries, ref pts, upgradeLimit - upgradeCount);
-        upgradeCount += aUps;
-        
+
         return upgradeCount;
     }
 }

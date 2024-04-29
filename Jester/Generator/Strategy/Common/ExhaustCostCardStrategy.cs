@@ -2,9 +2,15 @@
 
 namespace Jester.Generator.Strategy.Common;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IJesterResult = IJesterApi.IJesterResult;
+using IProvider = IJesterApi.IProvider;
+using IStrategy = IJesterApi.IStrategy;
+using StrategyCategory = IJesterApi.StrategyCategory;
+
 public class ExhaustCostCardStrategy : IStrategy
 {
-    public IJesterResult GenerateCard(IJesterRequest request, IList<IProvider> providers)
+    public IJesterResult GenerateCard(IJesterRequest request, IEnumerable<IProvider> providers)
     {
         var data = request.CardData;
         data.exhaust = true;

@@ -1,56 +1,37 @@
-﻿using Jester.Api;
+﻿using System.ComponentModel.DataAnnotations;
+using Jester.Api;
 
 namespace Jester.Generator.Provider.Common;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+
 public class EvadeProvider : IProvider
 {
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        var entries = new List<IEntry>();
-
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
-
-        for (var i = 1; i <= 3; i++)
-        {
-            if (ModManifest.JesterApi.GetJesterUtil().InRange(minCost, i * 10, maxCost))
+        return Enumerable.Range(1, 3)
+            .Select(i => (0.3, new EvadeEntry
             {
-                entries.Add(new EvadeEntry(i));
-            }
-        }
-
-        return entries;
+                Evade = i
+            } as IEntry));
     }
     
-    public class EvadeEntry : IEntry
+    private class EvadeEntry : IEntry
     {
-        public int Evade { get; set; }
-        
-        public EvadeEntry()
-        {
-        }
+        [Required] public int Evade { get; init; }
 
-        public EvadeEntry(int evade)
-        {
-            Evade = evade;
-        }
-
-
-        public ISet<string> Tags
-        {
-            get => new HashSet<string>
+        public IReadOnlySet<string> Tags =>
+            new HashSet<string>
             {
                 "defensive",
                 "status",
                 "evade",
                 "move"
             };
-            
-        }
 
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AStatus
             {
@@ -65,16 +46,15 @@ public class EvadeProvider : IProvider
             return Evade * 10;
         }
 
-        public IEntry GetUpgradeA(IJesterRequest request, out int cost)
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            cost = 10;
-            return new EvadeEntry(Evade + 1);
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            cost = 0;
-            return null;
+            return new List<(double, IEntry)>
+            {
+                (1, new EvadeEntry
+                {
+                    Evade = Evade + 1
+                })
+            };
         }
 
         public void AfterSelection(IJesterRequest request)

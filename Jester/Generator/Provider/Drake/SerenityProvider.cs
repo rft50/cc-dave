@@ -2,36 +2,33 @@
 
 namespace Jester.Generator.Provider.Drake;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+
 public class SerenityProvider : IProvider
 {
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        if (!ModManifest.JesterApi.HasCharacterFlag("heat")) return new List<IEntry>();
-        
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
+        if (!ModManifest.JesterApi.HasCharacterFlag("heat")) return new List<(double, IEntry)>();
 
-        return new List<IEntry>
-            {
-                new SerenityEntry()
-            }.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
-            .ToList();
+        return new List<(double, IEntry)>
+        {
+            (2, new SerenityEntry())
+        };
     }
     
-    public class SerenityEntry : IEntry
+    private class SerenityEntry : IEntry
     {
-        public ISet<string> Tags { get; } = new HashSet<string>
+        public IReadOnlySet<string> Tags { get; } = new HashSet<string>
         {
             "status",
             "heat",
             "serenity",
-            "cost",
-            "weighted"
+            "cost"
         };
 
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AStatus
             {
@@ -43,16 +40,9 @@ public class SerenityProvider : IProvider
 
         public int GetCost() => 15;
 
-        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            cost = 0;
-            return null;
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            cost = 0;
-            return null;
+            return new List<(double, IEntry)>();
         }
 
         public void AfterSelection(IJesterRequest request)

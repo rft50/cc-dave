@@ -1,44 +1,45 @@
-﻿using Jester.Api;
+﻿using System.ComponentModel.DataAnnotations;
+using Jester.Api;
 
 namespace Jester.Generator.Provider.Common;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+
 public class InstantMoveProvider : IProvider
 {
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        if (request.Entries.Any(e => e.Tags.Contains("hermes"))) return new List<IEntry>();
-        
-        var entries = new List<IEntry>();
-        
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
+        if (request.Entries.Any(e => e.Tags.Contains("hermes"))) return new List<(double, IEntry)>();
 
-        for (var i = 1; i <= 5; i++)
-        {
-            entries.Add(new InstantMoveEntry(i, false));
-            entries.Add(new InstantMoveEntry(-i, false));
-            entries.Add(new InstantMoveEntry(i, true));
-        }
-
-        return entries.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost)).ToList();
+        return Enumerable.Range(1, 5)
+            .SelectMany(i => new List<(double, IEntry)>
+            {
+                (0.15, new InstantMoveEntry
+                {
+                    Distance = i,
+                    Random = false
+                }),
+                (0.15, new InstantMoveEntry
+                {
+                    Distance = -i,
+                    Random = false
+                }),
+                (0.15, new InstantMoveEntry
+                {
+                    Distance = i,
+                    Random = true
+                })
+            });
     }
 
-    public class InstantMoveEntry : IEntry
+    private class InstantMoveEntry : IEntry
     {
-        public int Distance { get; set; }
-        public bool Random { get; set; }
-        
-        public InstantMoveEntry()
-        {
-        }
+        [Required] public int Distance { get; init; }
+        [Required] public bool Random { get; init; }
 
-        public InstantMoveEntry(int distance, bool random)
-        {
-            Distance = distance;
-            Random = random;
-        }
-
-        public ISet<string> Tags
+        public IReadOnlySet<string> Tags
         {
             get
             {
@@ -56,12 +57,9 @@ public class InstantMoveProvider : IProvider
                     "flippable"
                 };
             }
-            
         }
 
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AMove
             {
@@ -82,30 +80,24 @@ public class InstantMoveProvider : IProvider
             // left move: lerps from 4 to 6 per dist
             return Distance * (7 + Distance) / 2;
         }
-
-        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
+        
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            if (Distance == 0)
+            var options = new List<(double, IEntry)>
             {
-                cost = 0;
-                return null;
-            }
-            var entry = new InstantMoveEntry(Math.Sign(Distance) * (Math.Abs(Distance) + 1), Random);
-            cost = entry.GetCost() - GetCost();
-            return entry;
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            if (!Random)
-            {
-                cost = 0;
-                return null;
-            }
-            
-            var entry = new InstantMoveEntry(Distance, false);
-            cost = entry.GetCost() - GetCost();
-            return entry;
+                (1, new InstantMoveEntry
+                {
+                    Distance = Math.Sign(Distance) * (Math.Abs(Distance) + 1),
+                    Random = Random
+                })
+            };
+            if (Random)
+                options.Add((1, new InstantMoveEntry
+                {
+                    Distance = Distance,
+                    Random = false
+                }));
+            return options;
         }
 
         public void AfterSelection(IJesterRequest request)

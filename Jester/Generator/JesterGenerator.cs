@@ -1,13 +1,16 @@
 ﻿using HarmonyLib;
-using Jester.Api;
 using Jester.External;
-using Jester.Generator.Provider;
 using Jester.Generator.Provider.Books;
 using Jester.Generator.Provider.Common;
 using Jester.Generator.Provider.Drake;
-using Jester.Generator.Strategy;
 using Jester.Generator.Strategy.Books;
 using Jester.Generator.Strategy.Common;
+using IStrategy = Jester.Api.IJesterApi.IStrategy;
+using IJesterRequest = Jester.Api.IJesterApi.IJesterRequest;
+using IJesterResult = Jester.Api.IJesterApi.IJesterResult;
+using IEntry = Jester.Api.IJesterApi.IEntry;
+using IProvider = Jester.Api.IJesterApi.IProvider;
+using StrategyCategory = Jester.Api.IJesterApi.StrategyCategory;
 
 namespace Jester.Generator;
 
@@ -23,27 +26,30 @@ public class JesterGenerator
         new EvadeProvider(),
         new ShieldProvider(),
         new InstantMoveProvider(),
-        new BayProvider(),
+        new DroneProvider(),
+        new MissileProvider(),
+        new MineProvider(),
         new MidshiftProvider(),
         new DroneshiftProvider(),
         new StatusProvider(),
         new HealProvider(),
         new DrawProvider(),
-        
+
         // Common Costs
         new StatusCostProvider(),
         new AddCardCostProvider(),
         new EqualsZeroCostProvider(),
         new DiscardCardCostProvider(),
         new HurtCostProvider(),
-        
+
         // Drake
         new LessHeatProvider(),
         new HeatCostProvider(),
         new SerenityProvider(),
-        
+
         // Books
-        new ShardProvider()
+        new ShardProvider(),
+        new MaxShardProvider()
     };
 
     public static readonly List<IStrategy> Strategies = new()
@@ -60,11 +66,11 @@ public class JesterGenerator
     };
 
     public static int ActionCap = 5;
-    
+
     public static IJesterResult GenerateCard(IJesterRequest request)
     {
         IJesterResult data;
-        request.Random = new Rand((uint) request.Seed);
+        request.Random = new Rand((uint)request.Seed);
         request.ActionLimit = 3 + request.Random.NextInt() % (ActionCap - 3);
 
         {
@@ -89,7 +95,7 @@ public class JesterGenerator
                     .Join(delimiter: "\n")
             };
             text.text = $"Seed: {request.Seed}\n" + text.text;
-            
+
             data.Entries.Insert(0, new ArbitraryEntry
             {
                 Actions = new List<CardAction>
@@ -118,8 +124,8 @@ public class JesterGenerator
             tempData.flippable = true;
             request.CardData = tempData;
         }
-        
-        JesterCLI.Main();
+
+        // JesterCLI.Main();
 
         return data;
     }
@@ -129,7 +135,7 @@ public class JesterGenerator
         // things return true if they have a chance to be re-applied
         var options = new List<Func<IJesterRequest, IJesterResult, bool>>
         {
-            UpgradeOptions.UpgradeA,
+            ApplyUpgrade(Upgrade.A),
             UpgradeOptions.Flippable,
             UpgradeOptions.RemoveExhaust,
             UpgradeOptions.RemoveCost,
@@ -139,27 +145,40 @@ public class JesterGenerator
 
         return ApplyUpgradeOptions(origReq, origRes, options);
     }
-    
+
     public static IJesterResult UpgradeResultB(IJesterRequest origReq, IJesterResult origRes)
     {
-        var boolBox = new[] { origReq.Seed % 12 == 5 }; // has a cost been taken yet
-        
+        var tryBox = new[] { 6 + origReq.Seed % 4 }; // how many tries are left to apply a cost
+
         // things return true if they have a chance to be re-applied
         var options = new List<Func<IJesterRequest, IJesterResult, bool>>
         {
-            UpgradeOptions.UpgradeB,
+            ApplyUpgrade(Upgrade.B),
             UpgradeOptions.Flippable,
-            UpgradeOptions.AddCost(boolBox),
-            UpgradeOptions.IncreaseEnergy(boolBox)
+            UpgradeOptions.AddCost(tryBox),
+            UpgradeOptions.IncreaseEnergy(tryBox)
         };
 
         return ApplyUpgradeOptions(origReq, origRes, options);
     }
 
-    private static IJesterResult ApplyUpgradeOptions(IJesterRequest origReq, IJesterResult origRes, List<Func<IJesterRequest, IJesterResult, bool>> options)
+    private static Func<IJesterRequest, IJesterResult, bool> ApplyUpgrade(Upgrade upDir)
+    {
+        return (request, result) =>
+        {
+            var pts = result.SparePoints;
+            var origPts = pts;
+            var ups = ModManifest.JesterApi.PerformUpgrade(request, ref pts, upDir, 1);
+            result.SparePoints -= origPts - pts;
+            return ups > 0;
+        };
+    }
+
+    private static IJesterResult ApplyUpgradeOptions(IJesterRequest origReq, IJesterResult origRes,
+        List<Func<IJesterRequest, IJesterResult, bool>> options)
     {
         const int upgradeBonus = 20;
-        
+
         var req = new JesterRequest
         {
             Seed = origReq.Seed,
@@ -171,7 +190,8 @@ public class JesterGenerator
             SingleUse = origReq.SingleUse,
             Random = origReq.Random.Offshoot(),
             Whitelist = origReq.Whitelist,
-            Blacklist = origReq.Blacklist
+            Blacklist = origReq.Blacklist,
+            CardMeta = origReq.CardMeta
         };
 
         var res = new JesterResult
@@ -180,10 +200,10 @@ public class JesterGenerator
             Entries = origRes.Entries.ToList(),
             SparePoints = origRes.SparePoints
         };
-        
+
         res.SparePoints += upgradeBonus;
         req.Entries = res.Entries;
-        
+
         while (options.Count > 0)
         {
             var option = ModManifest.JesterApi.GetJesterUtil().GetRandom(options, req.Random);
@@ -197,12 +217,14 @@ public class JesterGenerator
         return res;
     }
 
-    public static IJesterResult CallInnerStrategy(IJesterRequest request, IList<IProvider> providers)
+    public static IJesterResult CallInnerStrategy(IJesterRequest request, IEnumerable<IProvider> providers)
     {
-        return GetStrategiesWeighted(request, StrategyCategory.Inner).Next(request.Random).GenerateCard(request, providers);
+        return GetStrategiesWeighted(request, StrategyCategory.Inner).Next(request.Random)
+            .GenerateCard(request, providers);
     }
 
-    private static WeightedRandom<IStrategy> GetStrategiesWeighted(IJesterRequest request, StrategyCategory? category = null)
+    private static WeightedRandom<IStrategy> GetStrategiesWeighted(IJesterRequest request,
+        StrategyCategory? category = null)
     {
         return new WeightedRandom<IStrategy>(Strategies
             .Where(s => category == null || s.GetStrategyCategory() == category)
@@ -222,163 +244,155 @@ public class JesterGenerator
     {
         public List<CardAction> Actions = null!;
 
-        public ISet<string> Tags { get; } = new HashSet<string>();
-        public IProvider Provider { get; } = new AttackProvider();
-        public int GetActionCount() => Actions.Count;
+        public IReadOnlySet<string> Tags { get; } = new HashSet<string>();
 
-        public IList<CardAction> GetActions(State s, Combat c) => Actions;
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => Actions;
 
         public int GetCost() => 0;
 
-        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            cost = 0;
-            return null;
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            cost = 0;
-            return null;
+            return new List<(double, IEntry)>();
         }
 
         public void AfterSelection(IJesterRequest request)
         {
         }
     }
-}
 
-internal static class UpgradeOptions
-{
-
-    public static bool UpgradeA(IJesterRequest request, IJesterResult result)
+    private static class UpgradeOptions
     {
-        var pts = result.SparePoints;
-        var origPts = pts;
-        var ups = ModManifest.JesterApi.PerformUpgradeA(request, result.Entries, ref pts, 1);
-        result.SparePoints -= origPts - pts;
-        return ups > 0;
-    }
 
-    public static bool UpgradeB(IJesterRequest request, IJesterResult result)
-    {
-        var pts = result.SparePoints;
-        var origPts = pts;
-        var ups = ModManifest.JesterApi.PerformUpgradeB(request, result.Entries, ref pts, 1);
-        result.SparePoints -= origPts - pts;
-        return ups > 0;
-    }
-
-    public static bool Flippable(IJesterRequest request, IJesterResult result)
-    {
-        if (result.SparePoints < 10) return false;
-        if (!result.Entries.Any(e => e.Tags.Contains("flippable"))) return false;
-        result.SparePoints -= 10;
-        var data = result.CardData;
-        data.flippable = true;
-        result.CardData = data;
-        request.CardData = data;
-        return false;
-    }
-
-    public static bool RemoveExhaust(IJesterRequest request, IJesterResult result)
-    {
-        if (!result.CardData.exhaust) return false;
-        if (result.SparePoints < 10) return false;
-        if (result.Entries.Any(e => e.Tags.Contains("mustExhaust"))) return false;
-        result.SparePoints -= 10;
-        var data = result.CardData;
-        data.exhaust = false;
-        result.CardData = data;
-        request.CardData = data;
-        return false;
-    }
-
-    public static bool RemoveCost(IJesterRequest request, IJesterResult result)
-    {
-        var cost = result.Entries.FirstOrDefault(e => e.Tags.Contains("cost"));
-        if (cost == null) return false;
-        if (-cost.GetCost() > result.SparePoints) return false;
-        result.SparePoints += cost.GetCost();
-        result.Entries.Remove(cost);
-        return false;
-    }
-
-    public static bool ReduceEnergy(IJesterRequest request, IJesterResult result)
-    {
-        if (result.CardData.cost == 0) return false;
-        var cost = Math.Max(result.CardData.cost * 5, 10);
-        if (result.SparePoints < cost) return false;
-        result.SparePoints -= cost;
-        var data = result.CardData;
-        data.cost -= 1;
-        result.CardData = data;
-        request.CardData = data;
-        return false;
-    }
-
-    public static bool AddAction(IJesterRequest request, IJesterResult result)
-    {
-        var actionCount = result.Entries.Sum(e => e.GetActionCount());
-        if (request.Seed % JesterGenerator.ActionCap > actionCount) return false;
-        request.MinCost = 1;
-        request.MaxCost = result.SparePoints;
-        var options = ModManifest.JesterApi.GetOptionsFromProvidersWeighted(request, JesterGenerator.Providers)
-            .Where(e => actionCount + e.GetActionCount() <= JesterGenerator.ActionCap)
-            .ToList();
-            
-        if (options.Count == 0) return false;
-        var entry = ModManifest.JesterApi.GetJesterUtil().GetRandom(options, request.Random);
-        result.Entries.Add(entry);
-        result.SparePoints -= entry.GetCost();
-        return false;
-    }
-
-    public static Func<IJesterRequest, IJesterResult, bool> AddCost(bool[] boolBox)
-    {
-        return (request, result) =>
+        public static bool Flippable(IJesterRequest request, IJesterResult result)
         {
-            if (boolBox[0]) return false;
-            var actionCount = result.Entries.Sum(e => e.GetActionCount());
-            if (actionCount >= JesterGenerator.ActionCap) return false;
-            var whitelist = request.Whitelist;
-            request.Whitelist = new HashSet<string>
-            {
-                "cost"
-            };
-            request.MinCost = -request.BasePoints;
-            request.MaxCost = request.MinCost / 2;
-            var options = ModManifest.JesterApi.GetOptionsFromProvidersWeighted(request, JesterGenerator.Providers)
-                .Where(e => actionCount + e.GetActionCount() <= JesterGenerator.ActionCap)
-                .ToList();
-            request.Whitelist = whitelist;
-            
-            if (options.Count == 0) return false;
-            var cost = ModManifest.JesterApi.GetJesterUtil().GetRandom(options, request.Random);
-            cost.AfterSelection(request);
-            result.SparePoints -= cost.GetCost();
-            result.Entries.Add(cost);
-
-            boolBox[0] = true;
-            return false;
-        };
-    }
-
-    public static Func<IJesterRequest, IJesterResult, bool> IncreaseEnergy(bool[] boolBox)
-    {
-        return (request, result) =>
-        {
-            if (boolBox[0]) return false;
-            
-            if (result.CardData.cost == 0) return false;
-            result.SparePoints += 15;
+            if (result.SparePoints < 10) return false;
+            if (!result.Entries.Any(e => e.Tags.Contains("flippable"))) return false;
+            result.SparePoints -= 10;
             var data = result.CardData;
-            data.cost += 1;
+            data.flippable = true;
             result.CardData = data;
             request.CardData = data;
-
-            boolBox[0] = true;
             return false;
-        };
+        }
+
+        public static bool RemoveExhaust(IJesterRequest request, IJesterResult result)
+        {
+            if (!result.CardData.exhaust) return false;
+            if (result.SparePoints < 25) return false;
+            if (result.Entries.Any(e => e.Tags.Contains("mustExhaust"))) return false;
+            result.SparePoints -= 25;
+            var data = result.CardData;
+            data.exhaust = false;
+            result.CardData = data;
+            request.CardData = data;
+            return false;
+        }
+
+        public static bool RemoveCost(IJesterRequest request, IJesterResult result)
+        {
+            var cost = result.Entries.FirstOrDefault(e => e.Tags.Contains("cost"));
+            if (cost == null) return false;
+            if (-cost.GetCost() > result.SparePoints) return false;
+            result.SparePoints += cost.GetCost();
+            result.Entries.Remove(cost);
+            return false;
+        }
+
+        public static bool ReduceEnergy(IJesterRequest request, IJesterResult result)
+        {
+            if (result.CardData.cost == 0) return false;
+            var cost = Math.Max(result.CardData.cost * 8, 16);
+            if (result.SparePoints < cost) return false;
+            result.SparePoints -= cost;
+            var data = result.CardData;
+            data.cost -= 1;
+            result.CardData = data;
+            request.CardData = data;
+            return false;
+        }
+
+        public static bool AddAction(IJesterRequest request, IJesterResult result)
+        {
+            var actionCount = result.Entries.Sum(e => e.GetActions(DB.fakeState, DB.fakeCombat).Count());
+            if (request.Seed % request.ActionLimit > actionCount) return false;
+            request.MinCost = 1;
+            request.MaxCost = result.SparePoints;
+            var option = ModManifest.JesterApi.GetRandomEntry(request, Providers, request.ActionLimit - actionCount);
+
+            if (option == null) return false;
+            
+            result.Entries.Add(option);
+            result.SparePoints -= option.GetCost();
+            return false;
+        }
+
+        public static Func<IJesterRequest, IJesterResult, bool> AddCost(int[] tryBox)
+        {
+            return (request, result) =>
+            {
+                if (tryBox[0] <= 0) return false;
+                tryBox[0]--;
+                var stats = UpgradePotentialStatistics(request, result);
+                if (stats.Count(e => e <= 0) >= stats.Count/2) return true;
+                
+                var actionCount = result.Entries.Sum(e => e.GetActions(DB.fakeState, DB.fakeCombat).Count());
+                if (actionCount >= request.ActionLimit) return false;
+                var whitelist = request.Whitelist;
+                request.Whitelist = new HashSet<string>
+                {
+                    "cost"
+                };
+                request.MinCost = -request.BasePoints * 2 / 3;
+                request.MaxCost = -stats.Min();
+                var option = ModManifest.JesterApi.GetRandomEntry(request, Providers, request.ActionLimit - actionCount);
+                request.Whitelist = whitelist;
+
+                if (option == null) return true;
+                
+                option.AfterSelection(request);
+                result.SparePoints -= option.GetCost();
+                result.Entries.Add(option);
+
+                tryBox[0] = 0;
+                return false;
+            };
+        }
+
+        public static Func<IJesterRequest, IJesterResult, bool> IncreaseEnergy(int[] tryBox)
+        {
+            return (request, result) =>
+            {
+                if (result.CardData.cost == 0) return false;
+                if (tryBox[0] <= 0) return false;
+                tryBox[0]--;
+                var stats = UpgradePotentialStatistics(request, result);
+                if (stats.Count(e => e <= 0) >= stats.Count) return true;
+                
+                if (!stats.Any(e => e is > 0 and <= 20))
+                    return true;
+
+                result.SparePoints += 20;
+                var data = result.CardData;
+                data.cost += 1;
+                result.CardData = data;
+                request.CardData = data;
+
+                tryBox[0] = 0;
+                return false;
+            };
+        }
+
+        private static List<int> UpgradePotentialStatistics(IJesterRequest request, IJesterResult result)
+        {
+            var sparePoints = result.SparePoints;
+            var data = result.Entries.Select(e =>
+                    e.GetUpgradeOptions(request, Upgrade.B)
+                        .Select(u => u.Item2.GetCost()))
+                .Where(e => e.Any())
+                .Select(e => e.Max())
+                .Select(e => e - sparePoints)
+                .ToList();
+            return data;
+        }
     }
 }

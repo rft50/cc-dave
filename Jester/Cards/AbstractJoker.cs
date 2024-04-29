@@ -1,13 +1,14 @@
 ﻿using Jester.Api;
 using Jester.Generator;
+using Shockah.Shared;
 
 namespace Jester.Cards;
 
 public abstract class AbstractJoker : Card
 {
-    private IJesterResult? _cache;
-    private IJesterResult? _cacheA;
-    private IJesterResult? _cacheB;
+    private IJesterApi.IJesterResult? _cache;
+    private IJesterApi.IJesterResult? _cacheA;
+    private IJesterApi.IJesterResult? _cacheB;
     public int? Seed;
     public int Points;
     public int? Energy;
@@ -84,13 +85,21 @@ public abstract class AbstractJoker : Card
 
     public override CardData GetData(State state)
     {
+        var g = GExt.Instance!;
+        if (g.state.route is NewRunOptions or CardBrowse { browseSource: CardBrowse.Source.Codex })
+            return new CardData
+            {
+                cost = 1,
+                description = $"A random {GetMeta().rarity} {Category} card."
+            };
+        
         return GetCache()?.CardData ?? new CardData
         {
             cost = Energy ?? 0
         };
     }
 
-    private IJesterResult? GetCache()
+    private IJesterApi.IJesterResult? GetCache()
     {
         switch (upgrade)
         {

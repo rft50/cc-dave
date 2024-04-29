@@ -2,37 +2,32 @@
 
 namespace Jester.Generator.Provider.Common;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+
 public class HurtCostProvider : IProvider
 {
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        if (!request.Whitelist.Contains("cost")) return new List<IEntry>();
-        
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
-        
-        return new List<IEntry>
+        if (!request.Whitelist.Contains("cost")) return new List<(double, IEntry)>();
+
+        return new List<(double, IEntry)>
         {
-            
-        }.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
-        .ToList();
+            (1, new HurtEntry())
+        };
     }
     
-    public class HurtEntry : IEntry
+    private class HurtEntry : IEntry
     {
-        public ISet<string> Tags
-        {
-            get => new HashSet<string>
+        public IReadOnlySet<string> Tags =>
+            new HashSet<string>
             {
                 "cost",
                 "hurt"
             };
-            
-        }
 
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AHurt
             {
@@ -43,16 +38,9 @@ public class HurtCostProvider : IProvider
 
         public int GetCost() => -30;
 
-        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            cost = 0;
-            return null;
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            cost = 0;
-            return null;
+            return new List<(double, IEntry)>();
         }
 
         public void AfterSelection(IJesterRequest request)

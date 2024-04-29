@@ -2,50 +2,39 @@
 
 namespace Jester.Generator.Provider.Common;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+
 public class DiscardCardCostProvider : IProvider
 {
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        if (!request.Whitelist.Contains("cost")) return new List<IEntry>();
-
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
+        if (!request.Whitelist.Contains("cost")) return new List<(double, IEntry)>();
         var costBase = 8 - request.CardData.cost;
-        
-        return new List<int> { 1, 2, 3, 4, 5 }
-            .Select(i => new DiscardCardCostEntry(costBase, i))
-            .Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
-            .ToList<IEntry>();
+
+        return Enumerable.Range(1, 5)
+            .Select(i => (0.2, new DiscardCardCostEntry
+            {
+                CostBase = costBase,
+                Amount = i
+            } as IEntry));
     }
     
-    public class DiscardCardCostEntry : IEntry
+    private class DiscardCardCostEntry : IEntry
     {
-        public int CostBase { get; set; }
+        public int CostBase { get; init; }
 
-        public int Amount { get; set; }
-        
-        public DiscardCardCostEntry()
-        {
-        }
+        public int Amount { get; init; }
 
-        public DiscardCardCostEntry(int costBase, int amount)
-        {
-            CostBase = costBase;
-            Amount = amount;
-        }
-
-        public ISet<string> Tags
-        {
-            get => new HashSet<string>
+        public IReadOnlySet<string> Tags =>
+            new HashSet<string>
             {
-                "cost"
+                "cost",
+                "discardCost"
             };
-            
-        }
 
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new ADiscard
             {
@@ -56,26 +45,22 @@ public class DiscardCardCostProvider : IProvider
 
         public int GetCost() => -Amount * CostBase;
 
-        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            if (Amount <= 1)
+            if (Amount <= 1) return new List<(double, IEntry)>();
+            return new List<(double, IEntry)>
             {
-                cost = 0;
-                return null;
-            }
-
-            cost = CostBase;
-            return new DiscardCardCostEntry(CostBase, Amount - 1);
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            cost = 0;
-            return null;
+                (1, new DiscardCardCostEntry
+                {
+                    CostBase = CostBase,
+                    Amount = Amount - 1
+                })
+            };
         }
 
         public void AfterSelection(IJesterRequest request)
         {
+            request.Blacklist.Add("discardCost");
         }
     }
 }

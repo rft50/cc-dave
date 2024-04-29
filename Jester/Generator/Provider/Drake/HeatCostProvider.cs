@@ -2,49 +2,36 @@
 
 namespace Jester.Generator.Provider.Drake;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+
 public class HeatCostProvider : IProvider
 {
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        if (!request.Whitelist.Contains("cost")) return new List<IEntry>();
-        if (!ModManifest.JesterApi.HasCharacterFlag("heat")) return new List<IEntry>();
-        
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
+        if (!request.Whitelist.Contains("cost")) return new List<(double, IEntry)>();
+        if (!ModManifest.JesterApi.HasCharacterFlag("heat")) return new List<(double, IEntry)>();
 
-        return new List<IEntry>
+        return Enumerable.Range(1, 3)
+            .Select(i => (1.3, new HeatCostEntry
             {
-                new HeatCostEntry(1),
-                new HeatCostEntry(2),
-                new HeatCostEntry(3)
-            }.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
-            .ToList();
+                Count = i
+            } as IEntry));
     }
 
-    public class HeatCostEntry : IEntry
+    private class HeatCostEntry : IEntry
     {
         public int Count { get; set; }
-
-        public HeatCostEntry()
-        {
-            
-        }
-
-        public HeatCostEntry(int count)
-        {
-            Count = count;
-        }
-        public ISet<string> Tags { get; } = new HashSet<string>
+        
+        public IReadOnlySet<string> Tags { get; } = new HashSet<string>
         {
             "status",
             "heat",
-            "cost",
-            "weighted"
+            "cost"
         };
 
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AStatus
             {
@@ -59,22 +46,16 @@ public class HeatCostProvider : IProvider
             return Count * -7;
         }
 
-        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            if (Count <= 1)
+            if (Count <= 1) return new List<(double, IEntry)>();
+            return new List<(double, IEntry)>
             {
-                cost = 0;
-                return null;
-            }
-
-            cost = 7;
-            return new HeatCostEntry(Count - 1);
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            cost = 0;
-            return null;
+                (1, new HeatCostEntry
+                {
+                    Count = Count - 1
+                })
+            };
         }
 
         public void AfterSelection(IJesterRequest request)

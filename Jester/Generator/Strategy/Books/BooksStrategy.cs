@@ -4,9 +4,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Jester.Generator.Strategy.Books;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IJesterResult = IJesterApi.IJesterResult;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+using IStrategy = IJesterApi.IStrategy;
+using StrategyCategory = IJesterApi.StrategyCategory;
+
 public class BooksStrategy : IStrategy
 {
-    public IJesterResult GenerateCard(IJesterRequest request, IList<IProvider> providers)
+    public IJesterResult GenerateCard(IJesterRequest request, IEnumerable<IProvider> providers)
     {
         var entries = request.Entries;
         var whitelist = request.Whitelist;
@@ -22,8 +29,6 @@ public class BooksStrategy : IStrategy
         request.MinCost = 1;
         blacklist.Add("shard");
 
-        IList<IEntry> options;
-
         while (actionCount < maxActions)
         {
             actionCount++;
@@ -31,13 +36,9 @@ public class BooksStrategy : IStrategy
             if (actionCount % 2 == 0)
                 points += -ShardCost(shardDistribution[actionCount / 2 - 1]);
             request.MaxCost = points;
-            options = ModManifest.JesterApi.GetOptionsFromProvidersWeighted(request, providers)
-                .Where(e => e.GetActionCount() == 1)
-                .ToList();
+            var option = ModManifest.JesterApi.GetRandomEntry(request, providers, 1);
             
-            if (options.Count == 0) break;
-            
-            var option = ModManifest.JesterApi.GetJesterUtil().GetRandom(options, rng);
+            if (option == null) break;
             
             if (actionCount % 2 == 0)
                 option = new ShardCostEntry
@@ -50,7 +51,7 @@ public class BooksStrategy : IStrategy
             points -= option.GetCost();
         }
 
-        ModManifest.JesterApi.PerformUpgradeA(request, entries, ref points);
+        ModManifest.JesterApi.PerformUpgrade(request, ref points, Upgrade.None);
 
         return new JesterResult
         {
@@ -84,17 +85,16 @@ public class BooksStrategy : IStrategy
 
     public StrategyCategory GetStrategyCategory() => StrategyCategory.Full;
 
-    public class ShardCostEntry : IEntry
+    private class ShardCostEntry : IEntry
     {
         public int Count { get; set; }
         public IEntry Entry { get; set; } = null!;
 
-        public ISet<string> Tags => Entry.Tags;
-        public int GetActionCount() => Entry.GetActionCount();
+        public IReadOnlySet<string> Tags => Entry.Tags;
 
-        public IList<CardAction> GetActions(State s, Combat c)
+        public IEnumerable<CardAction> GetActions(State s, Combat c)
         {
-            var actions = Entry.GetActions(s, c);
+            var actions = Entry.GetActions(s, c).ToList();
             actions[0].shardcost = Count;
             return actions;
         }
@@ -104,48 +104,27 @@ public class BooksStrategy : IStrategy
             return Entry.GetCost() + ShardCost(Count); 
         }
 
-        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            var inner = Entry.GetUpgradeA(request, out cost);
-            if (inner != null) return new ShardCostEntry
+            if (Count <= 1) return WrapUpgradeOptions(Entry.GetUpgradeOptions(request, upDir));
+            return WrapUpgradeOptions(
+                    Entry
+                    .GetUpgradeOptions(request, upDir)
+                    )
+                .Append((0.5, new ShardCostEntry
                 {
-                    Count = Count,
-                    Entry = inner
-                };
-            if (Count == 1)
-            {
-                cost = 0;
-                return null;
-            }
-
-            cost = ShardCost(Count) - ShardCost(Count - 1);
-            return new ShardCostEntry
-            {
-                Count = Count - 1,
-                Entry = Entry
-            };
+                    Count = Count - 1,
+                    Entry = Entry
+                }));
         }
 
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
+        private IEnumerable<(double, IEntry)> WrapUpgradeOptions(IEnumerable<(double, IEntry)> options)
         {
-            var inner = Entry.GetUpgradeB(request, out cost);
-            if (inner != null) return new ShardCostEntry
-                {
-                    Count = Count,
-                    Entry = inner
-                };
-            if (Count == 1)
+            return options.Select(e => (e.Item1, new ShardCostEntry
             {
-                cost = 0;
-                return null;
-            }
-
-            cost = ShardCost(Count) - ShardCost(Count - 1);
-            return new ShardCostEntry
-            {
-                Count = Count - 1,
-                Entry = Entry
-            };
+                Count = Count,
+                Entry = e.Item2
+            } as IEntry));
         }
 
         public void AfterSelection(IJesterRequest request)

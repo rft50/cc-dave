@@ -1,47 +1,35 @@
-﻿using Jester.Api;
+﻿using System.ComponentModel.DataAnnotations;
+using Jester.Api;
 
 namespace Jester.Generator.Provider.Common;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+
 public class DrawProvider : IProvider
 {
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        if (request.CardData.cost == 0 && !ModManifest.JesterApi.HasCardFlag("exhaust", request)) return new List<IEntry>();
+        if (request.CardData.cost == 0 && !ModManifest.JesterApi.HasCardFlag("exhaust", request)) return new List<(double, IEntry)>();
         
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
-
-        return new List<IEntry>
+        return Enumerable.Range(1, 3)
+            .Select(i => (0.3, new DrawEntry
             {
-                new DrawEntry(1),
-                new DrawEntry(2),
-                new DrawEntry(3)
-            }.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
-            .ToList();
+                Count = i
+            } as IEntry));
     }
     
-    public class DrawEntry : IEntry
+    private class DrawEntry : IEntry
     {
-        public int Count { get; set; }
-
-        public DrawEntry()
-        {
-            
-        }
-
-        public DrawEntry(int count)
-        {
-            Count = count;
-        }
-        public ISet<string> Tags { get; } = new HashSet<string>
+        [Required] public int Count { get; init; }
+        public IReadOnlySet<string> Tags { get; } = new HashSet<string>
         {
             "utility",
             "draw"
         };
 
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new ADrawCard
             {
@@ -51,21 +39,16 @@ public class DrawProvider : IProvider
 
         public int GetCost() => 8 * Count;
 
-        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            if (Count >= 7)
+            if (Count >= 7) return new List<(double, IEntry)>();
+            return new List<(double, IEntry)>
             {
-                cost = 0;
-                return null;
-            }
-            cost = 8;
-            return new DrawEntry(Count + 1);
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            cost = 0;
-            return null;
+                (1, new DrawEntry
+                {
+                    Count = Count + 1
+                })
+            };
         }
 
         public void AfterSelection(IJesterRequest request)

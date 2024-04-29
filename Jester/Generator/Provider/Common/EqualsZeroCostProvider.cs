@@ -1,54 +1,49 @@
-﻿using Jester.Api;
+﻿using System.ComponentModel.DataAnnotations;
+using Jester.Api;
 
 namespace Jester.Generator.Provider.Common;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+
 public class EqualsZeroCostProvider : IProvider
 {
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        if (!request.Whitelist.Contains("cost")) return new List<IEntry>();
-        
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
+        if (!request.Whitelist.Contains("cost")) return new List<(double, IEntry)>();
 
-        return new List<IEntry>
+        return new List<(double, IEntry)>
         {
-            new EqualsZeroCostEntry(Enum.Parse<Status>("shield"), "shield", -30),
-            new EqualsZeroCostEntry(Enum.Parse<Status>("evade"), "evade", -30)
-        }.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
-        .ToList();
+            (1, new EqualsZeroCostEntry
+            {
+                Status = Enum.Parse<Status>("shield"),
+                Tag = "shield",
+                Cost = -30
+            }),
+            (1, new EqualsZeroCostEntry
+            {
+                Status = Enum.Parse<Status>("evade"),
+                Tag = "evade",
+                Cost = -30
+            })
+        };
     }
     
-    public class EqualsZeroCostEntry : IEntry
+    private class EqualsZeroCostEntry : IEntry
     {
-        public Status Status { get; set; }
-        public string Tag { get; set; } = null!;
-        public int Cost { get; set; }
+        [Required] public Status Status { get; init; }
+        [Required] public string Tag { get; set; } = null!;
+        [Required] public int Cost { get; init; }
 
-        public EqualsZeroCostEntry()
-        {
-            
-        }
-        public EqualsZeroCostEntry(Status status, string tag, int cost)
-        {
-            Status = status;
-            Tag = tag;
-            Cost = cost;
-        }
-
-        public ISet<string> Tags
-        {
-            get => new HashSet<string>
+        public IReadOnlySet<string> Tags =>
+            new HashSet<string>
             {
                 "cost",
                 Tag
             };
-            
-        }
 
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AStatus
             {
@@ -61,16 +56,9 @@ public class EqualsZeroCostProvider : IProvider
 
         public int GetCost() => Cost;
 
-        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            cost = 0;
-            return null;
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            cost = 0;
-            return null;
+            return new List<(double, IEntry)>();
         }
 
         public void AfterSelection(IJesterRequest request)

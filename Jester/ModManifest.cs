@@ -41,11 +41,13 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
 
     public static IKokoroApi KokoroApi = null!;
     public static IJesterApi JesterApi = null!;
+    public static IMoreDifficultiesApi? MoreDifficultiesApi;
     public static ILogger Logr = null!;
 
     public IEnumerable<DependencyEntry> Dependencies => new DependencyEntry[]
     {
-        new DependencyEntry<IModManifest>("Shockah.Kokoro", false)
+        new DependencyEntry<IModManifest>("Shockah.Kokoro", false),
+        new DependencyEntry<IModManifest>("TheJazMaster.MoreDifficulties", true)
     };
     public DirectoryInfo? GameRootFolder { get; set; }
     public ILogger? Logger { get; set; }
@@ -66,6 +68,8 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
 
         KokoroApi = contact.GetApi<IKokoroApi>("Shockah.Kokoro")!;
         KokoroApi.RegisterTypeForExtensionData(typeof(Combat));
+        
+        MoreDifficultiesApi = contact.GetApi<IMoreDifficultiesApi>("TheJazMaster.MoreDifficulties");
 
         JesterApi = new JesterApi();
         
@@ -186,6 +190,8 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
 
         if (!registry.RegisterDeck(JesterDeck))
             return;
+
+        MoreDifficultiesApi?.RegisterAltStarters((Deck)JesterDeck.Id!, new StarterDeck());
     }
 
     public void LoadManifest(ICardRegistry registry)
@@ -227,10 +233,10 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
         var smokeAndMirrors = new ExternalCard("rft.Jester.SmokeAndMirrors", typeof(SmokeAndMirrors), card_art_sprite, JesterDeck);
         smokeAndMirrors.AddLocalisation("Smoke and Mirrors");
         registry.RegisterCard(smokeAndMirrors);
-
-        var curtainCall = new ExternalCard("rft.Jester.CurtainCall", typeof(CurtainCall), card_art_sprite, JesterDeck);
-        curtainCall.AddLocalisation("Curtain Call");
-        registry.RegisterCard(curtainCall);
+        
+        var practice = new ExternalCard("rft.Jester.Practice", typeof(Practice), card_art_sprite, JesterDeck);
+        practice.AddLocalisation("Practice");
+        registry.RegisterCard(practice);
 
         var madCackle = new ExternalCard("rft.Jester.MadCackle", typeof(MadCackle), card_art_sprite, JesterDeck);
         madCackle.AddLocalisation("Mad Cackle");
@@ -268,7 +274,7 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
         
         var jester = new ExternalCharacter("rft.Jester.JesterChar", JesterDeck ?? throw new NullReferenceException(), jester_panel, Type.EmptyTypes, Type.EmptyTypes, default_animation ?? throw new NullReferenceException(), MiniAnimation ?? throw new NullReferenceException());
         jester.AddNameLocalisation("Jester");
-        jester.AddDescLocalisation("A mad jester. Only supposedly knows what he's doing.");
+        jester.AddDescLocalisation("JESTER\nA mad jester. He only supposedly knows what he's doing.");
         registry.RegisterCharacter(jester);
     }
 

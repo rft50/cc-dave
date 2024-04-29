@@ -2,14 +2,19 @@
 
 namespace Jester.Generator.Strategy.Common;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IJesterResult = IJesterApi.IJesterResult;
+using IProvider = IJesterApi.IProvider;
+using IStrategy = IJesterApi.IStrategy;
+using StrategyCategory = IJesterApi.StrategyCategory;
+
 public class HalfHalfStrategy : IStrategy
 {
-    public IJesterResult GenerateCard(IJesterRequest request, IList<IProvider> providers)
+    public IJesterResult GenerateCard(IJesterRequest request, IEnumerable<IProvider> providers)
     {
         var entries = request.Entries;
         var whitelist = request.Whitelist;
         var blacklist = request.Blacklist;
-        var rng = request.Random;
         var points = request.BasePoints;
         var maxActions = request.ActionLimit;
         var actionCount = 0;
@@ -21,22 +26,17 @@ public class HalfHalfStrategy : IStrategy
         if (request.FirstAction != null)
             whitelist.Add(request.FirstAction);
 
-        IList<IEntry> options;
-
         do
         {
             request.MaxCost = points;
-            options = ModManifest.JesterApi.GetOptionsFromProvidersWeighted(request, providers)
-                .Where(e => e.GetActionCount() <= maxActions - actionCount)
-                .ToList();;
+            var option = ModManifest.JesterApi.GetRandomEntry(request, providers, maxActions - actionCount);
             
-            if (options.Count == 0) break;
+            if (option == null) break;
             
-            var option = ModManifest.JesterApi.GetJesterUtil().GetRandom(options, rng);
             option.AfterSelection(request);
             entries.Add(option);
             points -= option.GetCost();
-            actionCount += option.GetActionCount();
+            actionCount += option.GetActions(DB.fakeState, DB.fakeCombat).Count();
 
         } while (points > request.BasePoints / 2);
 
@@ -51,22 +51,19 @@ public class HalfHalfStrategy : IStrategy
         do
         {
             request.MaxCost = points;
-            options = ModManifest.JesterApi.GetOptionsFromProvidersWeighted(request, providers)
-                .Where(e => e.GetActionCount() <= maxActions - actionCount)
-                .ToList();
+            var option = ModManifest.JesterApi.GetRandomEntry(request, providers, maxActions - actionCount);
 
-            if (options.Count == 0) break;
+            if (option == null) break;
             
-            var option = ModManifest.JesterApi.GetJesterUtil().GetRandom(options, rng);
             option.AfterSelection(request);
             entries.Add(option);
             points -= option.GetCost();
-            actionCount += option.GetActionCount();
+            actionCount += option.GetActions(DB.fakeState, DB.fakeCombat).Count();
         } while (true);
         
         // UPGRADES
 
-        ModManifest.JesterApi.PerformUpgradeA(request, entries, ref points);
+        ModManifest.JesterApi.PerformUpgrade(request, ref points, Upgrade.None);
 
         return new JesterResult
         {

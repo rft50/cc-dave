@@ -1,51 +1,43 @@
-﻿using Jester.Api;
+﻿using System.ComponentModel.DataAnnotations;
+using Jester.Api;
 
 namespace Jester.Generator.Provider.Common;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+
 public class MidshiftProvider : IProvider
 {
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        var entries = new List<IEntry>();
-        
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
-
-        for (var i = 1; i <= 5; i++)
-        {
-            entries.Add(new MidshiftEntry(i));
-            entries.Add(new MidshiftEntry(-i));
-        }
-
-        return entries.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost)).ToList();
+        return Enumerable.Range(1, 5)
+            .SelectMany(i => new List<(double, IEntry)>
+            {
+                (0.1, new MidshiftEntry
+                {
+                    Distance = i
+                }),
+                (0.1, new MidshiftEntry
+                {
+                    Distance = -i
+                })
+            });
     }
     
-    public class MidshiftEntry : IEntry
+    private class MidshiftEntry : IEntry
     {
-        public int Distance { get; set; }
+        [Required] public int Distance { get; init; }
 
-        public MidshiftEntry()
-        {
-        }
-        public MidshiftEntry(int distance)
-        {
-            Distance = distance;
-        }
-
-        public ISet<string> Tags
-        {
-            get => new HashSet<string>
+        public IReadOnlySet<string> Tags =>
+            new HashSet<string>
             {
                 "utility",
                 "midshift",
                 "flippable"
             };
-            
-        }
 
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new ADroneMove
             {
@@ -58,17 +50,15 @@ public class MidshiftProvider : IProvider
             return Math.Abs(Distance) * 7;
         }
 
-        public IEntry GetUpgradeA(IJesterRequest request, out int cost)
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            var entry = new MidshiftEntry(Math.Sign(Distance) * (Math.Abs(Distance) + 1));
-            cost = entry.GetCost() - GetCost();
-            return entry;
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            cost = 0;
-            return null;
+            return new List<(double, IEntry)>
+            {
+                (1, new MidshiftEntry
+                {
+                    Distance = Math.Sign(Distance) * (Math.Abs(Distance) + 1)
+                }),
+            };
         }
 
         public void AfterSelection(IJesterRequest request)

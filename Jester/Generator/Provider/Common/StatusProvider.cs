@@ -1,6 +1,11 @@
-﻿using Jester.Api;
+﻿using System.ComponentModel.DataAnnotations;
+using Jester.Api;
 
 namespace Jester.Generator.Provider.Common;
+
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
 
 public class StatusProvider : IProvider
 {
@@ -163,7 +168,11 @@ public class StatusProvider : IProvider
         {
             for (var i = 1; i <= 3; i++)
             {
-                _entries.Add(new StatusEntry(stat, i));
+                _entries.Add(new StatusEntry
+                {
+                    Data = stat,
+                    Amount = i
+                });
                 
                 if (!stat.Stackable)
                     break;
@@ -171,20 +180,16 @@ public class StatusProvider : IProvider
         }
     }
     
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
         var alreadyPresent = request.Entries
             .Where(e => e is StatusEntry)
             .Select(e => (e as StatusEntry)!.Data.Status);
         var isExhaust = ModManifest.JesterApi.HasCardFlag("exhaust", request);
-        
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
 
-        return _entries.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
-            .Where(e => !alreadyPresent.Contains(e.Data.Status))
+        return _entries.Where(e => !alreadyPresent.Contains(e.Data.Status))
             .Where(e => isExhaust || !e.Tags.Contains("mustExhaust"))
-            .ToList<IEntry>();
+            .Select(e => (0.5, e as IEntry));
     }
 
     public struct StatusStruct
@@ -195,30 +200,14 @@ public class StatusProvider : IProvider
         public bool Stackable;
     }
 
-    public class StatusEntry : IEntry
+    private class StatusEntry : IEntry
     {
-        public StatusStruct Data { get; set; }
-        public int Amount { get; set; }
-        
-        public StatusEntry()
-        {
-        }
+        [Required] public StatusStruct Data { get; init; }
+        [Required] public int Amount { get; init; }
 
-        public StatusEntry(StatusStruct data, int amount)
-        {
-            Data = data;
-            Amount = amount;
-        }
+        public IReadOnlySet<string> Tags => Data.Tags;
 
-        public ISet<string> Tags
-        {
-            get => Data.Tags;
-            
-        }
-
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AStatus
             {
@@ -230,22 +219,17 @@ public class StatusProvider : IProvider
 
         public int GetCost() => Amount * Data.Cost;
 
-        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            if (!Data.Stackable)
+            if (!Data.Stackable) return new List<(double, IEntry)>();
+            return new List<(double, IEntry)>
             {
-                cost = 0;
-                return null;
-            }
-
-            cost = Data.Cost;
-            return new StatusEntry(Data, Amount + 1);
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            cost = 0;
-            return null;
+                (1, new StatusEntry
+                {
+                    Data = Data,
+                    Amount = Amount + 1
+                })
+            };
         }
 
         public void AfterSelection(IJesterRequest request)

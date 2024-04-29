@@ -1,58 +1,54 @@
-﻿using Jester.Api;
+﻿using System.ComponentModel.DataAnnotations;
+using Jester.Api;
 
 namespace Jester.Generator.Provider.Common;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+
 public class StatusCostProvider : IProvider
 {
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        if (!request.Whitelist.Contains("cost")) return new List<IEntry>();
-        
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
+        if (!request.Whitelist.Contains("cost")) return new List<(double, IEntry)>();
 
-        return new List<IEntry>
-        {
-            new StatusCostEntry(Enum.Parse<Status>("drawLessNextTurn"), 1, -15, "drawNext"),
-            new StatusCostEntry(Enum.Parse<Status>("drawLessNextTurn"), 2, -15, "drawNext"),
-            new StatusCostEntry(Enum.Parse<Status>("energyLessNextTurn"), 1, -20, "energyNext"),
-            new StatusCostEntry(Enum.Parse<Status>("energyLessNextTurn"), 2, -20, "energyNext")
-        }.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
-        .ToList();
+        return Enumerable.Range(1, 2)
+            .SelectMany(i => new List<(double, IEntry)>
+            {
+                (0.5, new StatusCostEntry
+                {
+                    Status = Enum.Parse<Status>("drawLessNextTurn"),
+                    Amount = i,
+                    CostPer = -15,
+                    Tag = "drawNext"
+                }),
+                (0.5, new StatusCostEntry
+                {
+                    Status = Enum.Parse<Status>("energyLessNextTurn"),
+                    Amount = i,
+                    CostPer = -20,
+                    Tag = "energyNext"
+                })
+            });
     }
     
-    public class StatusCostEntry : IEntry
+    private class StatusCostEntry : IEntry
     {
-        public Status Status { get; set; }
-        public int Amount { get; set; }
-        public int Cost { get; set; }
-        public string Tag { get; set; } = null!;
-
-        public StatusCostEntry()
-        {
-        }
-        public StatusCostEntry(Status status, int amount, int cost, string tag)
-        {
-            Status = status;
-            Amount = amount;
-            Cost = cost;
-            Tag = tag;
-        }
+        [Required] public Status Status { get; init; }
+        [Required] public int Amount { get; init; }
+        [Required] public int CostPer { get; init; }
+        [Required] public string Tag { get; set; } = null!;
         
-        public ISet<string> Tags
-        {
-            get => new HashSet<string>
+        public IReadOnlySet<string> Tags =>
+            new HashSet<string>
             {
                 "status",
                 "cost",
                 Tag
             };
-            
-        }
 
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AStatus
             {
@@ -62,24 +58,21 @@ public class StatusCostProvider : IProvider
             }
         };
 
-        public int GetCost() => Amount * Cost;
+        public int GetCost() => Amount * CostPer;
 
-        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            if (Amount <= 1)
+            if (Amount <= 1) return new List<(double, IEntry)>();
+            return new List<(double, IEntry)>
             {
-                cost = 0;
-                return null;
-            }
-
-            cost = -Cost;
-            return new StatusCostEntry(Status, Amount - 1, Cost, Tag);
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            cost = 0;
-            return null;
+                (1, new StatusCostEntry
+                {
+                    Status = Status,
+                    Amount = Amount - 1,
+                    CostPer = CostPer,
+                    Tag = Tag
+                })
+            };
         }
 
         public void AfterSelection(IJesterRequest request)

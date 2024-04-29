@@ -1,59 +1,52 @@
-﻿using Jester.Api;
+﻿using System.ComponentModel.DataAnnotations;
+using Jester.Api;
 
 namespace Jester.Generator.Provider.Common;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+
 public class AttackProvider : IProvider
 {
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
-        var entries = new List<IEntry>();
         var existingShotCount = request.Entries
             .Count(e => e.Tags.Contains("shot"));
 
-        for (var i = 1; i <= 5; i++)
-        {
-            entries.Add(new AttackEntry(i, false, existingShotCount));
-            entries.Add(new AttackEntry(i, true, existingShotCount));
-        }
-
-        return entries
-            .Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
-            .ToList();
+        return Enumerable.Range(1, 5)
+            .SelectMany(i => new List<(double, IEntry)>
+            {
+                (0.2, new AttackEntry
+                {
+                    Damage = i,
+                    Piercing = false,
+                    ExistingShotCount = existingShotCount
+                }),
+                (0.15, new AttackEntry
+                {
+                    Damage = i,
+                    Piercing = true,
+                    ExistingShotCount = existingShotCount
+                })
+            });
     }
 
-    public class AttackEntry : IEntry
+    private class AttackEntry : IEntry
     {
-        public int Damage { get; set; }
-        public bool Piercing { get; set; }
-        public int ExistingShotCount { get; set; }
-        
-        public AttackEntry()
-        {
-        }
+        [Required] public int Damage { get; init; }
+        [Required] public bool Piercing { get; init; }
+        [Required] public int ExistingShotCount { get; init; }
 
-        public AttackEntry(int damage, bool piercing, int existingShotCount)
-        {
-            Damage = damage;
-            Piercing = piercing;
-            ExistingShotCount = existingShotCount;
-        }
-
-        public ISet<string> Tags
-        {
-            get => new HashSet<string>
+        public IReadOnlySet<string> Tags =>
+            new HashSet<string>
             {
                 "offensive",
                 "attack",
                 "shot"
             };
-            
-        }
 
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AAttack
             {
@@ -66,24 +59,26 @@ public class AttackProvider : IProvider
         {
             return Damage * (Piercing ? 13 : 10) + ExistingShotCount * 5;
         }
-
-        public IEntry GetUpgradeA(IJesterRequest request, out int cost)
+        
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            var entry = new AttackEntry(Damage + 1, Piercing, ExistingShotCount);
-            cost = entry.GetCost() - GetCost();
-            return entry;
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            if (Piercing)
+            var options = new List<(double, IEntry)>
             {
-                cost = 0;
-                return null;
-            }
-            var entry = new AttackEntry(Damage, true, ExistingShotCount);
-            cost = entry.GetCost() - GetCost();
-            return entry;
+                (1, new AttackEntry
+                {
+                    Damage = Damage + 1,
+                    Piercing = Piercing,
+                    ExistingShotCount = ExistingShotCount
+                })
+            };
+            if (!Piercing)
+                options.Add((1, new AttackEntry
+                    {
+                        Damage = Damage,
+                        Piercing = true,
+                        ExistingShotCount = ExistingShotCount
+                    }));
+            return options;
         }
 
         public void AfterSelection(IJesterRequest request)

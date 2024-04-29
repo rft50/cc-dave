@@ -2,47 +2,33 @@
 
 namespace Jester.Generator.Provider.Books;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+
 public class ShardProvider : IProvider
 {
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        if (!ModManifest.JesterApi.HasCharacterFlag("shard")) return new List<IEntry>();
-        
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
-
-        return new List<IEntry>
+        if (!ModManifest.JesterApi.HasCharacterFlag("shard")) return new List<(double, IEntry)>();
+        return Enumerable.Range(1, 3)
+            .Select(i => (1.3, new ShardEntry
             {
-                new ShardEntry(1),
-                new ShardEntry(2),
-                new ShardEntry(3)
-            }.Where(e => ModManifest.JesterApi.GetJesterUtil().InRange(minCost, e.GetCost(), maxCost))
-            .ToList();
+                Count = i
+            } as IEntry));
     }
 
-    public class ShardEntry : IEntry
+    private class ShardEntry : IEntry
     {
         public int Count { get; set; }
-
-        public ShardEntry()
-        {
-            
-        }
-
-        public ShardEntry(int count)
-        {
-            Count = count;
-        }
-        public ISet<string> Tags { get; } = new HashSet<string>
+        
+        public IReadOnlySet<string> Tags { get; } = new HashSet<string>
         {
             "status",
-            "shard",
-            "weighted"
+            "shard"
         };
 
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AStatus
             {
@@ -54,22 +40,16 @@ public class ShardProvider : IProvider
 
         public int GetCost() => 5 * Count;
 
-        public IEntry? GetUpgradeA(IJesterRequest request, out int cost)
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            if (Count >= 3)
+            if (Count >= 3) return new List<(double, IEntry)>();
+            return new List<(double, IEntry)>
             {
-                cost = 0;
-                return null;
-            }
-
-            cost = 5;
-            return new ShardEntry(Count + 1);
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            cost = 0;
-            return null;
+                (1, new ShardEntry
+                {
+                    Count = Count + 1
+                })
+            };
         }
 
         public void AfterSelection(IJesterRequest request)

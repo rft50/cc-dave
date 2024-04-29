@@ -1,18 +1,22 @@
-﻿using Jester.Api;
+﻿using System.ComponentModel.DataAnnotations;
+using Jester.Api;
 
 namespace Jester.Generator;
+
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
 
 public class JesterRequest : IJesterRequest
 {
     // provided by caller
-    public int Seed { get; set; }
-    public string? FirstAction { get; set; }
-    public State State { get; set; } = null!;
-    public int BasePoints { get; set; }
-    public CardData CardData { get; set; }
-    public int ActionLimit { get; set; }
-    public bool SingleUse { get; set; }
-    public CardMeta CardMeta { get; set; } = null!;
+    [Required] public int Seed { get; set; }
+    [Required] public string? FirstAction { get; set; }
+    [Required] public State State { get; set; } = null!;
+    [Required] public int BasePoints { get; set; }
+    [Required] public CardData CardData { get; set; }
+    [Required] public int ActionLimit { get; set; }
+    [Required] public bool SingleUse { get; set; }
+    [Required] public CardMeta CardMeta { get; set; } = null!;
 
     // calculation
     public Rand Random { get; set; } = null!;

@@ -1,55 +1,37 @@
-﻿using Jester.Api;
+﻿using System.ComponentModel.DataAnnotations;
+using Jester.Api;
 
 namespace Jester.Generator.Provider.Common;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+
 public class DroneshiftProvider : IProvider
 {
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        var entries = new List<IEntry>();
-
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
-
-        for (var i = 1; i <= 3; i++)
-        {
-            if (ModManifest.JesterApi.GetJesterUtil().InRange(minCost, i * 10, maxCost))
+        return Enumerable.Range(1, 3)
+            .Select(i => (0.3, new DroneshiftEntry
             {
-                entries.Add(new DroneshiftEntry(i));
-            }
-        }
-
-        return entries;
+                Droneshift = i
+            } as IEntry));
     }
     
-    public class DroneshiftEntry : IEntry
+    private class DroneshiftEntry : IEntry
     {
-        public int Droneshift { get; set; }
+        [Required] public int Droneshift { get; init; }
         
-        public DroneshiftEntry()
-        {
-        }
-
-        public DroneshiftEntry(int droneshift)
-        {
-            Droneshift = droneshift;
-        }
-        
-        public ISet<string> Tags
-        {
-            get => new HashSet<string>
+        public IReadOnlySet<string> Tags =>
+            new HashSet<string>
             {
                 "defensive",
                 "status",
                 "droneshift",
                 "move"
             };
-            
-        }
 
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AStatus
             {
@@ -64,16 +46,15 @@ public class DroneshiftProvider : IProvider
             return Droneshift * 8;
         }
 
-        public IEntry GetUpgradeA(IJesterRequest request, out int cost)
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            cost = 8;
-            return new DroneshiftEntry(Droneshift + 1);
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            cost = 0;
-            return null;
+            return new List<(double, IEntry)>
+            {
+                (1, new DroneshiftEntry
+                {
+                    Droneshift = Droneshift + 1
+                })
+            };
         }
 
         public void AfterSelection(IJesterRequest request)

@@ -2,6 +2,9 @@
 
 namespace Jester.Generator;
 
+using IJesterResult = IJesterApi.IJesterResult;
+using IEntry = IJesterApi.IEntry;
+
 public class JesterResult : IJesterResult
 {
     public IList<IEntry> Entries { get; set; } = null!;

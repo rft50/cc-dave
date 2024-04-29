@@ -1,7 +1,11 @@
 ﻿using Jester.Api;
 using Jester.Generator;
-using Jester.Generator.Strategy;
 using Jester.Generator.Strategy.Common;
+using IStrategy = Jester.Api.IJesterApi.IStrategy;
+using IJesterRequest = Jester.Api.IJesterApi.IJesterRequest;
+using IJesterResult = Jester.Api.IJesterApi.IJesterResult;
+using IEntry = Jester.Api.IJesterApi.IEntry;
+using IProvider = Jester.Api.IJesterApi.IProvider;
 
 namespace Jester;
 
@@ -13,21 +17,14 @@ public class JesterApi : IJesterApi
 
     public IJesterResult NewJesterResult() => new JesterResult();
 
-    public IList<IEntry> GetOptionsFromProviders(IJesterRequest request, IEnumerable<IProvider> providers) => StrategyUtil.GetOptionsFromProviders(request, providers);
+    public IEnumerable<(double, IEntry)> GetOptionsFromProviders(IJesterRequest request, IEnumerable<IProvider> providers) => StrategyUtil.GetOptionsFromProviders(request, providers);
 
-    public IList<IEntry> GetOptionsFromProvidersFiltered(IJesterRequest request, IEnumerable<IProvider> providers) =>
-        StrategyUtil.GetOptionsFromProvidersFiltered(request, providers);
-
-    public IList<IEntry> GetOptionsFromProvidersWeighted(IJesterRequest request, IEnumerable<IProvider> providers) =>
-        StrategyUtil.GetOptionsFromProvidersWeighted(request, providers);
-
-    public int PerformUpgradeA(IJesterRequest request, IList<IEntry> entries, ref int pts, int upgradeLimit) =>
-        StrategyUtil.PerformUpgradeA(request, entries, ref pts, upgradeLimit);
+    public IEntry? GetRandomEntry(IJesterRequest request, IEnumerable<IProvider> providers, int actionCountLimit) => StrategyUtil.GetRandomEntry(request, providers, actionCountLimit);
     
-    public int PerformUpgradeB(IJesterRequest request, IList<IEntry> entries, ref int pts, int upgradeLimit) =>
-        StrategyUtil.PerformUpgradeB(request, entries, ref pts, upgradeLimit);
+    public int PerformUpgrade(IJesterRequest request, ref int pts, Upgrade upDir, int upgradeLimit) =>
+        StrategyUtil.PerformUpgrade(request, ref pts, upDir, upgradeLimit);
 
-    public IJesterResult CallInnerStrategy(IJesterRequest request, IList<IProvider> providers) =>
+    public IJesterResult CallInnerStrategy(IJesterRequest request, IEnumerable<IProvider> providers) =>
         JesterGenerator.CallInnerStrategy(request, providers);
 
     public void RegisterProvider(IProvider provider) => JesterGenerator.Providers.Add(provider);

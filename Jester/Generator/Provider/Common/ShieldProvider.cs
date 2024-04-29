@@ -1,47 +1,38 @@
-﻿using Jester.Api;
+﻿using System.ComponentModel.DataAnnotations;
+using Jester.Api;
 
 namespace Jester.Generator.Provider.Common;
 
+using IJesterRequest = IJesterApi.IJesterRequest;
+using IEntry = IJesterApi.IEntry;
+using IProvider = IJesterApi.IProvider;
+
 public class ShieldProvider : IProvider
 {
-    public IList<IEntry> GetEntries(IJesterRequest request)
+    public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        var entries = new List<IEntry>();
-
-        var minCost = request.MinCost;
-        var maxCost = request.MaxCost;
-
-        for (var i = 1; i <= 3; i++)
-        {
-            if (ModManifest.JesterApi.GetJesterUtil().InRange(minCost, i * 10, maxCost))
+        return Enumerable.Range(1, 3)
+            .SelectMany(i => new List<(double, IEntry)>
             {
-                entries.Add(new ShieldEntry(i, false));
-            }
-            if (ModManifest.JesterApi.GetJesterUtil().InRange(minCost, i * 8, maxCost))
-            {
-                entries.Add(new ShieldEntry(i, true));
-            }
-        }
-
-        return entries;
+                (0.3, new ShieldEntry
+                {
+                    Shield = i,
+                    Temp = true
+                }),
+                (0.3, new ShieldEntry
+                {
+                    Shield = i,
+                    Temp = false
+                })
+            });
     }
 
     class ShieldEntry : IEntry
     {
-        public int Shield { get; set; }
-        public bool Temp { get; set; }
+        [Required] public int Shield { get; init; }
+        [Required] public bool Temp { get; init; }
         
-        public ShieldEntry()
-        {
-        }
-
-        public ShieldEntry(int shield, bool temp)
-        {
-            Shield = shield;
-            Temp = temp;
-        }
-        
-        public ISet<string> Tags
+        public IReadOnlySet<string> Tags
         {
             get
             {
@@ -57,12 +48,9 @@ public class ShieldProvider : IProvider
                     "tempShield"
                 };
             }
-            
         }
 
-        public int GetActionCount() => 1;
-
-        public IList<CardAction> GetActions(State s, Combat c) => new List<CardAction>
+        public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>
         {
             new AStatus
             {
@@ -76,25 +64,24 @@ public class ShieldProvider : IProvider
         {
             return Shield * (Temp ? 8 : 10);
         }
-
-        public IEntry GetUpgradeA(IJesterRequest request, out int cost)
+        
+        public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
-            var entry = new ShieldEntry(Shield + 1, Temp);
-            cost = entry.GetCost() - GetCost();
-            return entry;
-        }
-
-        public IEntry? GetUpgradeB(IJesterRequest request, out int cost)
-        {
-            if (Temp && !request.Entries.Any(e => e is ShieldEntry))
+            var options = new List<(double, IEntry)>
             {
-                var entry = new ShieldEntry(Shield, false);
-                cost = entry.GetCost() - GetCost();
-                return entry;
-            }
-
-            cost = 0;
-            return null;
+                (1, new ShieldEntry
+                {
+                    Shield = Shield + 1,
+                    Temp = Temp
+                })
+            };
+            if (Temp && !request.Entries.Any(e => e is ShieldEntry))
+                options.Add((1, new ShieldEntry
+                    {
+                        Shield = Shield,
+                        Temp = false
+                    }));
+            return options;
         }
 
         public void AfterSelection(IJesterRequest request)
