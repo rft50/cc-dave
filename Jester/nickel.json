@@ -1,7 +1,7 @@
 {
   "EntryPointAssembly": "Jester.dll",
   "UniqueName": "rft.Jester",
-  "Version": "0.6.0",
+  "Version": "0.6.1",
   "RequiredApiVersion": "0.5.0",
   "Dependencies": [
     {
@@ -19,5 +19,11 @@
       "IsRequired": false
     }
   ],
-  "ModType": "Nickel.Legacy"
+  "ModType": "Nickel.Legacy",
+  "UpdateChecks": {
+    "GitHub": {
+      "Repository": "rft50/cc-dave",
+      "ReleaseTagRegex": "^jester\\-(.*)"
+    }
+  }
 }

@@ -42,11 +42,11 @@ public class Practice : Card
 
     public override CardData GetData(State state) => new()
     {
-        cost = 1,
+        cost = 0,
         description = upgrade switch
         {
             Upgrade.A => "Discount two random cards in hand.",
-            Upgrade.B => "Pick a card in your hand to discount.",
+            Upgrade.B => "Discount the rightmost card in hand.",
             _ => "Discount a random card in hand."
         }
     };

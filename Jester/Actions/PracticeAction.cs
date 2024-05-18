@@ -22,16 +22,9 @@ public class PracticeAction : CardAction
         }
         else
         {
-            var cardBrowse = new ArbitraryCardBrowse
-            {
-                mode = CardBrowse.Mode.Browse,
-                browseAction = new PracticeSubAction(),
-                Cards = cards
-            };
-
-            timer = 0;
-
-            return cardBrowse;
+            var card = cards.Last();
+            card.discount--;
+            return null;
         }
     }
 
@@ -39,13 +32,4 @@ public class PracticeAction : CardAction
     {
         new TTGlossary("cardtrait.discount", 1)
     };
-}
-
-public class PracticeSubAction : CardAction
-{
-    public override void Begin(G g, State s, Combat c)
-    {
-        if (selectedCard == null) return;
-        selectedCard.discount++;
-    }
 }

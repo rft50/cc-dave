@@ -32,7 +32,8 @@ public class HurtCostProvider : IProvider
             new AHurt
             {
                 targetPlayer = true,
-                hurtShieldsFirst = false
+                hurtShieldsFirst = false,
+                hurtAmount = 1
             }
         };
 

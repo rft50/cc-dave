@@ -3,7 +3,7 @@
   <Import Project="Config.user" />
   
   <PropertyGroup>
-    <Version>0.6.0</Version>
+    <Version>0.6.1</Version>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
