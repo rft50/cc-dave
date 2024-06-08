@@ -34,7 +34,7 @@
       "name": "Hex"
     },
     "Flamethrower": {
-      "name": "Flamethrower"
+      "name": "Flame-\nthrower"
     },
     "HotShot": {
       "name": "Hot Shot"
@@ -53,6 +53,31 @@
     },
     "ShadowCover": {
       "name": "Shadow Cover"
+    },
+    
+    "Immolation": {
+      "name": "Immolation"
+    },
+    "BlessingAndACurse": {
+      "name": "Blessing and a Curse"
+    },
+    "Balance": {
+      "name": "Balance"
+    },
+    "MagnesiumSlug": {
+      "name": "Magnesium Slug"
+    },
+    "Brimstone": {
+      "name": "Brimstone"
+    },
+    "BurningRage": {
+      "name": "Burning Rage"
+    },
+    "Malediction": {
+      "name": "Malediction",
+      "description": {
+        "B": "Attack for <c=status>Curse</c> - <c=status>Heat</c> <c=attack>({0})</c>."
+      }
     }
   },
   "status": {
@@ -62,7 +87,7 @@
     },
     "Enflamed": {
       "name": "Enflamed",
-      "description": "Gain <c=pink>{0}</c> <c=lightblue>HEAT</c> every turn."
+      "description": "Gain <c=pink>{0}</c> <c=status>HEAT</c> every turn."
     }
   }
 }

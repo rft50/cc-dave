@@ -16,7 +16,7 @@ public class StatusManager : IStatusLogicHook
         {
             combat.Queue(new AStatus
             {
-                status = Status.heat, // TODO make StableStatus
+                status = Status.heat,
                 statusAmount = ship.Get(ModEntry.Instance.Enflamed.Status),
                 targetPlayer = ship == state.ship
             });

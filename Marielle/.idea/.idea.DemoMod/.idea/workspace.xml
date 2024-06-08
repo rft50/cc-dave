@@ -7,22 +7,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ae86e3ff-c25c-410e-b64d-afb907e745f3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Cards/DemoCardFoxTale.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/DemoCardSheepDream.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/FireField.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/Flamethrower.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/HeatRay.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/Hex.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/HotShot.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/Prayer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/ShadowCover.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/Voodoo.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/WickedPact.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Features/StatusManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Features/TraitManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/Cards/DefaultArt.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+    <list default="true" id="ae86e3ff-c25c-410e-b64d-afb907e745f3" name="Changes" comment="Common Cards pass&#10;&#10;All nine of her common cards.&#10;Note that Curse doesn't work.">
+      <change afterPath="$PROJECT_DIR$/Cards/Balance.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Cards/BlessingAndACurse.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Cards/Brimstone.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Cards/BurningRage.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Cards/Immolation.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Cards/MagnesiumSlug.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Cards/Malediction.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.DemoMod/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.DemoMod/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ModEntry.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ModEntry.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/i18n/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/i18n/en.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,6 +28,11 @@
     <option name="autoShow" value="false" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -58,6 +58,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6445275a89e9536bb6343243406859831aa1496357ddae453280186fe360ac/CardTraitConfiguration.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ModEntry.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>
@@ -68,9 +69,9 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;.NET Project.Marielle.executor&quot;: &quot;Debug&quot;,
+    &quot;.NET Project.Marielle.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;marielle&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/msauv/RiderProjects/CobaltCoreDave/Marielle&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -116,34 +117,38 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1717876220790</updated>
-      <workItem from="1717876221905" duration="9410000" />
+      <workItem from="1717876221905" duration="12198000" />
     </task>
+    <task id="LOCAL-00001" summary="Common Cards pass&#10;&#10;All nine of her common cards.&#10;Note that Curse doesn't work.">
+      <option name="closed" value="true" />
+      <created>1717886351507</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1717886351507</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ModEntry.cs</url>
-          <line>215</line>
-          <properties documentPath="C:\Users\msauv\RiderProjects\CobaltCoreDave\Marielle\ModEntry.cs" containingFunctionPresentation="Constructor 'ModEntry'">
-            <startOffsets>
-              <option value="13383" />
-            </startOffsets>
-            <endOffsets>
-              <option value="13476" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Common Cards pass&#10;&#10;All nine of her common cards.&#10;Note that Curse doesn't work." />
+    <option name="LAST_COMMIT_MESSAGE" value="Common Cards pass&#10;&#10;All nine of her common cards.&#10;Note that Curse doesn't work." />
   </component>
 </project>
