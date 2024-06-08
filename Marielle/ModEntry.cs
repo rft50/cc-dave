@@ -53,13 +53,22 @@ public sealed class ModEntry : SimpleMod
         typeof(BurningRage),
         typeof(Malediction)
     ];
+    
+    internal static IReadOnlyList<Type> MarielleRareCardTypes { get; } = [
+        typeof(FanTheFlames),
+        typeof(RendAssunder),
+        typeof(Scourge),
+        typeof(SlowRoast),
+        typeof(DarkThoughts)
+    ];
 
     /* We can use an IEnumerable to combine the lists we made above, and modify it if needed
      * Maybe you created a new list for Uncommon cards, and want to add it.
      * If so, you can .Concat(TheUncommonListYouMade) */
     internal static IEnumerable<Type> MarielleAllCardTypes
         => MarielleCommonCardTypes
-            .Concat(MarielleUncommonCardTypes);
+            .Concat(MarielleUncommonCardTypes)
+            .Concat(MarielleRareCardTypes);
 
     /* We'll organize our artifacts the same way: making lists and then feed those to an IEnumerable */
     internal static IReadOnlyList<Type> MarielleCommonArtifactTypes { get; } = [

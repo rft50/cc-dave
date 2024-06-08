@@ -7,14 +7,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ae86e3ff-c25c-410e-b64d-afb907e745f3" name="Changes" comment="Common Cards pass&#10;&#10;All nine of her common cards.&#10;Note that Curse doesn't work.">
-      <change afterPath="$PROJECT_DIR$/Cards/Balance.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/BlessingAndACurse.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/Brimstone.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/BurningRage.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/Immolation.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/MagnesiumSlug.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/Malediction.cs" afterDir="false" />
+    <list default="true" id="ae86e3ff-c25c-410e-b64d-afb907e745f3" name="Changes" comment="Uncommon Cards pass&#10;&#10;All of her uncommon cards, except Malediction B.&#10;That one's getting a replacement due to being not icons.">
+      <change afterPath="$PROJECT_DIR$/Cards/DarkThoughts.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Cards/FanTheFlames.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Cards/RendAssunder.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Cards/Scourge.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Cards/SlowRoast.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.DemoMod/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.DemoMod/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ModEntry.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ModEntry.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/i18n/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/i18n/en.json" afterDir="false" />
@@ -117,7 +115,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1717876220790</updated>
-      <workItem from="1717876221905" duration="12198000" />
+      <workItem from="1717876221905" duration="13924000" />
     </task>
     <task id="LOCAL-00001" summary="Common Cards pass&#10;&#10;All nine of her common cards.&#10;Note that Curse doesn't work.">
       <option name="closed" value="true" />
@@ -127,7 +125,23 @@
       <option name="project" value="LOCAL" />
       <updated>1717886351507</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Uncommon Cards pass&#10;&#10;All of her uncommon cards, except Malediction B.&#10;That one's getting a replacement due to being not icons.">
+      <option name="closed" value="true" />
+      <created>1717888883319</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1717888883319</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Uncommon Cards pass&#10;&#10;All of her uncommon cards, except Malediction B.&#10;That one's getting a replacement due to being not icons.">
+      <option name="closed" value="true" />
+      <created>1717888900582</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1717888900582</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -149,6 +163,7 @@
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Common Cards pass&#10;&#10;All nine of her common cards.&#10;Note that Curse doesn't work." />
-    <option name="LAST_COMMIT_MESSAGE" value="Common Cards pass&#10;&#10;All nine of her common cards.&#10;Note that Curse doesn't work." />
+    <MESSAGE value="Uncommon Cards pass&#10;&#10;All of her uncommon cards, except Malediction B.&#10;That one's getting a replacement due to being not icons." />
+    <option name="LAST_COMMIT_MESSAGE" value="Uncommon Cards pass&#10;&#10;All of her uncommon cards, except Malediction B.&#10;That one's getting a replacement due to being not icons." />
   </component>
 </project>

@@ -78,6 +78,22 @@
       "description": {
         "B": "Attack for <c=status>Curse</c> - <c=status>Heat</c> <c=attack>({0})</c>."
       }
+    },
+    
+    "FanTheFlames": {
+      "name": "Fan the Flames"
+    },
+    "RendAssunder": {
+      "name": "Rend Assunder"
+    },
+    "Scourge": {
+      "name": "Scourge"
+    },
+    "SlowRoast": {
+      "name": "Slow Roast"
+    },
+    "DarkThoughts": {
+      "name": "Dark Thoughts"
     }
   },
   "status": {
