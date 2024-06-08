@@ -16,17 +16,17 @@ public class RandomChoiceActionFactory
 
         var actions = new List<CardAction>
         {
-            new RandomChoiceSetupAction { data = data }
+            new RandomChoiceSetupAction { Data = data }
         };
             
         if (red != null)
-            actions.AddRange(red.Select(t => ModManifest.KokoroApi.ConditionalActions.Make(
-                new RedBlackCondition { isRed = true, data = data }, t
+            actions.AddRange(red.Select(t => ModEntry.Instance.KokoroApi.ConditionalActions.Make(
+                new RedBlackCondition { IsRed = true, Data = data }, t
             )));
             
         if (black != null)
-            actions.AddRange(black.Select(t => ModManifest.KokoroApi.ConditionalActions.Make(
-                new RedBlackCondition { isRed = false, data = data }, t
+            actions.AddRange(black.Select(t => ModEntry.Instance.KokoroApi.ConditionalActions.Make(
+                new RedBlackCondition { IsRed = false, Data = data }, t
             )));
 
         return actions;
@@ -34,39 +34,42 @@ public class RandomChoiceActionFactory
 
     public class RandomChoiceSetupAction : CardAction
     {
-        public RandomChoiceActionData data;
+        public RandomChoiceActionData Data = null!;
 
         public override void Begin(G g, State s, Combat c)
         {
             var isRoll = false;
                 
             var redOdds = 5f;
-            redOdds += s.ship.Get((Status)(ModManifest.red_bias?.Id ?? throw new Exception()));
-            redOdds -= s.ship.Get((Status)(ModManifest.black_bias?.Id ?? throw new Exception()));
+            redOdds += s.ship.Get(ModEntry.Instance.RedBias.Status);
+            redOdds -= s.ship.Get(ModEntry.Instance.BlackBias.Status);
             redOdds /= 10;
 
-            if (s.ship.Get((Status)(ModManifest.red_rigging?.Id ?? throw new Exception())) > 0)
+            if (s.ship.Get(ModEntry.Instance.RedRigging.Status) > 0)
             {
-                data.isRed = true;
-                c.QueueImmediate(new AStatus { status = (Status)ModManifest.red_rigging.Id, targetPlayer = true, statusAmount = -1, mode = AStatusMode.Add });
+                Data.IsRed = true;
+                c.QueueImmediate(new AStatus { status = ModEntry.Instance.RedRigging.Status, targetPlayer = true, statusAmount = -1, mode = AStatusMode.Add });
             }
 
-            if (s.ship.Get((Status)(ModManifest.black_rigging?.Id ?? throw new Exception())) > 0)
+            if (s.ship.Get(ModEntry.Instance.BlackRigging.Status) > 0)
             {
-                data.isBlack = true;
-                c.QueueImmediate(new AStatus { status = (Status)ModManifest.black_rigging.Id, targetPlayer = true, statusAmount = -1, mode = AStatusMode.Add });
+                Data.IsBlack = true;
+                c.QueueImmediate(new AStatus { status = ModEntry.Instance.BlackRigging.Status, targetPlayer = true, statusAmount = -1, mode = AStatusMode.Add });
             }
 
-            if (data is { isRed: false, isBlack: false })
+            if (Data is { IsRed: false, IsBlack: false })
             {
-                data.isRed = s.rngActions.Next() < redOdds;
-                data.isBlack = !data.isRed;
+                Data.IsRed = s.rngActions.Next() < redOdds;
+                Data.IsBlack = !Data.IsRed;
                 isRoll = true;
             }
 
-            data.filled = true;
-                
-            ModManifest.EventHub.SignalEvent("Dave.RedBlackRoll", Tuple.Create(s, c, data.isRed, data.isBlack, isRoll));
+            Data.Filled = true;
+            
+            foreach (var rollHook in ModEntry.Instance.RollManager.ToList())
+            {
+                rollHook.OnRoll(s, c, Data.IsRed, Data.IsBlack, isRoll);
+            }
                 
             if (!ArtifactUtil.PlayerHasArtifactOfType(s, typeof(Chip)))
                 c.QueueImmediate(new AAddArtifact { artifact = new Chip() });
@@ -88,22 +91,24 @@ public class RandomChoiceActionFactory
 
 public class RandomChoiceActionData
 {
-    public bool isRed;
-    public bool isBlack;
-    public bool filled = false;
+    public bool IsRed;
+    public bool IsBlack;
+    public bool Filled;
 }
 
 public class RedBlackCondition : IKokoroApi.IConditionalActionApi.IBoolExpression
 {
-    public RandomChoiceActionData data;
-    public bool isRed;
+    internal static Spr Red;
+    internal static Spr Black;
+    public RandomChoiceActionData Data = null!;
+    public bool IsRed;
     
     public void Render(G g, ref Vec position, bool isDisabled, bool dontRender)
     {
         if (!dontRender)
         {
             Draw.Sprite(
-                (Spr) (isRed ? ModManifest.red_sprite!.Id! : ModManifest.black_sprite!.Id!),
+                IsRed ? Red : Black,
                 position.x,
                 position.y,
                 color: isDisabled ? Colors.disabledIconTint : Colors.white
@@ -115,17 +120,17 @@ public class RedBlackCondition : IKokoroApi.IConditionalActionApi.IBoolExpressio
 
     public string GetTooltipDescription(State state, Combat? combat)
     {
-        return isRed ? "on Red" : "on Black";
+        return IsRed ? "on Red" : "on Black";
     }
 
     public bool GetValue(State state, Combat combat)
     {
-        if (data.filled) return isRed ? data.isRed : data.isBlack;
+        if (Data.Filled) return IsRed ? Data.IsRed : Data.IsBlack;
 
-        var redStatus = state.ship.Get((Status)ModManifest.red_rigging!.Id!);
-        var blackStatus = state.ship.Get((Status)ModManifest.black_rigging!.Id!);
+        var redStatus = state.ship.Get(ModEntry.Instance.RedRigging.Status);
+        var blackStatus = state.ship.Get(ModEntry.Instance.BlackRigging.Status);
         
-        return isRed ?
+        return IsRed ?
             redStatus > 0 || blackStatus == 0 :
             blackStatus > 0 || redStatus == 0;
     }

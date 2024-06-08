@@ -11,9 +11,9 @@ public class PerfectOddsCard : Card
     {
         return new List<CardAction>
         {
-            new AStatus { status = (Status)(ModManifest.red_rigging.Id ?? throw new Exception("missing status")), targetPlayer = true, statusAmount = 1, mode = AStatusMode.Add, disabled = flipped },
+            new AStatus { status = ModEntry.Instance.RedRigging.Status, targetPlayer = true, statusAmount = 1, mode = AStatusMode.Add, disabled = flipped },
             new ADummyAction(),
-            new AStatus { status = (Status)(ModManifest.black_rigging.Id ?? throw new Exception("missing status")), targetPlayer = true, statusAmount = 1, mode = AStatusMode.Add, disabled = !flipped }
+            new AStatus { status = ModEntry.Instance.BlackRigging.Status, targetPlayer = true, statusAmount = 1, mode = AStatusMode.Add, disabled = !flipped }
         };
     }
 

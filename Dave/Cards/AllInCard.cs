@@ -8,8 +8,6 @@ namespace Dave.Cards
     [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class AllInCard : Card
     {
-        public static Spr card_sprite;
-        
         public override List<CardAction> GetActions(State s, Combat c)
         {
             List<CardAction> actions;
@@ -60,7 +58,6 @@ namespace Dave.Cards
         public override CardData GetData(State state) => new()
         {
             cost = 3,
-            art = card_sprite,
             exhaust = true
         };
     }

@@ -2,39 +2,39 @@
 {
     public class BiasStatusAction : CardAction
     {
-        public static string blue_glossary_item = "";
-        public static string orange_glossary_item = "";
+        internal static string RedGlossaryItem = null!;
+        internal static string BlackGlossaryItem = null!;
 
-        public static Spr? spr_red;
-        public static Spr? spr_black;
+        public static Spr? SprRed;
+        public static Spr? SprBlack;
 
-        public int pow; // positive is red, negative is black
+        public int Pow; // positive is red, negative is black
 
         public override void Begin(G g, State s, Combat c)
         {
             var ship = s.ship;
-            var dir = Math.Sign(pow);
-            var total = pow
-                        + ship.Get((Status)(ModManifest.red_bias?.Id ?? throw new NullReferenceException()))
-                        - ship.Get((Status)(ModManifest.black_bias?.Id ?? throw new NullReferenceException()))
+            var dir = Math.Sign(Pow);
+            var total = Pow
+                        + ship.Get(ModEntry.Instance.RedBias.Status)
+                        - ship.Get(ModEntry.Instance.BlackBias.Status)
                         + dir * ship.Get(Status.boost);
             
             var actions = new List<CardAction>();
             
             if (ship.Get(Status.boost) > 0)
                 actions.Add(new AStatus { status = Status.boost, targetPlayer = true, statusAmount = 0, mode = AStatusMode.Set });
-            if (ship.Get((Status)ModManifest.red_bias.Id) > 0 && total <= 0)
+            if (ship.Get(ModEntry.Instance.RedBias.Status) > 0 && total <= 0)
                 actions.Add(new AStatus
                 {
-                    status = (Status)ModManifest.red_bias.Id,
+                    status = ModEntry.Instance.RedBias.Status,
                     targetPlayer = true,
                     statusAmount = 0,
                     mode = AStatusMode.Set
                 });
-            if (ship.Get((Status)ModManifest.black_bias.Id) > 0 && total >= 0)
+            if (ship.Get(ModEntry.Instance.BlackBias.Status) > 0 && total >= 0)
                 actions.Add(new AStatus
                 {
-                    status = (Status)ModManifest.black_bias.Id,
+                    status = ModEntry.Instance.BlackBias.Status,
                     targetPlayer = true,
                     statusAmount = 0,
                     mode = AStatusMode.Set
@@ -44,7 +44,7 @@
                 case > 0:
                     actions.Add(new AStatus
                     {
-                        status = (Status)ModManifest.red_bias.Id,
+                        status = ModEntry.Instance.RedBias.Status,
                         targetPlayer = true,
                         statusAmount = total,
                         mode = AStatusMode.Set
@@ -53,7 +53,7 @@
                 case < 0:
                     actions.Add(new AStatus
                     {
-                        status = (Status)ModManifest.black_bias.Id,
+                        status = ModEntry.Instance.BlackBias.Status,
                         targetPlayer = true,
                         statusAmount = -total,
                         mode = AStatusMode.Set
@@ -68,10 +68,10 @@
 
         public override Icon? GetIcon(State s)
         {
-            return pow switch
+            return Pow switch
             {
-                > 0 when spr_red != null => new Icon(spr_red.Value, pow, Colors.textMain),
-                < 0 when spr_black != null => new Icon(spr_black.Value, -pow, Colors.textMain),
+                > 0 when SprRed != null => new Icon(SprRed.Value, Pow, Colors.textMain),
+                < 0 when SprBlack != null => new Icon(SprBlack.Value, -Pow, Colors.textMain),
                 _ => null
             };
         }
@@ -80,9 +80,9 @@
         {
             return new List<Tooltip>
             {
-                pow > 0
-                ? new TTGlossary(blue_glossary_item, pow)
-                : new TTGlossary(orange_glossary_item, -pow)
+                Pow > 0
+                ? new TTGlossary(RedGlossaryItem, Pow)
+                : new TTGlossary(BlackGlossaryItem, -Pow)
             };
         }
     }

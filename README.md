@@ -3,6 +3,7 @@
 A gambling man, who performs random actions, with the ability to rig the odds in his favor.
 
 Code by rft50, art by Arin
+Duo Artifact ideas by Kurio, art by rft50
 
 ## Jester
 A mad jester, only supposedly knowing what he's doing.
@@ -14,5 +15,4 @@ Code by rft50, art by rft50 and clay
 
 * Original Code and Concept for the Loader was done by EWanderer.
 * Single File Extractor by Joery Droppers
-* Loader was created using [Harmony](https://github.com/pardeike/Harmony) by Andreas Pardeike.
-* Sprites in the DemoMod by EWanderer
+* Loader was created using [Harmony](https://github.com/pardeike/Harmony) by Andreas Pardeik

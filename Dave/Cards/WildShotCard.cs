@@ -8,8 +8,6 @@ namespace Dave.Cards
     [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class WildShotCard : Card
     {
-        public static Spr card_sprite;
-
         public override List<CardAction> GetActions(State s, Combat c)
         {
             var actions = new List<CardAction>();
@@ -68,8 +66,7 @@ namespace Dave.Cards
 
         public override CardData GetData(State state) => new()
         {
-            cost = 1,
-            art = card_sprite
+            cost = 1
         };
     }
 }

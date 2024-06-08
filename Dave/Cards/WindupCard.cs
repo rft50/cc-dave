@@ -8,13 +8,11 @@ namespace Dave.Cards;
 [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
 public class WindupCard : Card
 {
-    public static Spr card_sprite;
-
     public override List<CardAction> GetActions(State s, Combat c)
     {
         var builtActions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
         {
-            new AStatus { status = (Status)(ModManifest.black_rigging.Id ?? throw new Exception("missing status")), targetPlayer = true, statusAmount = upgrade == Upgrade.B ? 3 : 2, mode = AStatusMode.Add }
+            new AStatus { status = ModEntry.Instance.BlackRigging.Status, targetPlayer = true, statusAmount = upgrade == Upgrade.B ? 3 : 2, mode = AStatusMode.Add }
         });
         
         return new List<CardAction>
@@ -29,7 +27,6 @@ public class WindupCard : Card
 
     public override CardData GetData(State state) => new()
     {
-        cost = 0,
-        art = card_sprite
+        cost = 0
     };
 }

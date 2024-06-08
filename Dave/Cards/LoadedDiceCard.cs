@@ -17,9 +17,9 @@ namespace Dave.Cards
 
             var list = new List<CardAction>
             {
-                new BiasStatusAction { pow = pow, disabled = flipped },
+                new BiasStatusAction { Pow = pow, disabled = flipped },
                 new ADummyAction(),
-                new BiasStatusAction { pow = -pow, disabled = !flipped }
+                new BiasStatusAction { Pow = -pow, disabled = !flipped }
             };
 
             return list;

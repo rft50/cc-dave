@@ -10,8 +10,8 @@
 
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            var redRigging = (Status)(ModManifest.red_rigging.Id ?? throw new Exception("missing status"));
-            var blackRigging = (Status)(ModManifest.black_rigging.Id ?? throw new Exception("missing status"));
+            var redRigging = ModEntry.Instance.RedRigging.Status;
+            var blackRigging = ModEntry.Instance.BlackRigging.Status;
 
             var rigAmount = s.ship.Get(redRigging) + s.ship.Get(blackRigging);
             

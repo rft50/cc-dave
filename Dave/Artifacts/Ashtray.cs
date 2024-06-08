@@ -19,7 +19,7 @@ public class Ashtray : Artifact
     public override void OnPlayerPlayCard(int energyCost, Deck deck, Card card, State state, Combat combat, int handPosition,
         int handCount)
     {
-        if (deck == (Deck)ModManifest.dave_deck.Id) return;
+        if (deck == ModEntry.Instance.DaveDeck.Deck) return;
 
         count++;
 

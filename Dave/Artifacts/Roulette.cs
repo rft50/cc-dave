@@ -1,23 +1,23 @@
-﻿using Dave.Cards;
+﻿using Dave.Api;
+using Dave.Cards;
 
 namespace Dave.Artifacts;
 
 // Roulette: Every 3 red/black cards you play with no Rigging, add a Perfect Odds to your hand
 
 [ArtifactMeta(pools = new[] { ArtifactPool.Common })]
-public class Roulette : Artifact
+public class Roulette : Artifact, IRollHook
 {
-    public int count;
+    public int Count;
 
     public Roulette()
     {
-        if (ModManifest.EventHub != null)
-            ModManifest.EventHub.ConnectToEvent<Tuple<State, Combat, bool, bool, bool>>("Dave.RedBlackRoll", OnRoll);
+        ModEntry.Instance.RollManager.Register(this, 0);
     }
 
     public override void OnRemoveArtifact(State state)
     {
-        ModManifest.EventHub.DisconnectFromEvent<Tuple<State, Combat, bool, bool, bool>>("Dave.RedBlackRoll", OnRoll);
+        ModEntry.Instance.RollManager.Unregister(this);
     }
 
     public override List<Tooltip>? GetExtraTooltips() => new()
@@ -25,25 +25,23 @@ public class Roulette : Artifact
         new TTCard { card = new PerfectOddsCard() }
     };
     
-    public override int? GetDisplayNumber(State s) => count;
+    public override int? GetDisplayNumber(State s) => Count;
 
-    private void OnRoll(Tuple<State, Combat, bool, bool, bool> data)
+    public void OnRoll(State state, Combat combat, bool isRed, bool isBlack, bool isRoll)
     {
-        var (state, combat, _, _, isRoll) = data;
-
         if (!ArtifactUtil.PlayerHasArtifact(state, this))
         {
-            ModManifest.EventHub.DisconnectFromEvent<Tuple<State, Combat, bool, bool, bool>>("Dave.RedBlackRoll", OnRoll);
+            ModEntry.Instance.RollManager.Unregister(this);
             return;
         }
 
         if (!isRoll) return;
 
-        count++;
+        Count++;
 
-        if (count < 3) return;
+        if (Count < 3) return;
 
-        count -= 3;
+        Count -= 3;
         
         combat.QueueImmediate(new AAddCard
         {

@@ -12,8 +12,8 @@
         {
             return new List<CardAction>
             {
-                new AStatus { status = (Status)(ModManifest.red_rigging.Id ?? throw new Exception("missing status")), targetPlayer = true, statusAmount = 2, mode = AStatusMode.Add },
-                new AStatus { status = (Status)(ModManifest.black_rigging.Id ?? throw new Exception("missing status")), targetPlayer = true, statusAmount = 2, mode = AStatusMode.Add }
+                new AStatus { status = ModEntry.Instance.RedRigging.Status, targetPlayer = true, statusAmount = 2, mode = AStatusMode.Add },
+                new AStatus { status = ModEntry.Instance.BlackRigging.Status, targetPlayer = true, statusAmount = 2, mode = AStatusMode.Add }
             };
         }
 

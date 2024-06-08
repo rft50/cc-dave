@@ -1,8 +1,8 @@
 {
   "EntryPointAssembly": "Dave.dll",
   "UniqueName": "Dave",
-  "Version": "1.1.3",
-  "RequiredApiVersion": "0.4.0",
+  "Version": "2.0.0",
+  "RequiredApiVersion": "0.10.0",
   "Dependencies": [
     {
       "UniqueName": "Nickel.Legacy",
@@ -25,5 +25,6 @@
       "IsRequired": false
     }
   ],
-  "ModType": "Nickel.Legacy"
+  "LoadPhase": "AfterDbInit",
+  "Author": "rft50"
 }

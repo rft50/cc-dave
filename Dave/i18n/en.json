@@ -1,0 +1,138 @@
+﻿{
+    "character": {
+        "name": "Dave",
+        "description": [
+            "<c=159D3E>DAVE</c>",
+            "A gambler. His cards have <c=cardtrait>random effects</c> and allow him to rig the odds."
+        ]
+    },
+    "status": {
+        "RedRigging": {
+            "name": "Red Rigging",
+            "description": "The next {0} cards with Red/Black actions will go Red."
+        },
+        "BlackRigging": {
+            "name": "Black Rigging",
+            "description": "The next {0} cards with Red/Black actions will go Black."
+        },
+        "RedBias": {
+            "name": "Red Bias",
+            "description": "Each stack of this makes Red/Black actions 10% more likely to roll Red."
+        },
+        "BlackBias": {
+            "name": "Black Bias",
+            "description": "Each stack of this makes Red/Black actions 10% more likely to roll Black."
+        }
+    },
+    "action": {
+        "RandomFoeMove": {
+            "name": "Random Foe Move",
+            "description": "Instantly move the opponent {0} spaces in a random direction."
+        },
+        "ShieldHurt": {
+            "name": "Shield Hurt",
+            "description": "Take {0} damage, hitting shields first."
+        },
+        "RedBlack": {
+            "name": "Red/Black",
+            "description": "When played, either performs the Red or Black actions."
+        }
+    },
+    "artifact": {
+        "Chip": {
+            "name": "CHIP",
+            "description": "This chip indicates the red/black roll result for the last card you played."
+        },
+        "DriveRefund": {
+            "name": "DRIVE REFUND",
+            "description": "The first time you lose <c=status>overdrive</c> each turn, draw a card."
+        },
+        "Ashtray": {
+            "name": "ASHTRAY",
+            "description": "Every 5 non-Dave cards you play, add a Perfect Odds to your hand."
+        },
+        "Roulette": {
+            "name": "ROULETTE",
+            "description": "Every 3 red/black cards you play with no Rigging, add a Perfect Odds to your hand."
+        },
+        "UnderdriveGenerator": {
+            "name": "UNDERDRIVE GENERATOR",
+            "description": "Every 3 red/Gain 1 extra <c=energy>ENERGY</c> every turn. <c=downside>Gain -1 <c=status>overdrive</c> every 2 turns</c>."
+        },
+        "RiggedDice": {
+            "name": "RIGGED DICE",
+            "description": "Every other turn, add a Perfect Odds to your hand."
+        }
+    },
+    "card": {
+        "LuckyEscape": {
+            "name": "Lucky Escape"
+        },
+        "RiggingShot": {
+            "name": "Rigging Shot"
+        },
+        "WildStep": {
+            "name": "Wild Step"
+        },
+        "WildShot": {
+            "name": "Wild Shot"
+        },
+        "Windup": {
+            "name": "Windup"
+        },
+        "PrimedShot": {
+            "name": "Primed Shot"
+        },
+        "PinchShot": {
+            "name": "Pinch Shot"
+        },
+        "WildWall": {
+            "name": "Wild Wall"
+        },
+        "Fold": {
+            "name": "Fold"
+        },
+        
+        "WildBarrage": {
+            "name": "Wild Barrage"
+        },
+        "Rigging": {
+            "name": "Rigging"
+        },
+        "Raise": {
+            "name": "Raise"
+        },
+        "Investment": {
+            "name": "Investment"
+        },
+        "Lowball": {
+            "name": "Lowball"
+        },
+        "LuckyShot": {
+            "name": "Lucky Shot"
+        },
+        "SeeingRed": {
+            "name": "Seeing Red"
+        },
+        
+        "LoadedDice": {
+            "name": "Loaded Dice"
+        },
+        "AllIn": {
+            "name": "All In"
+        },
+        "EvenBet": {
+            "name": "Even Bet"
+        },
+        "AllBetsAreOff": {
+            "name": "All Bets Are Off"
+        },
+        "DrawnGambit": {
+            "name": "Drawn Gambit"
+        },
+        
+        "PerfectOdds": {
+            "name": "Perfect Odds"
+        }
+    }
+}
