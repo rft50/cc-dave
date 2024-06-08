@@ -1,0 +1,68 @@
+{
+  "character": {
+    "Marielle": {
+      "name": "Marielle",
+      "description": "<c=ac507e>Marielle</c>\nA zealot of the occult. She uses her cards to <c=pink>fry her enemies</c> and <c=red>delay the inevitable</c>."
+    }
+  },
+  "artifact": {
+    "BookOfTails": {
+      "name": "BOOK OF TAILS",
+      "description": "At start of turn, add a <c=cardtrait>temp</c> <c=card>Fox Tale</c> to your hand."
+    },
+    "Counting": {
+      "name": "COUNTING",
+      "description": "At start of turn, count sheeps. Once you counted 7 sheep, gain 1 <c=status>ENERGY</c> and start counting again."
+    }
+  },
+  "card": {
+    "FoxTale": {
+      "name": "Fox Tale"
+    },
+    "SheepDream": {
+      "name": "Sheep Dream",
+      "description": {
+        "None": "Attack for set amount = 3. On hit, apply 1 <c=status>BOOST</c>.",
+        "A": "Attack for set amount = 4. On hit, apply 1 <c=status>BOOST</c>.",
+        "B": "Attack for set amount = 5. On hit, apply 2 <c=status>BOOST</c>."
+      }
+    },
+    "FireField": {
+      "name": "Fire Field"
+    },
+    "Hex": {
+      "name": "Hex"
+    },
+    "Flamethrower": {
+      "name": "Flamethrower"
+    },
+    "HotShot": {
+      "name": "Hot Shot"
+    },
+    "Prayer": {
+      "name": "Prayer"
+    },
+    "Voodoo": {
+      "name": "Voodoo"
+    },
+    "HeatRay": {
+      "name": "Heat Ray"
+    },
+    "WickedPact": {
+      "name": "Wicked Pact"
+    },
+    "ShadowCover": {
+      "name": "Shadow Cover"
+    }
+  },
+  "status": {
+    "Curse": {
+      "name": "Curse",
+      "description": "Increase the damage and threshold of overheat by <c=pink>{0}</c>."
+    },
+    "Enflamed": {
+      "name": "Enflamed",
+      "description": "Gain <c=pink>{0}</c> <c=lightblue>HEAT</c> every turn."
+    }
+  }
+}
