@@ -7,13 +7,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ae86e3ff-c25c-410e-b64d-afb907e745f3" name="Changes" comment="Uncommon Cards pass&#10;&#10;All of her uncommon cards, except Malediction B.&#10;That one's getting a replacement due to being not icons.">
-      <change afterPath="$PROJECT_DIR$/Cards/DarkThoughts.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/FanTheFlames.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/RendAssunder.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/Scourge.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Cards/SlowRoast.cs" afterDir="false" />
+    <list default="true" id="ae86e3ff-c25c-410e-b64d-afb907e745f3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.DemoMod/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.DemoMod/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cards/Malediction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Cards/Malediction.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Features/StatusManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Features/StatusManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Features/TraitManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Features/TraitManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ModEntry.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ModEntry.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/i18n/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/i18n/en.json" afterDir="false" />
     </list>
@@ -46,11 +44,15 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8a509a44775346118ef1ad9ae49177fd3ca00/1c/a78f1af8/HarmonyPrefix.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8a509a44775346118ef1ad9ae49177fd3ca00/be/21e68d07/HarmonyPatch.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8b689de6513c4f56b08c7afc238752d01ca600/15/eb9a62c4/Cheevos.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8b689de6513c4f56b08c7afc238752d01ca600/49/ee679eb5/AStatus.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8b689de6513c4f56b08c7afc238752d01ca600/54/5fe447b1/ARemoveExhaustFromCard.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8b689de6513c4f56b08c7afc238752d01ca600/89/3ac8fbfa/TridimensionalCockpit.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8b689de6513c4f56b08c7afc238752d01ca600/ab/dd2b6c28/CardSelectAddBuoyantForever.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8b689de6513c4f56b08c7afc238752d01ca600/bc/969f4978/PressureFuse.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8b689de6513c4f56b08c7afc238752d01ca600/e9/b4e41a16/AEndTurn.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/461946c682744b1fcb6fac2b816856e983a4f31c3f14df9a33f1c7d4ed40/IModCards.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5effc11d4633cc8f8d6e92fce69bc29a6f95b3a72266cad1a8c38a17844e/SingleLocalizationProvider.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6445275a89e9536bb6343243406859831aa1496357ddae453280186fe360ac/CardTraitConfiguration.cs" root0="SKIP_HIGHLIGHTING" />
@@ -65,28 +67,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Project.Marielle.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;marielle&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/msauv/RiderProjects/CobaltCoreDave/Marielle&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;RiderCSharpFileTemplatesSettingsId&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Project.Marielle.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "XThreadsFramesViewSplitterKey": "0.87954545",
+    "git-widget-placeholder": "marielle",
+    "last_opened_file_path": "C:/Users/msauv/RiderProjects/CobaltCoreDave/Marielle",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "RiderCSharpFileTemplatesSettingsId",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\msauv\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\msauv\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\msauv\\AppData\\Local\\Symbols\\src&quot;
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\msauv\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
+      "C:\\Users\\msauv\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
+      "C:\\Users\\msauv\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="Marielle" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="$PROJECT_DIR$/../../../../../program files (x86)/steam/steamapps/common/Cobalt Core/Nickel/Nickel.exe" />
@@ -115,7 +118,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1717876220790</updated>
-      <workItem from="1717876221905" duration="13924000" />
+      <workItem from="1717876221905" duration="17086000" />
     </task>
     <task id="LOCAL-00001" summary="Common Cards pass&#10;&#10;All nine of her common cards.&#10;Note that Curse doesn't work.">
       <option name="closed" value="true" />
@@ -141,7 +144,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717888900582</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Rare Cards pass&#10;&#10;Her main deck is now complete!">
+      <option name="closed" value="true" />
+      <created>1717890604462</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1717890604462</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -164,6 +175,7 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Common Cards pass&#10;&#10;All nine of her common cards.&#10;Note that Curse doesn't work." />
     <MESSAGE value="Uncommon Cards pass&#10;&#10;All of her uncommon cards, except Malediction B.&#10;That one's getting a replacement due to being not icons." />
-    <option name="LAST_COMMIT_MESSAGE" value="Uncommon Cards pass&#10;&#10;All of her uncommon cards, except Malediction B.&#10;That one's getting a replacement due to being not icons." />
+    <MESSAGE value="Rare Cards pass&#10;&#10;Her main deck is now complete!" />
+    <option name="LAST_COMMIT_MESSAGE" value="Rare Cards pass&#10;&#10;Her main deck is now complete!" />
   </component>
 </project>

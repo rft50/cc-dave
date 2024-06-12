@@ -5,11 +5,11 @@ using Nickel;
 
 namespace Marielle.Cards;
 
-public class Flamethrower : Card, IRegisterable
+public class Blowtorch : Card, IRegisterable
 {
     public static void Register(IPluginPackage<IModManifest> package, IModHelper helper)
     {
-        helper.Content.Cards.RegisterCard("Flamethrower", new()
+        helper.Content.Cards.RegisterCard("Blowtorch", new()
         {
             CardType = MethodBase.GetCurrentMethod()!.DeclaringType!,
             Meta = new()
@@ -18,8 +18,8 @@ public class Flamethrower : Card, IRegisterable
                 rarity = Rarity.common,
                 upgradesTo = [Upgrade.A, Upgrade.B]
             },
-            Name = ModEntry.Instance.AnyLocalizations.Bind(["card", "Flamethrower", "name"]).Localize,
-            Art = helper.Content.Sprites.RegisterSprite(package.PackageRoot.GetRelativeFile("assets/Cards/Flamethrower.png")).Sprite
+            Name = ModEntry.Instance.AnyLocalizations.Bind(["card", "Blowtorch", "name"]).Localize,
+            Art = helper.Content.Sprites.RegisterSprite(package.PackageRoot.GetRelativeFile("assets/Cards/Blowtorch.png")).Sprite
         });
     }
 
@@ -54,6 +54,7 @@ public class Flamethrower : Card, IRegisterable
 
     public override CardData GetData(State state) => new()
     {
-        cost = 0
+        cost = 0,
+        artTint = "FFFFFF"
     };
 }

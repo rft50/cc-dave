@@ -27,14 +27,13 @@ public class Malediction : Card, IRegisterable
     public override List<CardAction> GetActions(State s, Combat c)
     {
         var curse = ModEntry.Instance.Curse.Status;
-        if (upgrade == Upgrade.A)
+        return upgrade switch
         {
-            return
+            Upgrade.A =>
             [
                 new AStatus
                 {
-                    status = curse,
-                    statusAmount = 1,
+                    status = curse, statusAmount = 1,
                     targetPlayer = true
                 },
                 new AVariableHint
@@ -46,27 +45,39 @@ public class Malediction : Card, IRegisterable
                     damage = GetDamage(s),
                     xHint = 1
                 }
-            ];
-        }
-        return
-        [
-            new AVariableHint
-            {
-                status = curse
-            },
-            new AAttack
-            {
-                damage = GetDamage(s),
-                xHint = 1
-            }
-        ];
+            ],
+            Upgrade.B =>
+            [
+                new AVariableHint
+                {
+                    status = curse,
+                    secondStatus = Status.heat
+                },
+                new AAttack
+                {
+                    damage = GetDamage(s),
+                    xHint = 1
+                }
+            ],
+            _ =>
+            [
+                new AVariableHint
+                {
+                    status = curse
+                },
+                new AAttack
+                {
+                    damage = GetDamage(s),
+                    xHint = 1
+                }
+            ]
+        };
     }
 
     public override CardData GetData(State state) => new()
     {
-        cost = upgrade == Upgrade.B ? 1 : 2,
-        description = upgrade == Upgrade.B ? string.Format(ModEntry.Instance.AnyLocalizations
-            .Bind(["card", "Malediction", "description", "b"]).Localize("en") ?? "look out for Soggoru's replacement for this {0}", GetDamage(state)) : null
+        cost = upgrade == Upgrade.B ? 3 : 2,
+        artTint = "FFFFFF"
     };
 
     private int GetDamage(State s)
@@ -78,7 +89,7 @@ public class Malediction : Card, IRegisterable
                 dmg += 1 + s.ship.Get(Status.boost);
                 break;
             case Upgrade.B:
-                dmg -= s.ship.Get(Status.heat);
+                dmg += s.ship.Get(Status.heat);
                 break;
         }
         return GetDmg(s, dmg);

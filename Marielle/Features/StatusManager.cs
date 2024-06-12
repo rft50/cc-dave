@@ -1,7 +1,14 @@
-﻿using Marielle.ExternalAPI;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection.Emit;
+using HarmonyLib;
+using Marielle.ExternalAPI;
+using Nanoray.Shrike;
+using Nanoray.Shrike.Harmony;
 
 namespace Marielle.Features;
 
+[HarmonyPatch]
 public class StatusManager : IStatusLogicHook
 {
     public StatusManager()
@@ -21,5 +28,65 @@ public class StatusManager : IStatusLogicHook
                 targetPlayer = ship == state.ship
             });
         }
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(AStatus), "Begin")]
+    private static void AStatus_Begin_Prefix(AStatus __instance, State s, out int __state)
+    {
+        var ship = GetShip(__instance, s);
+        __state = ship.Get(ModEntry.Instance.Curse.Status);
+    }
+    
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(AStatus), "Begin")]
+    private static void AStatus_Begin_Postfix(AStatus __instance, State s, int __state)
+    {
+        var ship = GetShip(__instance, s);
+        var diff = ship.Get(ModEntry.Instance.Curse.Status) - __state;
+        ship.heatTrigger += diff;
+        ship.overheatDamage += diff;
+    }
+
+    private static Ship GetShip(AStatus instance, State s)
+    {
+        return instance.targetPlayer ? s.ship : ((Combat)s.route).otherShip;
+    }
+
+    [HarmonyTranspiler]
+    [HarmonyPatch(typeof(AOverheat), "Begin")]
+    private static IEnumerable<CodeInstruction> AOverheat_Begin_Transpiler(IEnumerable<CodeInstruction> instructions)
+    {
+        try
+        {
+            return new SequenceBlockMatcher<CodeInstruction>(instructions)
+                .Find(
+                    ILMatches.Ldarg(2),
+                    ILMatches.Ldfld("ship"),
+                    ILMatches.AnyStloc.CreateLdlocInstruction(out var ldloc)
+                )
+                .Find(
+                    ILMatches.Instruction(OpCodes.Ldc_I4_1)
+                )
+                .Replace(
+                    ldloc,
+                    new(OpCodes.Ldfld, AccessTools.Field("Ship:overheatDamage"))
+                )
+                .AllElements();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("AOverheat's Begin patch failed!");
+            Console.WriteLine(e);
+            return instructions;
+        }
+    }
+    
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Ship), "ResetAfterCombat")]
+    private static void Ship_ResetAfterCombat_Prefix(Ship __instance)
+    {
+        __instance.heatTrigger -= __instance.Get(ModEntry.Instance.Curse.Status);
+        __instance.overheatDamage -= __instance.Get(ModEntry.Instance.Curse.Status);
     }
 }

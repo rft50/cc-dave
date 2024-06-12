@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AuthorName.DemoMod;
-using AuthorName.DemoMod.Artifacts;
-using AuthorName.DemoMod.Cards;
 using HarmonyLib;
+using Marielle.Artifacts;
 using Marielle.Cards;
 using Marielle.ExternalAPI;
 using Marielle.Features;
@@ -22,6 +20,8 @@ public sealed class ModEntry : SimpleMod
 {
     internal static ModEntry Instance { get; private set; } = null!;
     internal IKokoroApi KokoroApi { get; }
+    internal ILouisApi? LouisApi { get; }
+    internal IMoreDifficultiesApi? MoreDifficultyApi { get; }
     internal ILocalizationProvider<IReadOnlyList<string>> AnyLocalizations { get; }
     internal ILocaleBoundNonNullLocalizationProvider<IReadOnlyList<string>> Localizations { get; }
     internal IDeckEntry MarielleDeck { get; }
@@ -35,7 +35,7 @@ public sealed class ModEntry : SimpleMod
     internal static IReadOnlyList<Type> MarielleCommonCardTypes { get; } = [
         typeof(FireField),
         typeof(Hex),
-        typeof(Flamethrower),
+        typeof(Blowtorch),
         typeof(HotShot),
         typeof(Prayer),
         typeof(Voodoo),
@@ -62,24 +62,35 @@ public sealed class ModEntry : SimpleMod
         typeof(DarkThoughts)
     ];
 
+    internal static IReadOnlyList<Type> MarielleArtifactCardTypes { get; } = [
+        typeof(Absolve)
+    ];
+
     /* We can use an IEnumerable to combine the lists we made above, and modify it if needed
      * Maybe you created a new list for Uncommon cards, and want to add it.
      * If so, you can .Concat(TheUncommonListYouMade) */
     internal static IEnumerable<Type> MarielleAllCardTypes
         => MarielleCommonCardTypes
             .Concat(MarielleUncommonCardTypes)
-            .Concat(MarielleRareCardTypes);
+            .Concat(MarielleRareCardTypes)
+            .Concat(MarielleArtifactCardTypes);
 
     /* We'll organize our artifacts the same way: making lists and then feed those to an IEnumerable */
     internal static IReadOnlyList<Type> MarielleCommonArtifactTypes { get; } = [
-        typeof(DemoArtifactBookOfTails)
+        typeof(Repentance),
+        typeof(DarkAura),
+        typeof(ColdHearted),
+        typeof(HotPotato),
+        typeof(RedCandle),
+        typeof(TollingBell)
     ];
-    internal static IReadOnlyList<Type> DemoShip_Artifact_Types { get; } = [
-        typeof(DemoArtifactCounting)
+
+    internal static IReadOnlyList<Type> MarielleBossArtifactTypes { get; } = [
+        typeof(NoMercy)
     ];
-    internal static IEnumerable<Type> DemoMod_AllArtifact_Types
+    internal static IEnumerable<Type> MatielleAllArtifactTypes
         => MarielleCommonArtifactTypes
-        .Concat(DemoShip_Artifact_Types);
+        .Concat(MarielleBossArtifactTypes);
 
 
     public ModEntry(IPluginPackage<IModManifest> package, IModHelper helper, ILogger logger) : base(package, helper, logger)
@@ -90,6 +101,8 @@ public sealed class ModEntry : SimpleMod
          * We take from Kokoro what we need and put in our own project. Head to ExternalAPI/StatusLogicHook.cs if you're interested in what, exactly, we use.
          * If you're interested in more fancy stuff, make sure to peek at the Kokoro repository found online. */
         KokoroApi = helper.ModRegistry.GetApi<IKokoroApi>("Shockah.Kokoro")!;
+        LouisApi = helper.ModRegistry.GetApi<ILouisApi>("TheJazMaster.Louis");
+        MoreDifficultyApi = helper.ModRegistry.GetApi<IMoreDifficultiesApi>("TheJazMaster.MoreDifficulties");
 
         /* These localizations lists help us organize our mod's text and messages by language.
          * For general use, prefer AnyLocalizations, as that will provide an easier time to potential localization submods that are made for your mod 
@@ -104,9 +117,6 @@ public sealed class ModEntry : SimpleMod
         Localizations = new MissingPlaceholderLocalizationProvider<IReadOnlyList<string>>(
             new CurrentLocaleOrEnglishLocalizationProvider<IReadOnlyList<string>>(AnyLocalizations)
         );
-
-        /* Assigning our ISpriteEntry objects manually. This is the easiest way to do it when starting out!
-         * Of note: GetRelativeFile is case sensitive. Double check you've written the file names correctly */
 
         /* Decks are assigned separate of the character. This is because the game has decks like Trash which is not related to a playable character
          * Do note that Color accepts a HEX string format (like Color("a1b2c3")) or a Float RGB format (like Color(0.63, 0.7, 0.76). It does NOT allow a traditional RGB format (Meaning Color(161, 178, 195) will NOT work) */
@@ -215,12 +225,20 @@ public sealed class ModEntry : SimpleMod
              * It's recommended that it follows the same color scheme as the character and deck, for cohesion */
             BorderSprite = helper.Content.Sprites.RegisterSprite(package.PackageRoot.GetRelativeFile("assets/Marielle/Panel.png")).Sprite
         });
+        
+        MoreDifficultyApi?.RegisterAltStarters(MarielleDeck.Deck, new StarterDeck
+        {
+            cards = new List<Card>
+            {
+                new Blowtorch(),
+                new ShadowCover()
+            }
+        });
 
         /* The basics for a Character mod are done!
          * But you may still have mechanics you want to tackle, such as,
          * 1. How to make cards
          * 2. How to make artifacts
-         * 3. How to make ships
          * 4. How to make statuses */
 
         /* 1. CARDS
@@ -239,7 +257,7 @@ public sealed class ModEntry : SimpleMod
          * Creating artifacts is pretty similar to creating Cards
          * Take a look at the Artifacts folder for demo artifacts!
          * You may also notice we're using the other interface from InternalInterfaces.cs, IDemoArtifact, to help us out */
-        foreach (var artifactType in DemoMod_AllArtifact_Types)
+        foreach (var artifactType in MatielleAllArtifactTypes)
             AccessTools.DeclaredMethod(artifactType, nameof(IRegisterable.Register))?.Invoke(null, [package, helper]);
 
         /* 4. STATUSES
@@ -268,15 +286,37 @@ public sealed class ModEntry : SimpleMod
         });
         _ = new StatusManager();
         
-        /* 5. Traits */
+        /* 5. TRAITS */
         {
-            var sprite = helper.Content.Sprites.RegisterSprite(package.PackageRoot.GetRelativeFile("assets/Statuses/Fleeting.png")).Sprite;
-            Fleeting = helper.Content.Cards.RegisterTrait("Fleeting", new()
+            if (LouisApi != null)
             {
-                Name = AnyLocalizations.Bind(["trait", "Fleeting", "name"]).Localize,
-                Icon = (_, _) => sprite
-            });
+                Fleeting = LouisApi.FleetingTrait;
+                TraitManager.HandleFleeting = false;
+            }
+            else
+            {
+                var sprite = helper.Content.Sprites.RegisterSprite(package.PackageRoot.GetRelativeFile("assets/Statuses/Fleeting.png")).Sprite;
+                Fleeting = helper.Content.Cards.RegisterTrait("Fleeting", new()
+                {
+                    Name = AnyLocalizations.Bind(["trait", "Fleeting", "name"]).Localize,
+                    Icon = (_, _) => sprite,
+                    Tooltips = (_, _) => [
+                        new GlossaryTooltip($"trait.{GetType().Namespace!}::Fleeting")
+                        {
+                            Icon = sprite,
+                            TitleColor = Colors.action,
+                            Title = Localizations.Localize(["trait", "Fleeting", "name"]),
+                            Description = Localizations.Localize(["trait", "Fleeting", "description"])
+                        }
+                    ]
+                });
+                TraitManager.HandleFleeting = true;
+            }
         }
         _ = new TraitManager();
+        
+        /* 6. HARMONY */
+        var harmony = new Harmony("rft.Marielle");
+        harmony.PatchAll();
     }
 }

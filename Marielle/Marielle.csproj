@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<RootNamespace>Marielle</RootNamespace>
-		<Version>0.0.1</Version>
+		<Version>1.0.1</Version>
 		<IsNickelMod>True</IsNickelMod>
 		<IncludedModProjectPaths>i18n;assets</IncludedModProjectPaths>
 		<LangVersion>12.0</LangVersion>

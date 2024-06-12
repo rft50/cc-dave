@@ -6,35 +6,45 @@
     }
   },
   "artifact": {
-    "BookOfTails": {
-      "name": "BOOK OF TAILS",
-      "description": "At start of turn, add a <c=cardtrait>temp</c> <c=card>Fox Tale</c> to your hand."
+    "Repentance": {
+      "name": "REPENTANCE",
+      "description": "At the start of combat, gain an <c=card>Absolve</c>."
     },
-    "Counting": {
-      "name": "COUNTING",
-      "description": "At start of turn, count sheeps. Once you counted 7 sheep, gain 1 <c=status>ENERGY</c> and start counting again."
+    "DarkAura": {
+      "name": "DARK AURA",
+      "description": "At the start of combat, apply 1 <c=status>CURSE</c> to the enemy and yourself."
+    },
+    "ColdHearted": {
+      "name": "COLD-HEARTED",
+      "description": "Start combat at -2 <c=status>HEAT</c>."
+    },
+    "HotPotato": {
+      "name": "HOT POTATO",
+      "description": "When gaining any amount of heat, apply 1 <c=status>HEAT</c> to the enemy."
+    },
+    "RedCandle": {
+      "name": "RED CANDLE",
+      "description": "Overheat on the enemy triggers instantly, instead of at the end of the turn."
+    },
+    "TollingBell": {
+      "name": "TOLLING BELL",
+      "description": "While overheating, add 1 damage to all attacks for each <c=status>CURSE</c> you have."
+    },
+    
+    "NoMercy": {
+      "name": "NO MERCY",
+      "description": "At the start of combat, apply 30 <c=status>CURSE</c> to the enemy."
     }
   },
   "card": {
-    "FoxTale": {
-      "name": "Fox Tale"
-    },
-    "SheepDream": {
-      "name": "Sheep Dream",
-      "description": {
-        "None": "Attack for set amount = 3. On hit, apply 1 <c=status>BOOST</c>.",
-        "A": "Attack for set amount = 4. On hit, apply 1 <c=status>BOOST</c>.",
-        "B": "Attack for set amount = 5. On hit, apply 2 <c=status>BOOST</c>."
-      }
-    },
     "FireField": {
       "name": "Fire Field"
     },
     "Hex": {
       "name": "Hex"
     },
-    "Flamethrower": {
-      "name": "Flame-\nthrower"
+    "Blowtorch": {
+      "name": "Blowtorch"
     },
     "HotShot": {
       "name": "Hot Shot"
@@ -74,10 +84,7 @@
       "name": "Burning Rage"
     },
     "Malediction": {
-      "name": "Malediction",
-      "description": {
-        "B": "Attack for <c=status>Curse</c> - <c=status>Heat</c> <c=attack>({0})</c>."
-      }
+      "name": "Malediction"
     },
     
     "FanTheFlames": {
@@ -94,6 +101,10 @@
     },
     "DarkThoughts": {
       "name": "Dark Thoughts"
+    },
+    
+    "Absolve": {
+      "name": "Absolve"
     }
   },
   "status": {
@@ -104,6 +115,12 @@
     "Enflamed": {
       "name": "Enflamed",
       "description": "Gain <c=pink>{0}</c> <c=status>HEAT</c> every turn."
+    }
+  },
+  "trait": {
+    "Fleeting": {
+      "name": "Fleeting",
+      "description": "If this card is in your hand at the end of your turn, it is exhausted."
     }
   }
 }

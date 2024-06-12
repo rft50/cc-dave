@@ -56,6 +56,7 @@ public class HeatRay : Card, IRegisterable
 
     public override CardData GetData(State state) => new()
     {
-        cost = upgrade == Upgrade.B ? 0 : 1
+        cost = upgrade == Upgrade.B ? 0 : 1,
+        artTint = "FFFFFF"
     };
 }

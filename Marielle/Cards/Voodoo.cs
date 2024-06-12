@@ -57,6 +57,7 @@ public class Voodoo : Card, IRegisterable
     public override CardData GetData(State state) => new()
     {
         cost = 1,
+        artTint = "FFFFFF",
         exhaust = true
     };
 }

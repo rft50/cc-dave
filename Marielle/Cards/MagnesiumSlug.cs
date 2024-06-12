@@ -45,6 +45,7 @@ public class MagnesiumSlug : Card, IRegisterable
 
     public override CardData GetData(State state) => new()
     {
-        cost = upgrade == Upgrade.B ? 1 : 2
+        cost = upgrade == Upgrade.B ? 1 : 2,
+        artTint = "FFFFFF"
     };
 }

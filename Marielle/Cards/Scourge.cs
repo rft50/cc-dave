@@ -46,6 +46,7 @@ public class Scourge : Card, IRegisterable, IHasCustomCardTraits
     public override CardData GetData(State state) => new()
     {
         cost = 1,
+        artTint = "FFFFFF",
         infinite = upgrade != Upgrade.B,
         recycle = upgrade == Upgrade.B
     };

@@ -39,6 +39,7 @@ public class Hex : Card, IRegisterable, IHasCustomCardTraits
     public override CardData GetData(State state) => new()
     {
         cost = upgrade == Upgrade.A? 0 : 1,
+        artTint = "FFFFFF",
         exhaust = true
     };
 

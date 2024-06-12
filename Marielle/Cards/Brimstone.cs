@@ -45,7 +45,8 @@ public class Brimstone : Card, IRegisterable, IHasCustomCardTraits
 
     public override CardData GetData(State state) => new()
     {
-        cost = 2
+        cost = 2,
+        artTint = "FFFFFF"
     };
 
     public IReadOnlySet<ICardTraitEntry> GetInnateTraits(State state)

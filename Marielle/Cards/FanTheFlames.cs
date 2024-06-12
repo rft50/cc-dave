@@ -76,6 +76,7 @@ public class FanTheFlames : Card, IRegisterable
 
     public override CardData GetData(State state) => new()
     {
-        cost = 1
+        cost = 1,
+        artTint = "FFFFFF"
     };
 }

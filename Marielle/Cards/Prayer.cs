@@ -45,6 +45,7 @@ public class Prayer : Card, IRegisterable
     public override CardData GetData(State state) => new()
     {
         cost = upgrade == Upgrade.B ? 1 : 2,
+        artTint = "FFFFFF",
         exhaust = upgrade == Upgrade.B
     };
 }

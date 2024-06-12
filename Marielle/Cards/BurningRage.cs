@@ -43,6 +43,7 @@ public class BurningRage : Card, IRegisterable
 
     public override CardData GetData(State state) => new()
     {
-        cost = upgrade == Upgrade.A ? 0 : 1
+        cost = upgrade == Upgrade.A ? 0 : 1,
+        artTint = "FFFFFF"
     };
 }

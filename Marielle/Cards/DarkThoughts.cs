@@ -55,6 +55,7 @@ public class DarkThoughts : Card, IRegisterable
 
     public override CardData GetData(State state) => new()
     {
-        cost = 0
+        cost = 0,
+        artTint = "FFFFFF"
     };
 }

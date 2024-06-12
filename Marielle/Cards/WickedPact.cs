@@ -68,7 +68,8 @@ public class WickedPact : Card, IRegisterable, IHasCustomCardTraits
 
     public override CardData GetData(State state) => new()
     {
-        cost = 1
+        cost = 1,
+        artTint = "FFFFFF"
     };
 
     public IReadOnlySet<ICardTraitEntry> GetInnateTraits(State state)

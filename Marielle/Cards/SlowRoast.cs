@@ -45,6 +45,7 @@ public class SlowRoast : Card, IRegisterable
     public override CardData GetData(State state) => new()
     {
         cost = upgrade == Upgrade.B ? 2 : 1,
+        artTint = "FFFFFF",
         exhaust = true
     };
 }
