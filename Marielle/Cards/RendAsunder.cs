@@ -5,11 +5,11 @@ using Nickel;
 
 namespace Marielle.Cards;
 
-public class RendAssunder : Card, IRegisterable
+public class RendAsunder : Card, IRegisterable
 {
     public static void Register(IPluginPackage<IModManifest> package, IModHelper helper)
     {
-        helper.Content.Cards.RegisterCard("RendAssunder", new()
+        helper.Content.Cards.RegisterCard("RendAsunder", new()
         {
             CardType = MethodBase.GetCurrentMethod()!.DeclaringType!,
             Meta = new()
@@ -18,9 +18,9 @@ public class RendAssunder : Card, IRegisterable
                 rarity = Rarity.rare,
                 upgradesTo = [Upgrade.A, Upgrade.B]
             },
-            Name = ModEntry.Instance.AnyLocalizations.Bind(["card", "RendAssunder", "name"]).Localize,
+            Name = ModEntry.Instance.AnyLocalizations.Bind(["card", "RendAsunder", "name"]).Localize,
             Art = helper.Content.Sprites
-                .RegisterSprite(package.PackageRoot.GetRelativeFile("assets/Cards/RendAssunder.png")).Sprite
+                .RegisterSprite(package.PackageRoot.GetRelativeFile("assets/Cards/RendAsunder.png")).Sprite
         });
     }
 

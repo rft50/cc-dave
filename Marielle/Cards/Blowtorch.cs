@@ -40,7 +40,7 @@ public class Blowtorch : Card, IRegisterable
             new AStatus
             {
                 status = Status.heat,
-                statusAmount = upgrade == Upgrade.B ? 4 : 3,
+                statusAmount = upgrade == Upgrade.B ? 5 : 3,
                 targetPlayer = false
             },
             new AStatus

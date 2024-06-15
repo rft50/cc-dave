@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Nanoray.PluginManager;
 using Nickel;
@@ -30,7 +31,11 @@ public class Prayer : Card, IRegisterable
             new AStatus
             {
                 status = Status.shield,
-                statusAmount = upgrade == Upgrade.A ? 3 : 2,
+                statusAmount = upgrade switch {
+                    Upgrade.A => 3,
+                    Upgrade.B => 1,
+                    _ => 2
+                },
                 targetPlayer = true
             },
             new AStatus
@@ -44,8 +49,7 @@ public class Prayer : Card, IRegisterable
 
     public override CardData GetData(State state) => new()
     {
-        cost = upgrade == Upgrade.B ? 1 : 2,
-        artTint = "FFFFFF",
-        exhaust = upgrade == Upgrade.B
+        cost = 2,
+        artTint = "FFFFFF"
     };
 }

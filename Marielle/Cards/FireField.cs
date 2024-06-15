@@ -39,7 +39,7 @@ public class FireField : Card, IRegisterable
                 new AStatus
                 {
                     status = Status.heat,
-                    statusAmount = 3,
+                    statusAmount = 4,
                     targetPlayer = false
                 },
 

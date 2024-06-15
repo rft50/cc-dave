@@ -56,7 +56,7 @@ public sealed class ModEntry : SimpleMod
     
     internal static IReadOnlyList<Type> MarielleRareCardTypes { get; } = [
         typeof(FanTheFlames),
-        typeof(RendAssunder),
+        typeof(RendAsunder),
         typeof(Scourge),
         typeof(SlowRoast),
         typeof(DarkThoughts)

@@ -12,7 +12,7 @@
     },
     "DarkAura": {
       "name": "DARK AURA",
-      "description": "At the start of combat, apply 1 <c=status>CURSE</c> to the enemy and yourself."
+      "description": "At the start of combat, apply 1 <c=status>CURSE</c> to the enemy."
     },
     "ColdHearted": {
       "name": "COLD-HEARTED",
@@ -90,8 +90,8 @@
     "FanTheFlames": {
       "name": "Fan the Flames"
     },
-    "RendAssunder": {
-      "name": "Rend Assunder"
+    "RendAsunder": {
+      "name": "Rend Asunder"
     },
     "Scourge": {
       "name": "Scourge"

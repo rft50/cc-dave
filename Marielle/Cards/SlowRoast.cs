@@ -33,9 +33,9 @@ public class SlowRoast : Card, IRegisterable
                 status = ModEntry.Instance.Enflamed.Status,
                 statusAmount = upgrade switch
                 {
-                    Upgrade.A => 2,
-                    Upgrade.B => 3,
-                    _ => 1
+                    Upgrade.A => 3,
+                    Upgrade.B => 4,
+                    _ => 2
                 },
                 targetPlayer = false
             }
