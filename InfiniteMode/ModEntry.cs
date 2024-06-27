@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
-using Marielle.ExternalAPI;
+using InfiniteMode.Artifacts;
+using InfiniteMode.Features;
 using Microsoft.Extensions.Logging;
 using Nanoray.PluginManager;
 using Nickel;
+using IKokoroApi = InfiniteMode.ExternalAPI.IKokoroApi;
 
 /* In the Cobalt Core modding community it is common for namespaces to be <Author>.<ModName>
  * This is helpful to know at a glance what mod we're looking at, and who made it */
@@ -19,9 +21,11 @@ public sealed class ModEntry : SimpleMod
     internal IKokoroApi KokoroApi { get; }
     internal ILocalizationProvider<IReadOnlyList<string>> AnyLocalizations { get; }
     internal ILocaleBoundNonNullLocalizationProvider<IReadOnlyList<string>> Localizations { get; }
+    internal ICardTraitEntry CorruptedCardTrait { get; }
 
     /* We'll organize our artifacts the same way: making lists and then feed those to an IEnumerable */
     internal static IReadOnlyList<Type> TrackingArtifacts { get; } = [
+        typeof(InfinityArtifact)
     ];
 
     internal static IEnumerable<Type> AllArtifacts
@@ -37,6 +41,9 @@ public sealed class ModEntry : SimpleMod
          * We take from Kokoro what we need and put in our own project. Head to ExternalAPI/StatusLogicHook.cs if you're interested in what, exactly, we use.
          * If you're interested in more fancy stuff, make sure to peek at the Kokoro repository found online. */
         KokoroApi = helper.ModRegistry.GetApi<IKokoroApi>("Shockah.Kokoro")!;
+        KokoroApi.RegisterTypeForExtensionData(typeof(State));
+        KokoroApi.RegisterTypeForExtensionData(typeof(Combat));
+        KokoroApi.RegisterTypeForExtensionData(typeof(Artifact));
 
         /* These localizations lists help us organize our mod's text and messages by language.
          * For general use, prefer AnyLocalizations, as that will provide an easier time to potential localization submods that are made for your mod 
@@ -64,8 +71,34 @@ public sealed class ModEntry : SimpleMod
         foreach (var artifactType in AllArtifacts)
             AccessTools.DeclaredMethod(artifactType, nameof(IRegisterable.Register))?.Invoke(null, [package, helper]);
         
+        
+        /* 5. TRAITS */
+        {
+            
+            var sprite = helper.Content.Sprites.RegisterSprite(package.PackageRoot.GetRelativeFile("assets/Statuses/MrStarkIDontFeelSoGood2.png")).Sprite;
+            CorruptedCardTrait = helper.Content.Cards.RegisterTrait("CorruptedCard", new()
+            {
+                Name = AnyLocalizations.Bind(["trait", "CorruptedCard", "name"]).Localize,
+                Icon = (_, _) => sprite,
+                Tooltips = (_, _) => [
+                    new GlossaryTooltip($"trait.{GetType().Namespace!}::CorruptedCard")
+                    {
+                        Icon = sprite,
+                        TitleColor = Colors.action,
+                        Title = Localizations.Localize(["trait", "CorruptedCard", "name"]),
+                        Description = Localizations.Localize(["trait", "CorruptedCard", "description"])
+                    }
+                ]
+            });
+        }
+        
         /* 6. HARMONY */
         var harmony = new Harmony("rft.InfiniteMode");
         harmony.PatchAll();
+        
+        /* 7. MANAGERS */
+        RestartOptionManager.Instance.Register();
+        CorruptedCardManager.Instance.Register(helper);
+        CorruptedArtifactManager.Instance.Register();
     }
 }

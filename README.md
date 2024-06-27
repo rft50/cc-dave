@@ -14,6 +14,11 @@ A zealot of the occult. She uses her cards to fry her enemies and delay the inev
 
 Code by rft50, idea and art by Soggoru Waffle
 
+## Infinite Mode
+After you defeat the Cobalt, the game ends, and you win. But what if it didn't?
+
+Idea and code by rft50, art by Arin
+
 # Modloader Credits
 * Many thanks to the wonderful people at Rocket Rat Games for creating Cobalt Core. This would not have been possible with their help and approval to expand their game this way.
 

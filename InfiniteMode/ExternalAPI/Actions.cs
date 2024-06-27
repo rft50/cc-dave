@@ -1,4 +1,4 @@
-﻿namespace Marielle.ExternalAPI;
+﻿namespace InfiniteMode.ExternalAPI;
 
 public partial interface IKokoroApi
 {

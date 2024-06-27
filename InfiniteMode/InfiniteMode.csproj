@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<RootNamespace>InfiniteMode</RootNamespace>
-		<Version>1.0.1</Version>
+		<Version>0.0.1</Version>
 		<IsNickelMod>True</IsNickelMod>
 		<IncludedModProjectPaths>i18n;assets</IncludedModProjectPaths>
 		<LangVersion>12.0</LangVersion>
@@ -13,13 +13,9 @@
 		<ModZipPath>$(MSBuildProjectDirectory)\.release\$(MSBuildProjectName)-$(Version).zip</ModZipPath>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Nickel.ModBuildConfig" Version="0.4.0" />
+		<PackageReference Include="Nickel.ModBuildConfig" Version="0.12.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<Project Include="Configuration.props.user" Condition="Exists('Configuration.props.user')" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Artifacts\" />
-	  <Folder Include="Features\" />
 	</ItemGroup>
 </Project>
