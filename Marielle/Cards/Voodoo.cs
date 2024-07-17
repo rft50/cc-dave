@@ -29,7 +29,7 @@ public class Voodoo : Card, IRegisterable
         [
             new AAttack
             {
-                damage = GetDmg(s, upgrade == Upgrade.None ? 3 : 6),
+                damage = GetDmg(s, upgrade == Upgrade.None ? 2 : 5),
                 status = ModEntry.Instance.Curse.Status,
                 statusAmount = upgrade == Upgrade.B ? 2 : 1
             },

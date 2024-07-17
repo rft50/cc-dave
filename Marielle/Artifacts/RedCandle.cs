@@ -30,12 +30,14 @@ public class RedCandle : Artifact, IRegisterable
     [HarmonyPatch(typeof(AStatus), "Begin")]
     private static void AStatus_Postfix(AStatus __instance, State s, Combat c)
     {
-        if (__instance.targetPlayer || !s.EnumerateAllArtifacts().Any(a => a is RedCandle)) return;
+        var candle = s.EnumerateAllArtifacts().Find(a => a is RedCandle) as RedCandle;
+        if (__instance.targetPlayer || candle == null) return;
         if (c.otherShip.Get(Status.heat) >= c.otherShip.heatTrigger)
         {
             c.QueueImmediate(new AOverheat
             {
-                targetPlayer = false
+                targetPlayer = false,
+                artifactPulse = candle.Key()
             });
         }
     }

@@ -30,15 +30,15 @@ public class FanTheFlames : Card, IRegisterable
         {
             Upgrade.A =>
             [
-                ModEntry.Instance.KokoroApi.Actions.SetTargetPlayer(new AVariableHint
-                {
-                    status = Status.heat
-                }, false),
                 new AStatus
                 {
                     status = Status.heat,
                     statusAmount = 1, targetPlayer = false
                 },
+                ModEntry.Instance.KokoroApi.Actions.SetTargetPlayer(new AVariableHint
+                {
+                    status = Status.heat
+                }, false),
                 new AStatus
                 {
                     status = Status.heat,

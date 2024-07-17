@@ -35,7 +35,8 @@ public class HotPotato : Artifact, IRegisterable
         {
             status = Status.heat,
             statusAmount = 1,
-            targetPlayer = false
+            targetPlayer = false,
+            artifactPulse = Key()
         });
     }
 }
