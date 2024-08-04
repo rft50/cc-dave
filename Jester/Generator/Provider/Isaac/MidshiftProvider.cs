@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Jester.Api;
 
-namespace Jester.Generator.Provider.Common;
+namespace Jester.Generator.Provider.Isaac;
 
 using IJesterRequest = IJesterApi.IJesterRequest;
 using IEntry = IJesterApi.IEntry;
@@ -11,7 +11,9 @@ public class MidshiftProvider : IProvider
 {
     public IEnumerable<(double, IEntry)> GetEntries(IJesterRequest request)
     {
-        return Enumerable.Range(1, 5)
+        if (!ModManifest.JesterApi.HasCharacterFlag("midrow"))
+            return [];
+        return Enumerable.Range(1, 3)
             .SelectMany(i => new List<(double, IEntry)>
             {
                 (0.1, new MidshiftEntry
@@ -52,6 +54,8 @@ public class MidshiftProvider : IProvider
 
         public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)
         {
+            if (Math.Abs(Distance) >= 3)
+                return [];
             return new List<(double, IEntry)>
             {
                 (1, new MidshiftEntry

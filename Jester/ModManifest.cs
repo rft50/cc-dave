@@ -7,13 +7,22 @@ using Jester.Api;
 using Jester.Artifacts;
 using Jester.Cards;
 using Jester.External;
+using Jester.Generator;
+using Jester.Render;
 using Microsoft.Extensions.Logging;
+using Nanoray.PluginManager;
+using Nickel;
+using Nickel.Legacy;
+using IModManifest = CobaltCoreModding.Definitions.ModManifests.IModManifest;
+using ReflectionExt = Jester.External.ReflectionExt;
 
 namespace Jester;
 
-public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, IDeckManifest, ICardManifest, ICardOverwriteManifest, ICharacterManifest, IGlossaryManifest, IArtifactManifest, IStatusManifest, ICustomEventManifest, IApiProviderManifest
+public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, IDeckManifest, ICardManifest, ICardOverwriteManifest, ICharacterManifest, IGlossaryManifest, IArtifactManifest, IStatusManifest, ICustomEventManifest, IApiProviderManifest, INickelManifest
 {
-    public static ICustomEventHub? EventHub;
+    public static ICustomEventHub EventHub = null!;
+    public static IModHelper Helper = null!;
+    internal static Settings Settings = null!;
     private ExternalSprite? card_art_sprite;
     private ExternalAnimation? default_animation;
     private ExternalSprite? demo_status_sprite;
@@ -23,6 +32,7 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
     public static ExternalSprite JesterMini = null!;
 
     public static ExternalSprite BellSprite = null!;
+    public static ExternalSprite ScriptedSprite = null!;
     public static ExternalSprite CharacterFrame = null!;
 
     public static Dictionary<string, ExternalSprite> ArtifactSprites = new();
@@ -30,6 +40,10 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
 
     public static ExternalArtifact OpeningScript = null!;
     public static ExternalArtifact ClosingCeremony = null!;
+    public static ExternalArtifact CherishedPhoto = null!;
+    public static ExternalArtifact JingleBells = null!;
+    public static ExternalArtifact JugglingBalls = null!;
+    public static ExternalArtifact Confetti = null!;
 
     public static ExternalStatus OpeningFatigue = null!;
 
@@ -53,10 +67,170 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
     public ILogger? Logger { get; set; }
     public DirectoryInfo? ModRootFolder { get; set; }
     public string Name => "rft.Jester";
-
-    public static void Log(string @in)
+    public void OnNickelLoad(IPluginPackage<Nickel.IModManifest> package, IModHelper helper)
     {
-        Logr.Log(LogLevel.Information, new EventId(0), @in, null, (str, _) => str);
+        Helper = helper;
+        Settings = new Settings();
+        
+        helper.Events.RegisterBeforeArtifactsHook(nameof(Artifact.OnCombatEnd), (State state) =>
+        {
+            if (!state.EnumerateAllArtifacts().Any(a => a is JugglingBalls)) return;
+            foreach (var card in state.deck)
+            {
+                if (card is not AbstractJoker joker) continue;
+                joker.Seed = null;
+                joker.Energy = null;
+                joker.ClearCache();
+            }
+        }, 0);
+        
+        helper.ModRegistry.AwaitApi<IModSettingsApi>("Nickel.ModSettings", ms =>
+        {
+            var options = new List<IModSettingsApi.IModSetting>();
+            
+            options.Add(ms.MakeHeader(() => "These will only apply at the start of new runs"));
+                
+            options.Add(ms.MakeCheckbox(() => "Insane Mode", () => Settings.ProfileBased.Current.InsaneMode, (g, ctx, val) =>
+            {
+                Settings.ProfileBased.Current.InsaneMode = val;
+            }));
+            
+            options.Add(ms.MakeNumericStepper(() => "Max Actions", () => Settings.ProfileBased.Current.ActionCap, val =>
+            {
+                Settings.ProfileBased.Current.ActionCap = val;
+            }, 5, 7));
+
+            var conditionalOptions = new List<IModSettingsApi.IModSetting>();
+            
+            conditionalOptions.Add(ms.MakeHeader(() => "These are debug options for Jester integration. They print directly to the logs."));
+            
+            conditionalOptions.Add(ms.MakeButton(() => "Character Flags", (_, _) =>
+            {
+                var flags = ((JesterApi)JesterApi).CharacterFlags;
+                Logr.LogDebug("Character Flags:");
+                foreach (var (key, value) in flags)
+                {
+                    var chars = value.Select(Helper.Content.Decks.LookupByDeck)
+                        .Where(c => c != null)
+                        .Select(c => c!.UniqueName);
+                    Logr.LogDebug(key + ": " + string.Join(", ", chars));
+                }
+            }));
+            
+            conditionalOptions.Add(ms.MakeButton(() => "Entry Tags", (_, _) =>
+            {
+                ((JesterApi)JesterApi).ForceAllCharFlags = true;
+                
+                var basicRequest = new JesterRequest
+                {
+                    Seed = 0,
+                    FirstAction = null,
+                    State = DB.fakeState,
+                    BasePoints = 150,
+                    CardData = new CardData
+                    {
+                        exhaust = false,
+                        singleUse = false
+                    },
+                    ActionLimit = 5,
+                    SingleUse = false,
+                    CardMeta = new CardMeta
+                    {
+                        rarity = Rarity.common
+                    }
+                };
+                var exhaustRequest = new JesterRequest
+                {
+                    Seed = 0,
+                    FirstAction = null,
+                    State = DB.fakeState,
+                    BasePoints = 150,
+                    CardData = new CardData
+                    {
+                        exhaust = true,
+                        singleUse = false
+                    },
+                    ActionLimit = 5,
+                    SingleUse = false,
+                    CardMeta = new CardMeta
+                    {
+                        rarity = Rarity.uncommon
+                    }
+                };
+                var singleUseRequest = new JesterRequest
+                {
+                    Seed = 0,
+                    FirstAction = null,
+                    State = DB.fakeState,
+                    BasePoints = 150,
+                    CardData = new CardData
+                    {
+                        exhaust = false,
+                        singleUse = true
+                    },
+                    ActionLimit = 5,
+                    SingleUse = true,
+                    CardMeta = new CardMeta
+                    {
+                        rarity = Rarity.rare
+                    }
+                };
+                var costRequest = new JesterRequest
+                {
+                    Seed = 0,
+                    FirstAction = null,
+                    State = DB.fakeState,
+                    BasePoints = 150,
+                    CardData = new CardData
+                    {
+                        exhaust = false,
+                        singleUse = false
+                    },
+                    ActionLimit = 5,
+                    SingleUse = false,
+                    CardMeta = new CardMeta
+                    {
+                        rarity = Rarity.rare
+                    },
+                    Whitelist = new HashSet<string>
+                    {
+                        "cost"
+                    }
+                };
+
+                List<IJesterApi.IJesterRequest> requests = [basicRequest, exhaustRequest, singleUseRequest, costRequest];
+                var providers = JesterGenerator.Providers;
+                var weightedOptions = providers.SelectMany(p => requests.SelectMany(p.GetEntries))
+                    .SelectMany<(double, IJesterApi.IEntry), (string, double)>(we =>
+                    {
+                        var w = we.Item1;
+                        var e = we.Item2;
+                        return e.Tags.Select(t => (t, w));
+                    });
+                var results = new Dictionary<string, double>();
+                foreach (var (tag, weight) in weightedOptions)
+                {
+                    results.TryAdd(tag, 0);
+                    results[tag] += weight;
+                }
+                Logr.LogDebug("Entry Tags:");
+                foreach (var (key, value) in results.OrderBy(e => e.Value).Reverse())
+                {
+                    Logr.LogDebug(key + ": " + value);
+                }
+                
+                ((JesterApi)JesterApi).ForceAllCharFlags = false;
+            }));
+            
+            options.Add(ms.MakeConditional(
+                ms.MakeList(conditionalOptions),
+                () => FeatureFlags.Debug
+                ));
+            
+            ms.RegisterModSettings(
+                ms.MakeList(options)
+            );
+        });
     }
 
     public void BootMod(IModLoaderContact contact)
@@ -67,7 +241,7 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
         Logr = Logger!;
 
         KokoroApi = contact.GetApi<IKokoroApi>("Shockah.Kokoro")!;
-        KokoroApi.RegisterTypeForExtensionData(typeof(Combat));
+        KokoroApi.RegisterCardRenderHook(new ZipperCardRenderManager(), 0);
         
         MoreDifficultiesApi = contact.GetApi<IMoreDifficultiesApi>("TheJazMaster.MoreDifficulties");
 
@@ -76,6 +250,7 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
         JesterApi.RegisterCardFlag("singleUse", request => request.CardData.singleUse);
         JesterApi.RegisterCardFlag("exhaust", request => request.Whitelist.Contains("mustExhaust") || request.CardData.exhaust || JesterApi.HasCardFlag("singleUse", request));
         
+        JesterApi.RegisterCharacterFlag("midrow", Deck.goat);
         JesterApi.RegisterCharacterFlag("heat", Deck.eunice);
         JesterApi.RegisterCharacterFlag("shard", Deck.shard);
             
@@ -113,6 +288,12 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
                 throw new Exception("Cannot register sprite.");
         }
         {
+            var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("scripted.png"));
+            ScriptedSprite = new ExternalSprite("rft.Jester.Scripted", new FileInfo(path));
+            if (!artRegistry.RegisterArt(ScriptedSprite))
+                throw new Exception("Cannot register sprite.");
+        }
+        {
             var path = Path.Combine(ModRootFolder.FullName, "Sprites", Path.GetFileName("char_frame_jester.png"));
             CharacterFrame = new ExternalSprite("rft.Jester.CharFrame", new FileInfo(path));
             if (!artRegistry.RegisterArt(CharacterFrame))
@@ -129,8 +310,13 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
         {
             var artifactList = new List<string>
             {
-                "script",
-                "ceremony"
+                "ceremony",
+                "cherishedphoto",
+                "confetti",
+                "jinglebells",
+                "jugglingballs",
+                "jugglingballs_off",
+                "script"
             };
                 
             foreach (var artifact in artifactList)
@@ -202,28 +388,28 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
             
         // common
         var jco = new ExternalCard("rft.Jester.CommonOffensiveJoker", typeof(CommonOffensiveJoker), card_art_sprite, JesterDeck);
-        jco.AddLocalisation("Common Offensive Joker");
+        jco.AddLocalisation("Common Offensive");
         registry.RegisterCard(jco);
             
         var jcd = new ExternalCard("rft.Jester.CommonDefensiveJoker", typeof(CommonDefensiveJoker), card_art_sprite, JesterDeck);
-        jcd.AddLocalisation("Common Defensive Joker");
+        jcd.AddLocalisation("Common Defensive");
         registry.RegisterCard(jcd);
             
         var jcu = new ExternalCard("rft.Jester.CommonUtilityJoker", typeof(CommonUtilityJoker), card_art_sprite, JesterDeck);
-        jcu.AddLocalisation("Common Utility Joker");
+        jcu.AddLocalisation("Common Utility");
         registry.RegisterCard(jcu);
             
         // uncommon
         var juo = new ExternalCard("rft.Jester.UncommonOffensiveJoker", typeof(UncommonOffensiveJoker), card_art_sprite, JesterDeck);
-        juo.AddLocalisation("Uncommon Offensive Joker");
+        juo.AddLocalisation("Uncommon Offensive");
         registry.RegisterCard(juo);
             
         var jud = new ExternalCard("rft.Jester.UncommonDefensiveJoker", typeof(UncommonDefensiveJoker), card_art_sprite, JesterDeck);
-        jud.AddLocalisation("Uncommon Defensive Joker");
+        jud.AddLocalisation("Uncommon Defensive");
         registry.RegisterCard(jud);
             
         var juu = new ExternalCard("rft.Jester.UncommonUtilityJoker", typeof(UncommonUtilityJoker), card_art_sprite, JesterDeck);
-        juu.AddLocalisation("Uncommon Utility Joker");
+        juu.AddLocalisation("Uncommon Utility");
         registry.RegisterCard(juu);
 
         var encore = new ExternalCard("rft.Jester.Encore", typeof(Encore), card_art_sprite, JesterDeck);
@@ -244,15 +430,15 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
             
         // rare
         var jro = new ExternalCard("rft.Jester.RareOffensiveJoker", typeof(RareOffensiveJoker), card_art_sprite, JesterDeck);
-        jro.AddLocalisation("Rare Joker Offensive");
+        jro.AddLocalisation("Rare Offensive");
         registry.RegisterCard(jro);
             
         var jrd = new ExternalCard("rft.Jester.RareDefensiveJoker", typeof(RareDefensiveJoker), card_art_sprite, JesterDeck);
-        jrd.AddLocalisation("Rare Joker Defensive");
+        jrd.AddLocalisation("Rare Defensive");
         registry.RegisterCard(jrd);
             
         var jru = new ExternalCard("rft.Jester.RareUtilityJoker", typeof(RareUtilityJoker), card_art_sprite, JesterDeck);
-        jru.AddLocalisation("Rare Joker Utility");
+        jru.AddLocalisation("Rare Utility");
         registry.RegisterCard(jru);
             
         var openingAct = new ExternalCard("rft.Jester.OpeningAct", typeof(OpeningAct), card_art_sprite, JesterDeck);
@@ -274,13 +460,13 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
         
         var jester = new ExternalCharacter("rft.Jester.JesterChar", JesterDeck ?? throw new NullReferenceException(), jester_panel, Type.EmptyTypes, Type.EmptyTypes, default_animation ?? throw new NullReferenceException(), MiniAnimation ?? throw new NullReferenceException());
         jester.AddNameLocalisation("Jester");
-        jester.AddDescLocalisation("JESTER\nA mad jester. He only supposedly knows what he's doing.");
+        jester.AddDescLocalisation("<c=9f0028>JESTER</c>\nA mad jester. He only supposedly knows what he's doing.");
         registry.RegisterCharacter(jester);
     }
 
     public void LoadManifest(IGlossaryRegisty registry)
     {
-        var icon = ExternalSprite.GetRaw((int)Spr.icons_ace);
+        var icon = ScriptedSprite;
 
         OpeningScriptedGlossary = new ExternalGlossary("rft.Jester.OpeningScripted.Glossary", "OpeningScripted",
             false, ExternalGlossary.GlossayType.cardtrait, icon);
@@ -302,13 +488,39 @@ public class ModManifest : IModManifest, ISpriteManifest, IAnimationManifest, ID
         {
             OpeningScript = new ExternalArtifact("rft.Jester.OpeningScript", typeof(OpeningScript),
                 ArtifactSprites["script"], ownerDeck: JesterDeck);
-            OpeningScript.AddLocalisation("OPENING SCRIPT", "At the start of combat, play every card on the opening script in order, then gain Opening Fatigue equal to their costs, minus their discounts.");
+            OpeningScript.AddLocalisation("OPENING SCRIPT", "At the start of combat, play every card on the opening script in order, then gain <c=status>Opening Fatigue</c> equal to their costs, minus their discounts.");
             registry.RegisterArtifact(OpeningScript);
 
             ClosingCeremony = new ExternalArtifact("rft.Jester.ClosingCeremony", typeof(ClosingCeremony),
                 ArtifactSprites["ceremony"], ownerDeck: JesterDeck);
             ClosingCeremony.AddLocalisation("CLOSING CEREMONY", "At the start of the next boss, add Final Act Bs to your deck. The number states how many.");
             registry.RegisterArtifact(ClosingCeremony);
+        }
+        // COMMON ARTIFACTS
+        {
+            CherishedPhoto = new ExternalArtifact("rft.Jester.CherishedPhoto", typeof(CherishedPhoto),
+                ArtifactSprites["cherishedphoto"], ownerDeck: JesterDeck);
+            CherishedPhoto.AddLocalisation("CHERISHED PHOTO", "At the end of combat, pick a <c=9f0028>Jester</c> card in your deck. Keep it, or pick one of four similar cards to replace it.");
+            registry.RegisterArtifact(CherishedPhoto);
+            
+            JingleBells = new ExternalArtifact("rft.Jester.JingleBells", typeof(JingleBells),
+                ArtifactSprites["jinglebells"], ownerDeck: JesterDeck);
+            JingleBells.AddLocalisation("JINGLE BELLS", "Whenever you play any given card for the second time on a turn, gain 1 <c=energy>ENERGY</c>.");
+            registry.RegisterArtifact(JingleBells);
+        }
+        // BOSS ARTIFACTS
+        {
+            JugglingBalls = new ExternalArtifact("rft.Jester.JugglingBalls", typeof(JugglingBalls),
+                ArtifactSprites["jugglingballs"], ownerDeck: JesterDeck);
+            JugglingBalls.AddLocalisation("JUGGLING BALLS", "The first time you play a <c=9f0028>Jester</c> card each turn, gain 1 <c=energy>ENERGY</c>.\n<c=downside>At the end of every combat, reroll every Jester card in your deck.</c>");
+            registry.RegisterArtifact(JugglingBalls);
+            Artifacts.JugglingBalls.ReadySpr = (Spr) ArtifactSprites["jugglingballs"].Id!;
+            Artifacts.JugglingBalls.NotReadySpr = (Spr) ArtifactSprites["jugglingballs_off"].Id!;
+            
+            Confetti = new ExternalArtifact("rft.Jester.Confetti", typeof(Confetti),
+                ArtifactSprites["confetti"], ownerDeck: JesterDeck);
+            Confetti.AddLocalisation("CONFETTI", "Every three cards you exhaust, add a <c=cardtrait>Single Use</c> Encore to your hand.");
+            registry.RegisterArtifact(Confetti);
         }
     }
 

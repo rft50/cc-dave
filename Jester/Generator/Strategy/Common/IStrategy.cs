@@ -70,7 +70,7 @@ public static class StrategyUtil
         var entries = request.Entries;
         var upgradeCount = 0;
         var rng = new Rand((uint)(request.Random.seed + points + (int)upDir));
-        var actionHardcap = JesterGenerator.ActionCap;
+        var actionHardcap = ModManifest.Settings.ProfileBased.Current.ActionCap;
         var currentActions = entries.Select(e => e.GetActions(DB.fakeState, DB.fakeCombat).Count()).Sum();
 
         while (upgradeCount < upgradeLimit)

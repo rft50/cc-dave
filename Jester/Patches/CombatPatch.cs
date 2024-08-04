@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using Jester.Artifacts;
 using Nanoray.Shrike;
 using Nanoray.Shrike.Harmony;
 
@@ -130,5 +131,15 @@ public class CombatPatch
         c.hand.Remove(card);
         c.discard.Remove(card);
         c.exhausted.Remove(card);
+    }
+    
+    [HarmonyPostfix]
+    [HarmonyPatch("SendCardToExhaust")]
+    private static void OnCombatEndPatch(Combat __instance, State s)
+    {
+        if (s.EnumerateAllArtifacts().Find(a => a is Confetti) is Confetti confetti)
+        {
+            confetti.Increment(__instance);
+        }
     }
 }

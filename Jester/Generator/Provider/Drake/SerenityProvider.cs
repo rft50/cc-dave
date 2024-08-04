@@ -24,8 +24,7 @@ public class SerenityProvider : IProvider
         {
             "status",
             "heat",
-            "serenity",
-            "cost"
+            "serenity"
         };
 
         public IEnumerable<CardAction> GetActions(State s, Combat c) => new List<CardAction>

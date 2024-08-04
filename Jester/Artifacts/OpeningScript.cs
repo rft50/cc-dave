@@ -64,8 +64,9 @@ public class OpeningScript : Artifact
         return _currentCost == 0 ? null : _currentCost;
     }
 
-    public override List<Tooltip> GetExtraTooltips() => new()
-    {
-        ModManifest.OpeningScriptedTooltip
-    };
+    public override List<Tooltip> GetExtraTooltips() =>
+    [
+        ModManifest.OpeningScriptedTooltip,
+        StatusMeta.GetTooltips((Status) ModManifest.OpeningFatigue.Id!, _currentCost)[0]
+    ];
 }
