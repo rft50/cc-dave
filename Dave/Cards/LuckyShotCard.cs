@@ -28,8 +28,7 @@ public class LuckyShotCard : Card
                 {
                     builtActions[0],
                     builtActions[1],
-                    builtActions[2],
-                    new ADummyAction()
+                    builtActions[2]
                 };
                 break;
             case Upgrade.A:
@@ -42,8 +41,7 @@ public class LuckyShotCard : Card
                 {
                     builtActions[0],
                     builtActions[1],
-                    new AAttack { damage = this.GetDmg(s, 1) },
-                    new ADummyAction()
+                    new AAttack { damage = this.GetDmg(s, 1) }
                 };
                 break;
             case Upgrade.B:
@@ -61,8 +59,7 @@ public class LuckyShotCard : Card
                     builtActions[0],
                     builtActions[1],
                     builtActions[2],
-                    builtActions[3],
-                    new ADummyAction()
+                    builtActions[3]
                 };
                 break;
         }

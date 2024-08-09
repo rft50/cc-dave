@@ -18,8 +18,6 @@ public class FoldCard : Card
             new AStatus { status = Status.evade, targetPlayer = true, statusAmount = upgrade == Upgrade.B ? 2 : 1 }
         });
         
-        actions.Add(new ADummyAction());
-
         return actions;
     }
 

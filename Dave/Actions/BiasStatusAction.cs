@@ -1,4 +1,6 @@
-﻿namespace Dave.Actions
+﻿using Nickel;
+
+namespace Dave.Actions
 {
     public class BiasStatusAction : CardAction
     {
@@ -78,12 +80,20 @@
         
         public override List<Tooltip> GetTooltips(State s)
         {
-            return new List<Tooltip>
-            {
-                Pow > 0
-                ? new TTGlossary(RedGlossaryItem, Pow)
-                : new TTGlossary(BlackGlossaryItem, -Pow)
-            };
+            var isRed = Pow > 0;
+            return
+            [
+                new GlossaryTooltip("Dave::action::Bias")
+                {
+                    Title = ModEntry.Instance.Localizations.Localize(
+                        ["status", isRed ? "RedBias" : "BlackBias", "name"]),
+                    Description =
+                        ModEntry.Instance.Localizations.Localize([
+                            "status", isRed ? "RedBias" : "BlackBias", "description"
+                        ]),
+                    Icon = isRed ? SprRed : SprBlack
+                }
+            ];
         }
     }
 }

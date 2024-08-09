@@ -26,8 +26,7 @@ namespace Dave.Cards
                     {
                         actions[0],
                         actions[2],
-                        actions[1],
-                        new ADummyAction()
+                        actions[1]
                     };
                     break;
                 case Upgrade.A:
@@ -38,7 +37,6 @@ namespace Dave.Cards
                     {
                         new ShieldHurtAction { dmg = 3 }
                     });
-                    actions.Add(new ADummyAction());
                     break;
                 case Upgrade.B:
                     actions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
@@ -48,7 +46,6 @@ namespace Dave.Cards
                     {
                         new AAttack { damage = GetDmg(s, 10) }
                     });
-                    actions.Add(new ADummyAction());
                     break;
             }
 

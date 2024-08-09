@@ -122,31 +122,33 @@ public class ModEntry : SimpleMod
         PerfectOddsCard.black_sprite = helper.Content.Sprites.RegisterSprite(package.PackageRoot.GetRelativeFile("Sprites/Card/PerfectOdds_Black.png")).Sprite;
         
         // character registration
-        helper.Content.Characters.RegisterCharacter("Dave", new CharacterConfiguration
+        helper.Content.Characters.V2.RegisterPlayableCharacter("Dave", new PlayableCharacterConfigurationV2
         {
             Deck = DaveDeck.Deck,
             Description = AnyLocalizations.Bind(["character", "description"]).Localize,
             BorderSprite = helper.Content.Sprites.RegisterSprite(package.PackageRoot.GetRelativeFile("Sprites/char_frame_dave.png")).Sprite,
-            NeutralAnimation = new CharacterAnimationConfiguration
+            NeutralAnimation = new CharacterAnimationConfigurationV2
             {
-                Deck = DaveDeck.Deck,
                 LoopTag = "neutral",
-                Frames = Enumerable.Range(0, 3)
+                Frames = Enumerable.Range(0,
+                        3)
                     .Select(i =>
                         helper.Content.Sprites
-                            .RegisterSprite(package.PackageRoot.GetRelativeFile($"Sprites/Animation/DaveNeutral{i}.png"))
+                            .RegisterSprite(
+                                package.PackageRoot.GetRelativeFile($"Sprites/Animation/DaveNeutral{i}.png"))
                             .Sprite)
-                    .ToList()
+                    .ToList(),
+                CharacterType = DaveDeck.Deck.Key()
             },
-            MiniAnimation = new CharacterAnimationConfiguration
+            MiniAnimation = new CharacterAnimationConfigurationV2
             {
-                Deck = DaveDeck.Deck,
                 LoopTag = "mini",
                 Frames =
                 [
                     helper.Content.Sprites
                         .RegisterSprite(package.PackageRoot.GetRelativeFile("Sprites/Animation/DaveMini.png")).Sprite
-                ]
+                ],
+                CharacterType = DaveDeck.Deck.Key()
             },
             Starters = new StarterDeck
             {
@@ -161,22 +163,22 @@ public class ModEntry : SimpleMod
             }
         });
 
-        helper.Content.Characters.RegisterCharacterAnimation(new CharacterAnimationConfiguration
+        helper.Content.Characters.V2.RegisterCharacterAnimation(new CharacterAnimationConfigurationV2
         {
-            Deck = DaveDeck.Deck,
             LoopTag = "gameover",
             Frames = [
                 helper.Content.Sprites
                     .RegisterSprite(package.PackageRoot.GetRelativeFile("Sprites/Animation/DaveGameOver.png")).Sprite
-            ]
+            ],
+            CharacterType = DaveDeck.Deck.Key()
         });
-        helper.Content.Characters.RegisterCharacterAnimation(new CharacterAnimationConfiguration
+        helper.Content.Characters.V2.RegisterCharacterAnimation(new CharacterAnimationConfigurationV2
         {
-            Deck = DaveDeck.Deck,
             LoopTag = "squint",
             Frames = Enumerable.Range(0, 3)
                 .Select(i => helper.Content.Sprites.RegisterSprite(package.PackageRoot.GetRelativeFile($"Sprites/Animation/DaveSquint{i}.png")).Sprite)
-                .ToList()
+                .ToList(),
+            CharacterType = DaveDeck.Deck.Key()
         });
         
         MoreDifficultiesApi?.RegisterAltStarters(
@@ -332,6 +334,7 @@ public class ModEntry : SimpleMod
         RedBlackCondition.Red = helper.Content.Sprites.RegisterSprite(package.PackageRoot.GetRelativeFile("Sprites/red.png")).Sprite;
         RedBlackCondition.Black = helper.Content.Sprites.RegisterSprite(package.PackageRoot.GetRelativeFile("Sprites/black.png")).Sprite;
         RandomMoveFoeAction.Spr = helper.Content.Sprites.RegisterSprite(package.PackageRoot.GetRelativeFile("Sprites/random_move_foe.png")).Sprite;
+        ShieldHurtAction.Spr = helper.Content.Sprites.RegisterSprite(package.PackageRoot.GetRelativeFile("Sprites/shield_hurt.png")).Sprite;
         
         // post registration
         helper.Events.OnModLoadPhaseFinished += (_, phase) =>

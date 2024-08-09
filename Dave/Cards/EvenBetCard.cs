@@ -6,8 +6,6 @@
     [CardMeta(rarity = Rarity.rare, upgradesTo = new [] { Upgrade.A, Upgrade.B })]
     public class EvenBetCard : Card
     {
-        public static Spr card_sprite;
-
         public override List<CardAction> GetActions(State s, Combat c)
         {
             return new List<CardAction>
@@ -20,7 +18,6 @@
         public override CardData GetData(State state) => new()
         {
             cost = upgrade == Upgrade.A ? 0 : 1,
-            art = card_sprite,
             exhaust = upgrade != Upgrade.B
         };
     }

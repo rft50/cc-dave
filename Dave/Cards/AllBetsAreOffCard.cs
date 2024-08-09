@@ -6,8 +6,6 @@
     [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class AllBetsAreOffCard : Card
     {
-        public static Spr card_sprite;
-
         public override List<CardAction> GetActions(State s, Combat c)
         {
             var redRigging = ModEntry.Instance.RedRigging.Status;
@@ -49,7 +47,6 @@
         public override CardData GetData(State state) => new()
         {
             cost = 2,
-            art = card_sprite,
             exhaust = upgrade != Upgrade.B
         };
     }

@@ -33,7 +33,6 @@ public class RiggingShotCard : Card
                 actions.Add(new AAttack { damage = this.GetDmg(s, 1), fast = true });
                 actions.Add(builtActions[1]);
                 actions.Add(builtActions[2]);
-                actions.Add(new ADummyAction());
                 break;
             case Upgrade.A:
                 builtActions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
@@ -53,7 +52,6 @@ public class RiggingShotCard : Card
                 actions.Add(new AAttack { damage = this.GetDmg(s, 1), fast = true });
                 actions.Add(builtActions[1]);
                 actions.Add(builtActions[2]);
-                actions.Add(new ADummyAction());
                 break;
             case Upgrade.B:
                 builtActions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
@@ -75,7 +73,6 @@ public class RiggingShotCard : Card
                 actions.Add(builtActions[1]);
                 actions.Add(builtActions[2]);
                 actions.Add(builtActions[3]);
-                actions.Add(new ADummyAction());
                 break;
         }
 

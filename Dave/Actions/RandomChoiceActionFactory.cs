@@ -1,45 +1,60 @@
 ﻿using Dave.Artifacts;
 using Dave.External;
+using Nickel;
 
 namespace Dave.Actions;
 
-public class RandomChoiceActionFactory
+public static class RandomChoiceActionFactory
 {
-    private static readonly Random Random = new();
-    public static string glossary_item = "";
-        
     // 0th element is a setup action that should be the first action
     // after that it's all the reds, then all the blacks
     public static List<CardAction> BuildActions(List<CardAction>? red, List<CardAction>? black = null)
     {
-        var data = new RandomChoiceActionData();
+        var guid = Guid.NewGuid();
 
         var actions = new List<CardAction>
         {
-            new RandomChoiceSetupAction { Data = data }
+            ModEntry.Instance.KokoroApi.Actions.MakeHidden(new RandomChoiceSetupAction { Guid = guid })
         };
             
         if (red != null)
             actions.AddRange(red.Select(t => ModEntry.Instance.KokoroApi.ConditionalActions.Make(
-                new RedBlackCondition { IsRed = true, Data = data }, t
+                new RedBlackCondition { IsRed = true, Guid = guid }, t
             )));
             
         if (black != null)
             actions.AddRange(black.Select(t => ModEntry.Instance.KokoroApi.ConditionalActions.Make(
-                new RedBlackCondition { IsRed = false, Data = data }, t
+                new RedBlackCondition { IsRed = false, Guid = guid }, t
             )));
 
         return actions;
     }
 
-    public class RandomChoiceSetupAction : CardAction
+    public static CardAction MakeSetupAction(out Guid guid)
     {
-        public RandomChoiceActionData Data = null!;
+        guid = Guid.NewGuid();
+        return ModEntry.Instance.KokoroApi.Actions.MakeHidden(new RandomChoiceSetupAction { Guid = guid });
+    }
+    
+    public static CardAction MakeRedBlackAction(Guid guid, bool isRed, CardAction action)
+    {
+        return ModEntry.Instance.KokoroApi.ConditionalActions.Make(
+            new RedBlackCondition { IsRed = isRed, Guid = guid }, action
+        );
+    }
+
+    private class RandomChoiceSetupAction : CardAction
+    {
+        internal Guid Guid;
 
         public override void Begin(G g, State s, Combat c)
         {
             var isRoll = false;
-                
+            var data = new RandomChoiceActionData
+            {
+                Guid = Guid
+            };
+
             var redOdds = 5f;
             redOdds += s.ship.Get(ModEntry.Instance.RedBias.Status);
             redOdds -= s.ship.Get(ModEntry.Instance.BlackBias.Status);
@@ -47,33 +62,41 @@ public class RandomChoiceActionFactory
 
             if (s.ship.Get(ModEntry.Instance.RedRigging.Status) > 0)
             {
-                Data.IsRed = true;
-                c.QueueImmediate(new AStatus { status = ModEntry.Instance.RedRigging.Status, targetPlayer = true, statusAmount = -1, mode = AStatusMode.Add });
+                data.IsRed = true;
+                c.QueueImmediate(new AStatus { status = ModEntry.Instance.RedRigging.Status, targetPlayer = true, statusAmount = -1, mode = AStatusMode.Add, timer = 0 });
             }
 
             if (s.ship.Get(ModEntry.Instance.BlackRigging.Status) > 0)
             {
-                Data.IsBlack = true;
-                c.QueueImmediate(new AStatus { status = ModEntry.Instance.BlackRigging.Status, targetPlayer = true, statusAmount = -1, mode = AStatusMode.Add });
+                data.IsBlack = true;
+                c.QueueImmediate(new AStatus { status = ModEntry.Instance.BlackRigging.Status, targetPlayer = true, statusAmount = -1, mode = AStatusMode.Add, timer = 0 });
             }
 
-            if (Data is { IsRed: false, IsBlack: false })
+            if (data is { IsRed: false, IsBlack: false })
             {
-                Data.IsRed = s.rngActions.Next() < redOdds;
-                Data.IsBlack = !Data.IsRed;
+                data.IsRed = s.rngActions.Next() < redOdds;
+                data.IsBlack = !data.IsRed;
                 isRoll = true;
             }
 
-            Data.Filled = true;
+            data.Filled = true;
+
+            var allData =
+                ModEntry.Instance.Helper.ModData.ObtainModData<Dictionary<Guid, RandomChoiceActionData>>(s, "DaveRandomFlags",
+                    () => []);
+            allData[Guid] = data;
+            ModEntry.Instance.Helper.ModData.SetModData(s, "DaveRandomFlags", allData);
             
             foreach (var rollHook in ModEntry.Instance.RollManager.ToList())
             {
-                rollHook.OnRoll(s, c, Data.IsRed, Data.IsBlack, isRoll);
+                rollHook.OnRoll(s, c, data.IsRed, data.IsBlack, isRoll);
             }
                 
             if (!ArtifactUtil.PlayerHasArtifactOfType(s, typeof(Chip)))
                 c.QueueImmediate(new AAddArtifact { artifact = new Chip() });
 
+            c.Queue(new RandomChoiceTeardownAction { Guid = Guid });
+            
             timer = 0;
         }
 
@@ -84,7 +107,29 @@ public class RandomChoiceActionFactory
 
         public override List<Tooltip> GetTooltips(State s)
         {
-            return new List<Tooltip> { new TTGlossary(glossary_item) };
+            return
+            [
+                new GlossaryTooltip("Dave::action::RedBlack")
+                {
+                    Title = ModEntry.Instance.Localizations.Localize(["action", "RedBlack", "name"]),
+                    Description = ModEntry.Instance.Localizations.Localize(["action", "RedBlack", "description"]),
+                    TitleColor = Colors.action,
+                    Icon = RedBlackCondition.Red
+                }
+            ];
+        }
+    }
+
+    private class RandomChoiceTeardownAction : CardAction
+    {
+        internal Guid Guid;
+        public override void Begin(G g, State s, Combat c)
+        {
+            var allData =
+                ModEntry.Instance.Helper.ModData.ObtainModData<Dictionary<Guid, RandomChoiceActionData>>(s, "DaveRandomFlags",
+                    () => []);
+            allData.Remove(Guid);
+            ModEntry.Instance.Helper.ModData.SetModData(s, "DaveRandomFlags", allData);
         }
     }
 }
@@ -94,13 +139,14 @@ public class RandomChoiceActionData
     public bool IsRed;
     public bool IsBlack;
     public bool Filled;
+    public Guid Guid;
 }
 
 public class RedBlackCondition : IKokoroApi.IConditionalActionApi.IBoolExpression
 {
     internal static Spr Red;
     internal static Spr Black;
-    public RandomChoiceActionData Data = null!;
+    internal Guid Guid;
     public bool IsRed;
     
     public void Render(G g, ref Vec position, bool isDisabled, bool dontRender)
@@ -125,7 +171,11 @@ public class RedBlackCondition : IKokoroApi.IConditionalActionApi.IBoolExpressio
 
     public bool GetValue(State state, Combat combat)
     {
-        if (Data.Filled) return IsRed ? Data.IsRed : Data.IsBlack;
+        var allData =
+            ModEntry.Instance.Helper.ModData.ObtainModData<Dictionary<Guid, RandomChoiceActionData>>(state, "DaveRandomFlags",
+                () => []);
+        allData.TryGetValue(Guid, out var data);
+        if (data is { Filled: true }) return IsRed ? data.IsRed : data.IsBlack;
 
         var redStatus = state.ship.Get(ModEntry.Instance.RedRigging.Status);
         var blackStatus = state.ship.Get(ModEntry.Instance.BlackRigging.Status);

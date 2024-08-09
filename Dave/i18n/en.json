@@ -27,11 +27,11 @@
     "action": {
         "RandomFoeMove": {
             "name": "Random Foe Move",
-            "description": "Instantly move the opponent {0} spaces in a random direction."
+            "description": "Instantly move the opponent <c=boldPink>{0}</c> spaces in a random direction."
         },
         "ShieldHurt": {
             "name": "Shield Hurt",
-            "description": "Take {0} damage, hitting shields first."
+            "description": "Take <c=boldPink>{0}</c> damage, hitting shields first."
         },
         "RedBlack": {
             "name": "Red/Black",

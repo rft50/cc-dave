@@ -26,7 +26,6 @@ namespace Dave.Cards
                     actions.Add(new AAttack { damage = damage, fast = true});
                     actions.Add(builtActions[1]);
                     actions.Add(builtActions[2]);
-                    actions.Add(new ADummyAction());
                     break;
                 case Upgrade.A:
                     builtActions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
@@ -41,7 +40,6 @@ namespace Dave.Cards
                     actions.Add(builtActions[1]);
                     actions.Add(builtActions[2]);
                     actions.Add(builtActions[3]);
-                    actions.Add(new ADummyAction());
                     break;
                 case Upgrade.B:
                     builtActions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
@@ -57,7 +55,6 @@ namespace Dave.Cards
                     actions.Add(builtActions[1]);
                     actions.Add(builtActions[2]);
                     actions.Add(builtActions[3]);
-                    actions.Add(new ADummyAction());
                     break;
             }
 

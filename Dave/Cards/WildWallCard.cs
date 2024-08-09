@@ -28,8 +28,7 @@ public class WildWallCard : Card
                     builtActions[0],
                     new AStatus { status = Status.tempShield, targetPlayer = true, statusAmount = 2, mode = AStatusMode.Add },
                     builtActions[1],
-                    builtActions[2],
-                    new ADummyAction()
+                    builtActions[2]
                 };
                 break;
             case Upgrade.A:
@@ -45,8 +44,7 @@ public class WildWallCard : Card
                     builtActions[0],
                     new AStatus { status = Status.tempShield, targetPlayer = true, statusAmount = 3, mode = AStatusMode.Add },
                     builtActions[1],
-                    builtActions[2],
-                    new ADummyAction()
+                    builtActions[2]
                 };
                 break;
             case Upgrade.B:
@@ -64,8 +62,7 @@ public class WildWallCard : Card
                     new AStatus { status = Status.tempShield, targetPlayer = true, statusAmount = 2, mode = AStatusMode.Add },
                     builtActions[1],
                     builtActions[2],
-                    builtActions[3],
-                    new ADummyAction()
+                    builtActions[3]
                 };
                 break;
         }

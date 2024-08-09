@@ -31,8 +31,7 @@ public class SeeingRedCard : Card
             builtActions[2],
             new ShieldHurtAction { dmg = shieldHurt },
             new AStatus { status = Status.overdrive, statusAmount = upgrade == Upgrade.B ? 2 : 1, targetPlayer = true },
-            builtActions[1],
-            new ADummyAction()
+            builtActions[1]
         };
     }
 

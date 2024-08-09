@@ -19,8 +19,7 @@ public class PrimedShotCard : Card
         {
             builtActions[0],
             new AAttack { damage = this.GetDmg(s, upgrade == Upgrade.A ? 2 : 1) },
-            builtActions[1],
-            new ADummyAction()
+            builtActions[1]
         };
     }
 

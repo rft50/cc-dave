@@ -41,7 +41,6 @@ public class RiggingCard : Card
                 {
                     new AStatus { status = ModEntry.Instance.RedRigging.Status, targetPlayer = true, statusAmount = 3, mode = AStatusMode.Add },
                 });
-                list.Add(new ADummyAction());
                 break;
         }
 

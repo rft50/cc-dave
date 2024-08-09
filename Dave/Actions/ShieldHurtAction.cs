@@ -1,10 +1,10 @@
-﻿namespace Dave.Actions;
+﻿using Nickel;
+
+namespace Dave.Actions;
 
 public class ShieldHurtAction : CardAction
 {
-    internal static string glossary_item = "";
-
-    public static Spr? spr;
+    internal static Spr? Spr;
 
     public int dmg = 0;
 
@@ -17,13 +17,25 @@ public class ShieldHurtAction : CardAction
 
     public override Icon? GetIcon(State s)
     {
-        if (spr == null)
+        if (Spr == null)
             return null;
-        return new Icon(spr.Value, dmg, Colors.textMain);
+        return new Icon(Spr.Value, dmg, Colors.textMain);
     }
 
     public override List<Tooltip> GetTooltips(State s)
     {
-        return new List<Tooltip> { new TTGlossary(glossary_item, dmg) };
+        return
+        [
+            new GlossaryTooltip("Dave::action::ShieldHurt")
+            {
+                Title = ModEntry.Instance.Localizations.Localize(["action", "ShieldHurt", "name"]),
+                Description = string.Format(
+                    ModEntry.Instance.Localizations.Localize(["action", "ShieldHurt", "description"]),
+                    dmg
+                ),
+                TitleColor = Colors.action,
+                Icon = Spr
+            }
+        ];
     }
 }

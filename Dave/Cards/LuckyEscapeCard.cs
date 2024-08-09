@@ -23,8 +23,7 @@ namespace Dave.Cards
                 builtActions[0],
                 new RandomMoveFoeAction { Dist = upgrade == Upgrade.A ? 3 : 2 },
                 builtActions[2],
-                builtActions[1],
-                new ADummyAction()
+                builtActions[1]
             };
         }
 

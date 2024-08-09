@@ -1,9 +1,9 @@
-﻿namespace Dave.Actions
+﻿using Nickel;
+
+namespace Dave.Actions
 {
     public class RandomMoveFoeAction : CardAction
     {
-        internal static string glossary_item = "";
-
         internal static Spr? Spr;
 
         public int Dist = 0;
@@ -24,7 +24,19 @@
 
         public override List<Tooltip> GetTooltips(State s)
         {
-            return new List<Tooltip> { new TTGlossary(glossary_item, Dist) };
+            return
+            [
+                new GlossaryTooltip("Dave::action::RandomMoveFoe")
+                {
+                    Title = ModEntry.Instance.Localizations.Localize(["action", "RandomFoeMove", "name"]),
+                    Description = string.Format(
+                        ModEntry.Instance.Localizations.Localize(["action", "RandomFoeMove", "description"]),
+                        Dist
+                    ),
+                    TitleColor = Colors.action,
+                    Icon = Spr
+                }
+            ];
         }
     }
 }

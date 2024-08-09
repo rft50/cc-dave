@@ -22,7 +22,6 @@ public class RaiseCard : Card
                 {
                     new AStatus { status = Status.overdrive, statusAmount = 1, targetPlayer = true }
                 });
-                actions.Add(new ADummyAction());
                 break;
             case Upgrade.A:
                 actions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
@@ -32,7 +31,6 @@ public class RaiseCard : Card
                 {
                     new AStatus { status = Status.overdrive, statusAmount = 2, targetPlayer = true }
                 });
-                actions.Add(new ADummyAction());
                 break;
             case Upgrade.B:
                 actions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
@@ -42,7 +40,6 @@ public class RaiseCard : Card
                 {
                     new AStatus { status = Status.overdrive, statusAmount = 3, targetPlayer = true }
                 });
-                actions.Add(new ADummyAction());
                 break;
         }
 

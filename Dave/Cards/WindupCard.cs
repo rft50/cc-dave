@@ -20,8 +20,7 @@ public class WindupCard : Card
             builtActions[0],
             new AStatus { status = Status.overdrive, statusAmount = upgrade == Upgrade.A ? -1 : -2, targetPlayer = true },
             new AEnergy { changeAmount = 1 },
-            builtActions[1],
-            new ADummyAction()
+            builtActions[1]
         };
     }
 
