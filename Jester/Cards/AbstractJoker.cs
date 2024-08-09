@@ -111,4 +111,11 @@ public abstract class AbstractJoker : Card
                 return _cache;
         }
     }
+
+    public void ClearCache()
+    {
+        _cache = null;
+        _cacheA = null;
+        _cacheB = null;
+    }
 }

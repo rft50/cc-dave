@@ -59,19 +59,21 @@ public class JesterApi : IJesterApi
         _cardFlagCalculators[flag] = calculator;
     }
 
-    private readonly Dictionary<string, List<Deck>> _characterFlags = new();
+    internal readonly Dictionary<string, List<Deck>> CharacterFlags = new();
+    internal bool ForceAllCharFlags = false;
 
     public bool HasCharacterFlag(string flag)
     {
-        return _characterFlags.TryGetValue(flag, out var list)
-               && (StateExt.Instance?.characters.Any(c => list.Contains(c.deckType.GetValueOrDefault()))).GetValueOrDefault(false);
+        ModManifest.Helper.ModData.TryGetModData<ProfileSettings>(StateExt.Instance!, "Settings", out var settings);
+        return settings?.InsaneMode ?? ForceAllCharFlags || CharacterFlags.TryGetValue(flag, out var list)
+            && (StateExt.Instance?.characters.Any(c => list.Contains(c.deckType.GetValueOrDefault()))).GetValueOrDefault(false);
     }
 
     public void RegisterCharacterFlag(string flag, Deck deck)
     {
-        if (!_characterFlags.ContainsKey(flag))
-            _characterFlags[flag] = new List<Deck>();
-        _characterFlags[flag].Add(deck);
+        if (!CharacterFlags.ContainsKey(flag))
+            CharacterFlags[flag] = new List<Deck>();
+        CharacterFlags[flag].Add(deck);
     }
 }
 

@@ -3,6 +3,7 @@ using Jester.External;
 using Jester.Generator.Provider.Books;
 using Jester.Generator.Provider.Common;
 using Jester.Generator.Provider.Drake;
+using Jester.Generator.Provider.Isaac;
 using Jester.Generator.Strategy.Books;
 using Jester.Generator.Strategy.Common;
 using IStrategy = Jester.Api.IJesterApi.IStrategy;
@@ -29,11 +30,11 @@ public class JesterGenerator
         new DroneProvider(),
         new MissileProvider(),
         new MineProvider(),
-        new MidshiftProvider(),
         new DroneshiftProvider(),
         new StatusProvider(),
         new HealProvider(),
         new DrawProvider(),
+        new OverdriveProvider(),
 
         // Common Costs
         new StatusCostProvider(),
@@ -41,6 +42,9 @@ public class JesterGenerator
         new EqualsZeroCostProvider(),
         new DiscardCardCostProvider(),
         new HurtCostProvider(),
+        
+        // Isaac
+        new MidshiftProvider(),
 
         // Drake
         new LessHeatProvider(),
@@ -65,13 +69,12 @@ public class JesterGenerator
         new BooksStrategy()
     };
 
-    public static int ActionCap = 5;
-
     public static IJesterResult GenerateCard(IJesterRequest request)
     {
+        ModManifest.Helper.ModData.TryGetModData<ProfileSettings>(request.State, "Settings", out var settings);
         IJesterResult data;
         request.Random = new Rand((uint)request.Seed);
-        request.ActionLimit = 3 + request.Random.NextInt() % (ActionCap - 3);
+        request.ActionLimit = 3 + request.Random.NextInt() % ((settings?.ActionCap ?? 5) - 2);
 
         {
             var fullStrategies = GetStrategiesWeighted(request, StrategyCategory.Full);

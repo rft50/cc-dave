@@ -10,6 +10,8 @@ public class StatePatch
     [HarmonyPatch("PopulateRun")]
     public static void PopulateRun(State __instance)
     {
+        ModManifest.Helper.ModData.SetModData(__instance, "Settings", ModManifest.Settings.ProfileBased.Current);
+        
         var jesterDeck = (Deck?)ModManifest.JesterDeck?.Id;
         
         if (jesterDeck == null) return;

@@ -1,0 +1,126 @@
+{
+  "character": {
+    "Marielle": {
+      "name": "Marielle",
+      "description": "<c=ac507e>Marielle</c>\nA zealot of the occult. She uses her cards to <c=pink>fry her enemies</c> and <c=red>delay the inevitable</c>."
+    }
+  },
+  "artifact": {
+    "Repentance": {
+      "name": "REPENTANCE",
+      "description": "At the start of combat, gain an <c=card>Absolve</c>."
+    },
+    "DarkAura": {
+      "name": "DARK AURA",
+      "description": "At the start of combat, apply 1 <c=status>CURSE</c> to the enemy."
+    },
+    "ColdHearted": {
+      "name": "COLD-HEARTED",
+      "description": "Start combat at -2 <c=status>HEAT</c>."
+    },
+    "HotPotato": {
+      "name": "HOT POTATO",
+      "description": "When gaining any amount of heat, apply 1 <c=status>HEAT</c> to the enemy."
+    },
+    "RedCandle": {
+      "name": "RED CANDLE",
+      "description": "Overheat on the enemy triggers instantly, instead of at the end of the turn."
+    },
+    "TollingBell": {
+      "name": "TOLLING BELL",
+      "description": "While overheating, add 1 damage to all attacks for each <c=status>CURSE</c> you have."
+    },
+    
+    "NoMercy": {
+      "name": "NO MERCY",
+      "description": "At the start of combat, apply 30 <c=status>CURSE</c> to the enemy."
+    }
+  },
+  "card": {
+    "FireField": {
+      "name": "Fire Field"
+    },
+    "Hex": {
+      "name": "Hex"
+    },
+    "Blowtorch": {
+      "name": "Blowtorch"
+    },
+    "HotShot": {
+      "name": "Hot Shot"
+    },
+    "Prayer": {
+      "name": "Prayer"
+    },
+    "Voodoo": {
+      "name": "Voodoo"
+    },
+    "HeatRay": {
+      "name": "Heat Ray"
+    },
+    "WickedPact": {
+      "name": "Wicked Pact"
+    },
+    "ShadowCover": {
+      "name": "Shadow Cover"
+    },
+    
+    "Immolation": {
+      "name": "Immolation"
+    },
+    "BlessingAndACurse": {
+      "name": "Blessing and a Curse"
+    },
+    "Balance": {
+      "name": "Balance"
+    },
+    "MagnesiumSlug": {
+      "name": "Magnesium Slug"
+    },
+    "Brimstone": {
+      "name": "Brimstone"
+    },
+    "BurningRage": {
+      "name": "Burning Rage"
+    },
+    "Malediction": {
+      "name": "Malediction"
+    },
+    
+    "FanTheFlames": {
+      "name": "Fan the Flames"
+    },
+    "RendAsunder": {
+      "name": "Rend Asunder"
+    },
+    "Scourge": {
+      "name": "Scourge"
+    },
+    "SlowRoast": {
+      "name": "Slow Roast"
+    },
+    "DarkThoughts": {
+      "name": "Dark Thoughts"
+    },
+    
+    "Absolve": {
+      "name": "Absolve"
+    }
+  },
+  "status": {
+    "Curse": {
+      "name": "Curse",
+      "description": "Increase the damage and threshold of overheat by <c=pink>{0}</c>."
+    },
+    "Enflamed": {
+      "name": "Enflamed",
+      "description": "Gain <c=pink>{0}</c> <c=status>HEAT</c> every turn."
+    }
+  },
+  "trait": {
+    "Fleeting": {
+      "name": "Fleeting",
+      "description": "If this card is in your hand at the end of your turn, it is exhausted."
+    }
+  }
+}
