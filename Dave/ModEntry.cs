@@ -1,6 +1,7 @@
 ﻿using Dave.Actions;
 using Dave.Api;
 using Dave.Artifacts;
+using Dave.Artifacts.Duos;
 using Dave.Cards;
 using Dave.External;
 using HarmonyLib;
@@ -25,7 +26,8 @@ public class ModEntry : SimpleMod
     internal readonly IStatusEntry BlackRigging;
     internal readonly IStatusEntry RedBias;
     internal readonly IStatusEntry BlackBias;
-    internal readonly HookManager<IRollHook> RollManager;
+    internal readonly HookManager<IDaveApi.IRollHook> RollHookManager;
+    internal readonly HookManager<IDaveApi.IRollModifier> RollModifierManager;
 
     internal static readonly IReadOnlyList<Type> CommonCards =
     [
@@ -59,6 +61,18 @@ public class ModEntry : SimpleMod
         typeof(AllBetsAreOffCard),
         typeof(DrawnGambitCard)
     ];
+
+    internal static readonly IReadOnlyList<Type> DuoArtifacts =
+    [
+        typeof(DaveDizzyDuoArtifact),
+        typeof(DaveRiggsDuoArtifact),
+        typeof(DavePeriDuoArtifact),
+        typeof(DaveIsaacDuoArtifact),
+        typeof(DaveDrakeDuoArtifact),
+        typeof(DaveMaxDuoArtifact),
+        typeof(DaveBooksDuoArtifact),
+        typeof(DaveCatDuoArtifact)
+    ];
     
     internal IDeckEntry DaveDeck { get; }
     
@@ -69,7 +83,10 @@ public class ModEntry : SimpleMod
         KokoroApi = helper.ModRegistry.GetApi<IKokoroApi>("Shockah.Kokoro")!;
         MoreDifficultiesApi = helper.ModRegistry.GetApi<IMoreDifficultiesApi>("TheJazMaster.MoreDifficulties");
         DraculaApi = helper.ModRegistry.GetApi<IDraculaApi>("Shockah.Dracula");
-        RollManager = new HookManager<IRollHook>();
+        RollHookManager = new HookManager<IDaveApi.IRollHook>();
+        RollModifierManager = new HookManager<IDaveApi.IRollModifier>();
+        
+        RollModifierManager.Register(new RiggingRollModifier(), 0);
 
         AnyLocalizations = new JsonLocalizationProvider(
             tokenExtractor: new SimpleLocalizationTokenExtractor(),
@@ -81,7 +98,7 @@ public class ModEntry : SimpleMod
         
         DaveDeck = helper.Content.Decks.RegisterDeck("Dave", new DeckConfiguration
         {
-            Definition = new DeckDef { color = new Color("FF98FB98"), titleColor = Colors.black },
+            Definition = new DeckDef { color = new Color("98FB98"), titleColor = Colors.black },
             DefaultCardArt = StableSpr.cards_colorless,
             BorderSprite = helper.Content.Sprites.RegisterSprite(package.PackageRoot.GetRelativeFile("Sprites/frame_dave.png")).Sprite,
             Name = AnyLocalizations.Bind(["character", "name"]).Localize
@@ -344,6 +361,15 @@ public class ModEntry : SimpleMod
 
             DraculaApi.RegisterBloodTapOptionProvider(new BloodTapProvider());
         };
+        
+        Harmony.PatchAll();
+        
+        // duo registration
+        helper.ModRegistry.AwaitApi<IDuoApi>("Shockah.DuoArtifacts", api =>
+        {
+            foreach (var artifactType in DuoArtifacts)
+                AccessTools.DeclaredMethod(artifactType, nameof(IDuoArtifact.Register))?.Invoke(null, [package, helper, api]);
+        });
     }
 
     private void RegisterCard(IPluginPackage<IModManifest> package, IModHelper helper, Type type, string locName, bool offer = true)

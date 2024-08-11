@@ -6,18 +6,18 @@ namespace Dave.Artifacts;
 // Roulette: Every 3 red/black cards you play with no Rigging, add a Perfect Odds to your hand
 
 [ArtifactMeta(pools = new[] { ArtifactPool.Common })]
-public class Roulette : Artifact, IRollHook
+public class Roulette : Artifact, IDaveApi.IRollHook
 {
     public int Count;
 
     public Roulette()
     {
-        ModEntry.Instance.RollManager.Register(this, 0);
+        ModEntry.Instance.RollHookManager.Register(this, 0);
     }
 
     public override void OnRemoveArtifact(State state)
     {
-        ModEntry.Instance.RollManager.Unregister(this);
+        ModEntry.Instance.RollHookManager.Unregister(this);
     }
 
     public override List<Tooltip>? GetExtraTooltips() => new()
@@ -31,7 +31,7 @@ public class Roulette : Artifact, IRollHook
     {
         if (!ArtifactUtil.PlayerHasArtifact(state, this))
         {
-            ModEntry.Instance.RollManager.Unregister(this);
+            ModEntry.Instance.RollHookManager.Unregister(this);
             return;
         }
 
