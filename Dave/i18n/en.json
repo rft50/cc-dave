@@ -90,7 +90,7 @@
             },
             "Books": {
                 "name": "COLORED SHARDS",
-                "description": "When you play a card and have no <c=status>Rigging</c>, spend 2 <c=status>Shard</c> to make it <c=status>Dual Rigged</c>."
+                "description": "Whenever you play a card and have no <c=status>Rigging</c>, spend 2 <c=status>Shard</c> to make it <c=status>Dual Rigged</c>."
             },
             "CAT": {
                 "name": "PAIR OF ACES",
@@ -98,24 +98,24 @@
             },
             
             "Dyna": {
-                "name": "Red Bomb",
-                "description": "The first time each turn you fire a Charge from playing a card, Red: Deploy a copy of that Charge."
+                "name": "TACTICAL RIGGING",
+                "description": "The first time you deploy a <c=parttrait>Charge</c> each turn, gain <c=status>Red Rigging</c> or <c=status>Black Rigging</c>, alternating."
             },
             "Dracula": {
-                "name": "Blood Money",
-                "description": "Whenever you roll Red from rolling, apply 1 Bleeding to the enemy."
+                "name": "BLOOD MONEY",
+                "description": "Whenever you roll Red from rolling, apply 1 <c=status>Bleeding</c> to the enemy."
             },
             "Eddie": {
                 "name": "Red Lightbulb",
-                "description": "At the start of your turn, if you have any Red Rigging, spend 1 to gain 1 Energy."
+                "description": "At the start of your turn, if you have any <c=status>Red Rigging</c>, spend 1 to gain 1 <c=energy>ENERGY</c>."
             },
             "Johnson": {
                 "name": "Embezzlement",
-                "description": "Whenever you end your turn with negative Overdrive, gain 1 Cheap Fix."
+                "description": "Whenever you end your turn with negative <c=status>Overdrive</c>, gain 1 <c=status>Cheap Fix</c>."
             },
             "Soggins": {
                 "name": "Cracked Chip",
-                "description": "Whenever you have both Red Rigging and Black Rigging, Botch and Critical chances are tripled."
+                "description": "While you have both Red Rigging and Black Rigging, Botch and Critical chances are tripled."
             }
         }
     },

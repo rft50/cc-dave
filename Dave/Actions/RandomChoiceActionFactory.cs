@@ -172,6 +172,7 @@ public class RedBlackCondition : IKokoroApi.IConditionalActionApi.IBoolExpressio
 
     public bool GetValue(State state, Combat combat)
     {
+        // return false;
         var allData =
             ModEntry.Instance.Helper.ModData.ObtainModData<Dictionary<Guid, RandomChoiceActionData>>(state, "DaveRandomFlags",
                 () => []);

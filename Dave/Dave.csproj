@@ -25,6 +25,9 @@
     <None Update="Sprites\*\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Sprites\*\*\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="i18n\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
