@@ -18,7 +18,7 @@ public class WildWallCard : Card
             default:
                 builtActions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
                 {
-                    new ShieldHurtAction { dmg = 1 }
+                    new ShieldHurtAction { hurtAmount = 1 }
                 }, new List<CardAction>
                 {
                     new AStatus { status = Status.tempShield, targetPlayer = true, statusAmount = 2, mode = AStatusMode.Add }
@@ -34,7 +34,7 @@ public class WildWallCard : Card
             case Upgrade.A:
                 builtActions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
                 {
-                    new ShieldHurtAction { dmg = 1 }
+                    new ShieldHurtAction { hurtAmount = 1 }
                 }, new List<CardAction>
                 {
                     new AStatus { status = Status.tempShield, targetPlayer = true, statusAmount = 2, mode = AStatusMode.Add }
@@ -50,7 +50,7 @@ public class WildWallCard : Card
             case Upgrade.B:
                 builtActions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
                 {
-                    new ShieldHurtAction { dmg = 1 }
+                    new ShieldHurtAction { hurtAmount = 1 }
                 }, new List<CardAction>
                 {
                     new AStatus { status = Status.shield, targetPlayer = true, statusAmount = 2, mode = AStatusMode.Add },

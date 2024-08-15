@@ -76,7 +76,8 @@ public class ModEntry : SimpleMod
         typeof(DaveDynaDuoArtifact),
         typeof(DaveDraculaDuoArtifact),
         typeof(DaveEddieDuoArtifact),
-        typeof(DaveJohnsonDuoArtifact)
+        typeof(DaveJohnsonDuoArtifact),
+        typeof(DaveSogginsDuoArtifact)
     ];
     
     internal IDeckEntry DaveDeck { get; }

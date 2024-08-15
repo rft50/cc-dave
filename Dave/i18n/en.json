@@ -110,12 +110,12 @@
                 "description": "At the start of your turn, if you have any <c=status>Red Rigging</c>, spend 1 to gain 1 <c=energy>ENERGY</c>."
             },
             "Johnson": {
-                "name": "Embezzlement",
+                "name": "EMBEZZLEMENT",
                 "description": "Whenever you end your turn with negative <c=status>Overdrive</c>, gain 1 <c=status>Cheap Fix</c>."
             },
             "Soggins": {
-                "name": "Cracked Chip",
-                "description": "While you have both Red Rigging and Black Rigging, Botch and Critical chances are tripled."
+                "name": "CRACKED CHIP",
+                "description": "While you have both <c=status>Red Rigging</c> and <c=status>Black Rigging</c>, <c=downside>botch</c> and <c=cheevoGold>double</c> chances are tripled."
             }
         }
     },

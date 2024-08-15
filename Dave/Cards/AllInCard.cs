@@ -20,7 +20,7 @@ namespace Dave.Cards
                         new AAttack { damage = GetDmg(s, 10) }
                     }, new List<CardAction>
                     {
-                        new ShieldHurtAction { dmg = 3 }
+                        new ShieldHurtAction { hurtAmount = 3 }
                     });
                     actions = new List<CardAction>
                     {
@@ -35,13 +35,13 @@ namespace Dave.Cards
                         new AAttack { damage = GetDmg(s, 10) }
                     }, new List<CardAction>
                     {
-                        new ShieldHurtAction { dmg = 3 }
+                        new ShieldHurtAction { hurtAmount = 3 }
                     });
                     break;
                 case Upgrade.B:
                     actions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
                     {
-                        new ShieldHurtAction { dmg = 3 }
+                        new ShieldHurtAction { hurtAmount = 3 }
                     }, new List<CardAction>
                     {
                         new AAttack { damage = GetDmg(s, 10) }

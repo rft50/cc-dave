@@ -56,41 +56,34 @@ public class DaveDizzyDuoArtifact : Artifact, IDuoArtifact
         });
     }
 
-    [HarmonyTranspiler]
+    private static bool _inTryPlayCard = false;
+    
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(Combat), "TryPlayCard")]
-    public static IEnumerable<CodeInstruction> Combat_TryPlayCard_Transpiler(IEnumerable<CodeInstruction> instructions)
+    public static void Combat_TryPlayCard_Prefix()
     {
-        try
-        {
-            return new SequenceBlockMatcher<CodeInstruction>(instructions)
-                .Find(
-                    ILMatches.Call("GetActionsOverridden")
-                )
-                .Insert(SequenceMatcherPastBoundsDirection.After, SequenceMatcherInsertionResultingBounds.IncludingInsertion,
-                [
-                    new CodeInstruction(OpCodes.Call, AccessTools.DeclaredMethod(typeof(DaveDizzyDuoArtifact), nameof(ProcessActions)))
-                ])
-                .AllElements();
-        }
-        catch (Exception e)
-        {
-            ModEntry.Instance.Logger.Log(LogLevel.Error, e, "Combat_TryPlayCard_Transpiler failed");
-            throw;
-        }
+        _inTryPlayCard = true;
+    }
+    
+    [HarmonyFinalizer]
+    [HarmonyPatch(typeof(Combat), "TryPlayCard")]
+    public static void Combat_TryPlayCard_Finalizer()
+    {
+        _inTryPlayCard = false;
     }
 
-    public static List<CardAction> ProcessActions(List<CardAction> actions)
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Card), "GetActionsOverridden")]
+    public static void Card_GetActionsOverridden_Postfix(ref List<CardAction> __result)
     {
-        return actions.SelectMany(ModEntry.Instance.KokoroApi.Actions.GetWrappedCardActionsRecursively)
-            .Select(a =>
+        if (!_inTryPlayCard) return;
+        foreach (var a in __result.SelectMany(ModEntry.Instance.KokoroApi.Actions.GetWrappedCardActionsRecursively))
+        {
+            if (a is AHurt)
             {
-                if (a is AHurt)
-                {
-                    ModEntry.Instance.Helper.ModData.SetModData(a, "DaveDizzyDuoProc", true);
-                }
-
-                return a;
-            }).ToList();
+                ModEntry.Instance.Helper.ModData.SetModData(a, "DaveDizzyDuoProc", true);
+            }
+        }
     }
 }
 

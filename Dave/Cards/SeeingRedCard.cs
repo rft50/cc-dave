@@ -29,7 +29,7 @@ public class SeeingRedCard : Card
         {
             builtActions[0],
             builtActions[2],
-            new ShieldHurtAction { dmg = shieldHurt },
+            new ShieldHurtAction { hurtAmount = shieldHurt },
             new AStatus { status = Status.overdrive, statusAmount = upgrade == Upgrade.B ? 2 : 1, targetPlayer = true },
             builtActions[1]
         };

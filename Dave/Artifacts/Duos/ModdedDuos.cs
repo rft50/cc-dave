@@ -77,7 +77,7 @@ public class DaveDraculaDuoArtifact : Artifact, IDuoArtifact
         {
             helper.Content.Artifacts.RegisterArtifact("DaveDraculaDuoArtifact", new()
             {
-                ArtifactType = typeof(DaveJohnsonDuoArtifact),
+                ArtifactType = typeof(DaveDraculaDuoArtifact),
                 Meta = new()
                 {
                     owner = duoApi.DuoArtifactVanillaDeck
@@ -89,7 +89,7 @@ public class DaveDraculaDuoArtifact : Artifact, IDuoArtifact
                 Description = ModEntry.Instance.AnyLocalizations.Bind(["artifact", "duo", "Dracula", "description"])
                     .Localize
             });
-            duoApi.RegisterDuoArtifact(typeof(DaveJohnsonDuoArtifact), [ModEntry.Instance.DaveDeck.Deck, drac.DraculaDeck.Deck]);
+            duoApi.RegisterDuoArtifact(typeof(DaveDraculaDuoArtifact), [ModEntry.Instance.DaveDeck.Deck, drac.DraculaDeck.Deck]);
             
             ModEntry.Instance.RollHookManager.Register(new DaveDraculaRollHook(), 0);
         });
@@ -188,5 +188,53 @@ public class DaveJohnsonDuoArtifact : Artifact, IDuoArtifact
             targetPlayer = true,
             artifactPulse = Key()
         });
+    }
+}
+
+public class DaveSogginsDuoArtifact : Artifact, IDuoArtifact
+{
+    public static void Register(IPluginPackage<IModManifest> package, IModHelper helper, IDuoApi duoApi)
+    {
+        helper.ModRegistry.AwaitApi<ISogginsApi>("Shockah.Soggins", soggins =>
+        {
+            helper.Content.Artifacts.RegisterArtifact("DaveSogginsDuoArtifact", new()
+            {
+                ArtifactType = typeof(DaveSogginsDuoArtifact),
+                Meta = new()
+                {
+                    owner = duoApi.DuoArtifactVanillaDeck
+                },
+                Sprite = helper.Content.Sprites
+                    .RegisterSprite(package.PackageRoot.GetRelativeFile("Sprites/Artifact/Duo/DaveSogginsDuo.png"))
+                    .Sprite,
+                Name = ModEntry.Instance.AnyLocalizations.Bind(["artifact", "duo", "Soggins", "name"]).Localize,
+                Description = ModEntry.Instance.AnyLocalizations.Bind(["artifact", "duo", "Soggins", "description"])
+                    .Localize
+            });
+            duoApi.RegisterDuoArtifact(typeof(DaveSogginsDuoArtifact), [ModEntry.Instance.DaveDeck.Deck, soggins.SogginsVanillaDeck]);
+            
+            soggins.RegisterSmugHook(new DaveSogginsSmugHook(), -100);
+        });
+    }
+
+    private class DaveSogginsSmugHook : ISmugHook
+    {
+        public double ModifySmugBotchChance(State state, Ship ship, Card? card, double chance)
+        {
+            if (state.ship != ship || !state.EnumerateAllArtifacts().Any(a => a is DaveSogginsDuoArtifact))
+                return chance;
+            if (state.ship.Get(ModEntry.Instance.RedRigging.Status) < 1 || state.ship.Get(ModEntry.Instance.BlackRigging.Status) < 1)
+                return chance;
+            return chance * 3;
+        }
+        
+        public double ModifySmugDoubleChance(State state, Ship ship, Card? card, double chance)
+        {
+            if (state.ship != ship || !state.EnumerateAllArtifacts().Any(a => a is DaveSogginsDuoArtifact))
+                return chance;
+            if (state.ship.Get(ModEntry.Instance.RedRigging.Status) < 1 || state.ship.Get(ModEntry.Instance.BlackRigging.Status) < 1)
+                return chance;
+            return chance * 3;
+        }
     }
 }

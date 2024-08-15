@@ -23,7 +23,7 @@ public class PinchShotCard : Card
             builtActions[0],
             builtActions[1],
             builtActions[2],
-            new ShieldHurtAction { dmg = upgrade == Upgrade.A ? 2 : 1 }
+            new ShieldHurtAction { hurtAmount = upgrade == Upgrade.A ? 2 : 1 }
         };
     }
 
