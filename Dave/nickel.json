@@ -23,8 +23,18 @@
       "UniqueName": "TheJazMaster.MoreDifficulties",
       "Version": "1.3.2",
       "IsRequired": false
+    },
+    {
+      "UniqueName": "rft.Jester",
+      "Version": "0.7.0",
+      "IsRequired": false
     }
   ],
   "LoadPhase": "AfterDbInit",
-  "Author": "rft50"
+  "Author": "rft50",
+  "UpdateChecks": {
+    "NexusMods": {
+      "ID": 35
+    }
+  }
 }

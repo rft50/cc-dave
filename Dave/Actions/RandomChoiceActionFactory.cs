@@ -31,9 +31,8 @@ public static class RandomChoiceActionFactory
         return actions;
     }
 
-    public static CardAction MakeSetupAction(out Guid guid)
+    public static CardAction MakeSetupAction(Guid guid)
     {
-        guid = Guid.NewGuid();
         return ModEntry.Instance.KokoroApi.Actions.MakeHidden(new RandomChoiceSetupAction { Guid = guid });
     }
     

@@ -39,6 +39,13 @@ public class DaveDizzyDuoArtifact : Artifact, IDuoArtifact
         duoApi.RegisterDuoArtifact(MethodBase.GetCurrentMethod()!.DeclaringType!, [ModEntry.Instance.DaveDeck.Deck, Deck.dizzy]);
     }
 
+    public override List<Tooltip>? GetExtraTooltips() =>
+    [
+        new TTGlossary("status.shield", 1),
+        new TTGlossary("action.hurt", 1),
+        new TTGlossary("status.tempShield", 1)
+    ];
+
     [HarmonyPostfix]
     [HarmonyPatch(typeof(AHurt), "Begin")]
     public static void AHurt_Begin_Postfix(State s, Combat c, AHurt __instance)
@@ -109,6 +116,21 @@ public class DaveRiggsDuoArtifact : Artifact, IDuoArtifact
         duoApi.RegisterDuoArtifact(MethodBase.GetCurrentMethod()!.DeclaringType!, [ModEntry.Instance.DaveDeck.Deck, Deck.riggs]);
     }
 
+    public override List<Tooltip>? GetExtraTooltips() =>
+    [
+        new TTGlossary("action.moveRandom", 1),
+        new GlossaryTooltip("Dave::action::RandomMoveFoe")
+        {
+            Title = ModEntry.Instance.Localizations.Localize(["action", "RandomFoeMove", "name"]),
+            Description = string.Format(
+                ModEntry.Instance.Localizations.Localize(["action", "RandomFoeMove", "description"]),
+                1
+            ),
+            TitleColor = Colors.action,
+            Icon = RandomMoveFoeAction.Spr
+        }
+    ];
+
     [HarmonyPrefix]
     [HarmonyPatch(typeof(AMove), "Begin")]
     public static void AMove_Begin_Prefix(State s, AMove __instance)
@@ -150,6 +172,11 @@ public class DavePeriDuoArtifact : Artifact, IDuoArtifact
 
         return 0;
     }
+
+    public override List<Tooltip>? GetExtraTooltips() =>
+    [
+        new TTGlossary("status.overdrive", -1)
+    ];
 }
 
 public class DaveIsaacDuoArtifact : Artifact, IDuoArtifact
@@ -192,6 +219,12 @@ public class DaveIsaacDuoArtifact : Artifact, IDuoArtifact
             });
         }
     }
+
+    public override List<Tooltip>? GetExtraTooltips() =>
+    [
+        StatusMeta.GetTooltips(ModEntry.Instance.BlackRigging.Status, 1)[0],
+        new TTGlossary("status.bubbleJuice")
+    ];
 }
 
 [HarmonyPatch]
@@ -252,6 +285,13 @@ public class DaveDrakeDuoArtifact : Artifact, IDuoArtifact
             ]);
         }
     }
+
+    public override List<Tooltip>? GetExtraTooltips() =>
+    [
+        new TTGlossary("status.heat", 3),
+        StatusMeta.GetTooltips(ModEntry.Instance.RedRigging.Status, 1)[0],
+        StatusMeta.GetTooltips(ModEntry.Instance.BlackRigging.Status, 1)[0]
+    ];
 }
 
 public class DaveMaxDuoArtifact : Artifact, IDuoArtifact
@@ -308,6 +348,12 @@ public class DaveMaxDuoArtifact : Artifact, IDuoArtifact
     }
 
     public override Spr GetSprite() => Ready ? _readySprite.Sprite : _notReadySprite.Sprite;
+
+    public override List<Tooltip>? GetExtraTooltips() =>
+    [
+        StatusMeta.GetTooltips(ModEntry.Instance.RedRigging.Status, 1)[0],
+        StatusMeta.GetTooltips(ModEntry.Instance.BlackRigging.Status, 1)[0]
+    ];
 }
 
 public class DaveBooksDuoArtifact : Artifact, IDuoArtifact
@@ -332,6 +378,13 @@ public class DaveBooksDuoArtifact : Artifact, IDuoArtifact
         
         ModEntry.Instance.RollModifierManager.Register(new DaveBooksRollModifier(), -10);
     }
+
+    public override List<Tooltip>? GetExtraTooltips() =>
+    [
+        new TTGlossary("status.shard", 2),
+        StatusMeta.GetTooltips(ModEntry.Instance.RedRigging.Status, 1)[0],
+        StatusMeta.GetTooltips(ModEntry.Instance.BlackRigging.Status, 1)[0]
+    ];
 
     private class DaveBooksRollModifier : IDaveApi.IRollModifier
     {

@@ -4,6 +4,7 @@ using Dave.Artifacts;
 using Dave.Artifacts.Duos;
 using Dave.Cards;
 using Dave.External;
+using Dave.Jester;
 using HarmonyLib;
 using Microsoft.Extensions.Logging;
 using Nanoray.PluginManager;
@@ -18,6 +19,7 @@ public class ModEntry : SimpleMod
     // dave API
     internal readonly IKokoroApi KokoroApi;
     internal readonly IMoreDifficultiesApi? MoreDifficultiesApi;
+    internal readonly IJesterApi? JesterApi;
     internal readonly IDraculaApi? DraculaApi;
     internal readonly ILocalizationProvider<IReadOnlyList<string>> AnyLocalizations;
     internal readonly ILocaleBoundNonNullLocalizationProvider<IReadOnlyList<string>> Localizations;
@@ -88,6 +90,7 @@ public class ModEntry : SimpleMod
         Harmony = new Harmony(package.Manifest.UniqueName);
         KokoroApi = helper.ModRegistry.GetApi<IKokoroApi>("Shockah.Kokoro")!;
         MoreDifficultiesApi = helper.ModRegistry.GetApi<IMoreDifficultiesApi>("TheJazMaster.MoreDifficulties");
+        JesterApi = helper.ModRegistry.GetApi<IJesterApi>("rft.Jester");
         DraculaApi = helper.ModRegistry.GetApi<IDraculaApi>("Shockah.Dracula");
         RollHookManager = new HookManager<IDaveApi.IRollHook>();
         RollModifierManager = new HookManager<IDaveApi.IRollModifier>();
@@ -369,6 +372,10 @@ public class ModEntry : SimpleMod
         };
         
         Harmony.PatchAll();
+        
+        JesterApi?.RegisterProvider(new DaveJesterProvider());
+        JesterApi?.RegisterStrategy(new DaveJesterStrategy());
+        JesterApi?.RegisterCharacterFlag("dave_rigging", DaveDeck.Deck);
         
         // duo registration
         helper.ModRegistry.AwaitApi<IDuoApi>("Shockah.DuoArtifacts", api =>

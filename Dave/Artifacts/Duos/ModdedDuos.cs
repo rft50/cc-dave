@@ -48,6 +48,12 @@ public class DaveDynaDuoArtifact : Artifact, IDuoArtifact
 
     public override Spr GetSprite() => !Ready ? _off.Sprite : IsRed ? _red.Sprite : _black.Sprite;
 
+    public override List<Tooltip>? GetExtraTooltips() =>
+    [
+        StatusMeta.GetTooltips(ModEntry.Instance.RedRigging.Status, 1)[0],
+        StatusMeta.GetTooltips(ModEntry.Instance.BlackRigging.Status, 1)[0]
+    ];
+
     private class DaveDynaHook : IDynaHook
     {
         public void OnChargeFired(State state, Combat combat, Ship targetShip, int worldX)
@@ -94,6 +100,11 @@ public class DaveDraculaDuoArtifact : Artifact, IDuoArtifact
             ModEntry.Instance.RollHookManager.Register(new DaveDraculaRollHook(), 0);
         });
     }
+
+    public override List<Tooltip>? GetExtraTooltips() =>
+    [
+        StatusMeta.GetTooltips(ModEntry.Instance.DraculaApi!.BleedingStatus.Status, 1)[0]
+    ];
 
     private class DaveDraculaRollHook : IDaveApi.IRollHook
     {
@@ -152,6 +163,11 @@ public class DaveEddieDuoArtifact : Artifact, IDuoArtifact
             changeAmount = 1
         }]);
     }
+
+    public override List<Tooltip>? GetExtraTooltips() =>
+    [
+        StatusMeta.GetTooltips(ModEntry.Instance.RedRigging.Status, 1)[0]
+    ];
 }
 
 public class DaveJohnsonDuoArtifact : Artifact, IDuoArtifact
@@ -189,6 +205,12 @@ public class DaveJohnsonDuoArtifact : Artifact, IDuoArtifact
             artifactPulse = Key()
         });
     }
+
+    public override List<Tooltip>? GetExtraTooltips() =>
+    [
+        new TTGlossary("status.overdrive", -1),
+        new TTGlossary("status.cheapFix", 1)
+    ];
 }
 
 public class DaveSogginsDuoArtifact : Artifact, IDuoArtifact
@@ -216,6 +238,12 @@ public class DaveSogginsDuoArtifact : Artifact, IDuoArtifact
             soggins.RegisterSmugHook(new DaveSogginsSmugHook(), -100);
         });
     }
+
+    public override List<Tooltip>? GetExtraTooltips() =>
+    [
+        StatusMeta.GetTooltips(ModEntry.Instance.RedRigging.Status, 1)[0],
+        StatusMeta.GetTooltips(ModEntry.Instance.BlackRigging.Status, 1)[0]
+    ];
 
     private class DaveSogginsSmugHook : ISmugHook
     {

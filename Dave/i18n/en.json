@@ -45,7 +45,7 @@
         },
         "DriveRefund": {
             "name": "DRIVE REFUND",
-            "description": "The first time you lose <c=status>overdrive</c> each turn, draw a card."
+            "description": "The first time you lose <c=status>OVERDRIVE</c> each turn, draw a card."
         },
         "Ashtray": {
             "name": "ASHTRAY",
@@ -57,7 +57,7 @@
         },
         "UnderdriveGenerator": {
             "name": "UNDERDRIVE GENERATOR",
-            "description": "Every 3 red/Gain 1 extra <c=energy>ENERGY</c> every turn. <c=downside>Gain -1 <c=status>overdrive</c> every 2 turns</c>."
+            "description": "Gain 1 extra <c=energy>ENERGY</c> every turn. <c=downside>Gain -1 <c=status>OVERDRIVE</c> every 2 turns</c>."
         },
         "RiggedDice": {
             "name": "RIGGED DICE",
@@ -66,7 +66,7 @@
         "duo": {
             "Dizzy": {
                 "name": "SAFE BET SHIELD",
-                "description": "Whenever you lose <c=status>Shield</c> or <c=hurt>Hull</c> from playing a card, gain 1 <c=status>Temp Shield</c>."
+                "description": "Whenever you lose <c=status>SHIELD</c> or <c=downside>hull</c> from playing a card, gain 1 <c=status>TEMP SHIELD</c>."
             },
             "Riggs": {
                 "name": "ARROW SIGN",
@@ -74,23 +74,23 @@
             },
             "Peri": {
                 "name": "OVERDRIVE INSURANCE",
-                "description": "While you have negative <c=status>Overdrive</c>, <c=peri>Peri</c>'s and <c=98FB98>Dave</c>'s cards deal +1 damage."
+                "description": "While you have negative <c=status>OVERDRIVE</c>, <c=peri>Peri</c>'s and <c=98FB98>Dave</c>'s cards deal +1 damage."
             },
             "Isaac": {
                 "name": "SPADE MODULE",
-                "description": "Whenever you play a card that deploys a midrow object, Black: Gain a <c=status>Bubble</c> first."
+                "description": "Whenever you play a card that deploys a midrow object, Black: Gain a <c=status>BUBBLE</c> first."
             },
             "Drake": {
                 "name": "HOT STREAK",
-                "description": "Whenever your <c=status>Heat</c> is increased to 3, gain 1 <c=status>Red Rigging</c> and 1 <c=status>Black Rigging</c>."
+                "description": "Whenever your <c=status>HEAT</c> is increased to 3, gain 1 <c=status>RED RIGGING</c> and 1 <c=status>BLACK RIGGING</c>."
             },
             "Max": {
                 "name": "FOIL CARD",
-                "description": "The first time each combat you end your turn with any <c=status>Rigging</c>, gain 1 <c=status>Red Rigging</c> and 1 <c=status>Black Rigging</c>."
+                "description": "The first time each combat you end your turn with any <c=status>RIGGING</c>, gain 1 <c=status>RED RIGGING</c> and 1 <c=status>BLACK RIGGING</c>."
             },
             "Books": {
                 "name": "COLORED SHARDS",
-                "description": "Whenever you play a card and have no <c=status>Rigging</c>, spend 2 <c=status>Shard</c> to make it <c=status>Dual Rigged</c>."
+                "description": "Whenever you play a card and have no <c=status>RIGGING</c>, spend 2 <c=status>Shard</c> to make it <c=status>DUAL RIGGED</c>."
             },
             "CAT": {
                 "name": "PAIR OF ACES",
@@ -99,23 +99,23 @@
             
             "Dyna": {
                 "name": "TACTICAL RIGGING",
-                "description": "The first time you deploy a <c=parttrait>Charge</c> each turn, gain <c=status>Red Rigging</c> or <c=status>Black Rigging</c>, alternating."
+                "description": "The first time you deploy a <c=parttrait>Charge</c> each turn, gain <c=status>RED RIGGING</c> or <c=status>BLACK RIGGING</c>, alternating."
             },
             "Dracula": {
                 "name": "BLOOD MONEY",
-                "description": "Whenever you roll Red from rolling, apply 1 <c=status>Bleeding</c> to the enemy."
+                "description": "Whenever you roll Red from rolling, apply 1 <c=status>BLEEDING</c> to the enemy."
             },
             "Eddie": {
-                "name": "Red Lightbulb",
-                "description": "At the start of your turn, if you have any <c=status>Red Rigging</c>, spend 1 to gain 1 <c=energy>ENERGY</c>."
+                "name": "RED LIGHTBULB",
+                "description": "At the start of your turn, if you have any <c=status>RED RIGGING</c>, spend 1 to gain 1 <c=energy>ENERGY</c>."
             },
             "Johnson": {
                 "name": "EMBEZZLEMENT",
-                "description": "Whenever you end your turn with negative <c=status>Overdrive</c>, gain 1 <c=status>Cheap Fix</c>."
+                "description": "Whenever you end your turn with negative <c=status>OVERDRIVE</c>, gain 1 <c=status>CHEAP FIX</c>."
             },
             "Soggins": {
                 "name": "CRACKED CHIP",
-                "description": "While you have both <c=status>Red Rigging</c> and <c=status>Black Rigging</c>, <c=downside>botch</c> and <c=cheevoGold>double</c> chances are tripled."
+                "description": "While you have both <c=status>RED RIGGING</c> and <c=status>BLACK RIGGING</c>, <c=downside>botch</c> and <c=cheevoGold>double</c> chances are tripled."
             }
         }
     },
