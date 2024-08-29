@@ -425,7 +425,7 @@ public class DaveCatDuoArtifact : Artifact, IDuoArtifact
     [HarmonyPatch(typeof(ACardOffering), "BeginWithRoute")]
     public static void ACardOffering_BeginWithRoute_Prefix(State s, ACardOffering __instance)
     {
-        if (!s.EnumerateAllArtifacts().Any(a => a is DaveCatDuoArtifact)) return;
+        if (!s.EnumerateAllArtifacts().Any(a => a is DaveCatDuoArtifact) || s.route is not Combat || (s.route as Combat)!.otherShip.hull == 0) return;
         // this is intentionally a ceiling halve
         __instance.amount -= __instance.amount / 2;
     }
@@ -434,7 +434,7 @@ public class DaveCatDuoArtifact : Artifact, IDuoArtifact
     [HarmonyPatch(typeof(ACardOffering), "BeginWithRoute")]
     public static void ACardOffering_BeginWithRoute_Postfix(State s, ref Route __result)
     {
-        if (!s.EnumerateAllArtifacts().Any(a => a is DaveCatDuoArtifact)) return;
+        if (!s.EnumerateAllArtifacts().Any(a => a is DaveCatDuoArtifact) || s.route is not Combat || (s.route as Combat)!.otherShip.hull == 0) return;
         if (__result is not CardReward reward) return;
         ModEntry.Instance.Helper.ModData.SetModData(__result, "DaveCATDuoProc", true);
     }
