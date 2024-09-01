@@ -209,7 +209,7 @@ public class DaveJohnsonDuoArtifact : Artifact, IDuoArtifact
     public override List<Tooltip>? GetExtraTooltips() =>
     [
         new TTGlossary("status.overdrive", -1),
-        new TTGlossary("status.cheapFix", 1)
+        new TTGlossary("status.temporaryCheap", 1)
     ];
 }
 

@@ -1,10 +1,12 @@
-﻿using Dave.Actions;
+﻿using System.Collections;
+using Dave.Actions;
 using Dave.Api;
 using Dave.Artifacts;
 using Dave.Artifacts.Duos;
 using Dave.Cards;
 using Dave.External;
 using Dave.Jester;
+using Dave.Render;
 using HarmonyLib;
 using Microsoft.Extensions.Logging;
 using Nanoray.PluginManager;
@@ -376,6 +378,8 @@ public class ModEntry : SimpleMod
         JesterApi?.RegisterProvider(new DaveJesterProvider());
         JesterApi?.RegisterStrategy(new DaveJesterStrategy());
         JesterApi?.RegisterCharacterFlag("dave_rigging", DaveDeck.Deck);
+        
+        KokoroApi.RegisterCardRenderHook(new ZipperCardRenderManager(), 0);
         
         // duo registration
         helper.ModRegistry.AwaitApi<IDuoApi>("Shockah.DuoArtifacts", api =>
