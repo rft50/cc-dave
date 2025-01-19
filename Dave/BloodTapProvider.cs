@@ -7,20 +7,20 @@ public class BloodTapProvider : IBloodTapOptionProvider
 {
     public IEnumerable<Status> GetBloodTapApplicableStatuses(State state, Combat combat, IReadOnlySet<Status> allStatuses)
     {
-        if (allStatuses.Contains((Status) ModManifest.red_rigging!.Id!))
-            yield return (Status) ModManifest.red_rigging.Id;
-        if (allStatuses.Contains((Status) ModManifest.black_rigging!.Id!))
-            yield return (Status) ModManifest.black_rigging.Id;
-        if (allStatuses.Contains((Status) ModManifest.red_bias!.Id!))
-            yield return (Status) ModManifest.red_bias.Id;
-        if (allStatuses.Contains((Status) ModManifest.black_bias!.Id!))
-            yield return (Status) ModManifest.black_bias.Id;
+        if (allStatuses.Contains(ModEntry.Instance.RedRigging.Status))
+            yield return ModEntry.Instance.RedRigging.Status;
+        if (allStatuses.Contains(ModEntry.Instance.BlackRigging.Status))
+            yield return ModEntry.Instance.BlackRigging.Status;
+        if (allStatuses.Contains(ModEntry.Instance.RedBias.Status))
+            yield return ModEntry.Instance.RedBias.Status;
+        if (allStatuses.Contains(ModEntry.Instance.BlackBias.Status))
+            yield return ModEntry.Instance.BlackBias.Status;
     }
 
     public IEnumerable<List<CardAction>> GetBloodTapOptionsActions(State state, Combat combat, IReadOnlySet<Status> allStatuses)
     {
-        var red = (Status)ModManifest.red_rigging!.Id!;
-        var black = (Status)ModManifest.black_rigging!.Id!;
+        var red = ModEntry.Instance.RedRigging.Status;
+        var black = ModEntry.Instance.BlackRigging.Status;
         var hasRed = allStatuses.Contains(red);
         var hasBlack = allStatuses.Contains(black);
 
@@ -75,7 +75,7 @@ public class BloodTapProvider : IBloodTapOptionProvider
                     targetPlayer = true
                 }
             };
-        if (allStatuses.Contains((Status)ModManifest.red_bias!.Id!))
+        if (allStatuses.Contains(ModEntry.Instance.RedBias.Status))
             yield return new List<CardAction>
             {
                 new AHurt
@@ -85,10 +85,10 @@ public class BloodTapProvider : IBloodTapOptionProvider
                 },
                 new BiasStatusAction
                 {
-                    pow = 1
+                    Pow = 1
                 }
             };
-        if (allStatuses.Contains((Status)ModManifest.black_bias!.Id!))
+        if (allStatuses.Contains(ModEntry.Instance.BlackBias.Status))
             yield return new List<CardAction>
             {
                 new AHurt
@@ -98,7 +98,7 @@ public class BloodTapProvider : IBloodTapOptionProvider
                 },
                 new BiasStatusAction
                 {
-                    pow = -1
+                    Pow = -1
                 }
             };
     }

@@ -1,56 +1,54 @@
-﻿using CobaltCoreModding.Definitions.ExternalItems;
+﻿
+using Dave.Api;
 
 namespace Dave.Artifacts;
 
 // Chip: This chip indicates the red/black roll result for the last card you played.
 
 [ArtifactMeta(unremovable = true)]
-public class Chip : Artifact
+public class Chip : Artifact, IDaveApi.IRollHook
 {
-    public static ExternalSprite red;
-    public static ExternalSprite black;
-    public static ExternalSprite both;
-    public static ExternalSprite neutral;
+    internal static Spr Red;
+    internal static Spr Black;
+    internal static Spr Both;
+    internal static Spr Neutral;
 
-    private ExternalSprite sprite = neutral;
+    private Spr _sprite = Neutral;
 
     public Chip()
     {
-        if (ModManifest.EventHub != null)
-            ModManifest.EventHub.ConnectToEvent<Tuple<State, Combat, bool, bool, bool>>("Dave.RedBlackRoll", OnRoll);
+        ModEntry.Instance.RollHookManager.Register(this, 0);
     }
 
     public override void OnRemoveArtifact(State state)
     {
-        ModManifest.EventHub.DisconnectFromEvent<Tuple<State, Combat, bool, bool, bool>>("Dave.RedBlackRoll", OnRoll);
+        ModEntry.Instance.RollHookManager.Unregister(this);
     }
 
     public override void OnPlayerPlayCard(int energyCost, Deck deck, Card card, State state, Combat combat, int handPosition,
         int handCount)
     {
-        sprite = neutral;
+        _sprite = Neutral;
     }
 
     public override void OnCombatEnd(State state)
     {
-        sprite = neutral;
+        _sprite = Neutral;
     }
 
-    private void OnRoll(Tuple<State, Combat, bool, bool, bool> data)
+    public void OnRoll(State state, Combat combat, bool isRed, bool isBlack, bool isRoll)
     {
-        var (state, _, isRed, isBlack, _) = data;
-
         if (!ArtifactUtil.PlayerHasArtifact(state, this))
         {
-            ModManifest.EventHub.DisconnectFromEvent<Tuple<State, Combat, bool, bool, bool>>("Dave.RedBlackRoll", OnRoll);
+            ModEntry.Instance.RollHookManager.Unregister(this);
             return;
         }
 
-        sprite = isRed switch
+        _sprite = isRed switch
         {
-            true when isBlack => both,
-            true => red,
-            _ => black
+            true when isBlack => Both,
+            true => Red,
+            _ => Black
         };
         
         Pulse();
@@ -58,6 +56,6 @@ public class Chip : Artifact
 
     public override Spr GetSprite()
     {
-        return (Spr) sprite.Id!;
+        return _sprite;
     }
 }

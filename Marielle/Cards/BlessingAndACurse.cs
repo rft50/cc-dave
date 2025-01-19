@@ -50,7 +50,7 @@ public class BlessingAndACurse : Card, IRegisterable
 
     public override CardData GetData(State state) => new()
     {
-        cost = 1,
+        cost = 0,
         artTint = "FFFFFF",
         exhaust = true
     };

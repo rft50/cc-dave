@@ -6,12 +6,10 @@
     [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class AllBetsAreOffCard : Card
     {
-        public static Spr card_sprite;
-
         public override List<CardAction> GetActions(State s, Combat c)
         {
-            var redRigging = (Status)(ModManifest.red_rigging.Id ?? throw new Exception("missing status"));
-            var blackRigging = (Status)(ModManifest.black_rigging.Id ?? throw new Exception("missing status"));
+            var redRigging = ModEntry.Instance.RedRigging.Status;
+            var blackRigging = ModEntry.Instance.BlackRigging.Status;
 
             var rigAmount = s.ship.Get(redRigging) + s.ship.Get(blackRigging);
             
@@ -49,7 +47,6 @@
         public override CardData GetData(State state) => new()
         {
             cost = 2,
-            art = card_sprite,
             exhaust = upgrade != Upgrade.B
         };
     }

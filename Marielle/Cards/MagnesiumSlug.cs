@@ -30,7 +30,7 @@ public class MagnesiumSlug : Card, IRegisterable
         [
             new AAttack
             {
-                damage = GetDmg(s, upgrade == Upgrade.A ? 3 : 2),
+                damage = GetDmg(s, upgrade == Upgrade.A ? 4 : 3),
                 status = Status.heat,
                 statusAmount = upgrade == Upgrade.A ? 7 : 6
             },

@@ -8,8 +8,6 @@ namespace Dave.Cards
     [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
     public class AllInCard : Card
     {
-        public static Spr card_sprite;
-        
         public override List<CardAction> GetActions(State s, Combat c)
         {
             List<CardAction> actions;
@@ -22,14 +20,13 @@ namespace Dave.Cards
                         new AAttack { damage = GetDmg(s, 10) }
                     }, new List<CardAction>
                     {
-                        new ShieldHurtAction { dmg = 3 }
+                        new ShieldHurtAction { hurtAmount = 3 }
                     });
                     actions = new List<CardAction>
                     {
                         actions[0],
                         actions[2],
-                        actions[1],
-                        new ADummyAction()
+                        actions[1]
                     };
                     break;
                 case Upgrade.A:
@@ -38,19 +35,17 @@ namespace Dave.Cards
                         new AAttack { damage = GetDmg(s, 10) }
                     }, new List<CardAction>
                     {
-                        new ShieldHurtAction { dmg = 3 }
+                        new ShieldHurtAction { hurtAmount = 3 }
                     });
-                    actions.Add(new ADummyAction());
                     break;
                 case Upgrade.B:
                     actions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
                     {
-                        new ShieldHurtAction { dmg = 3 }
+                        new ShieldHurtAction { hurtAmount = 3 }
                     }, new List<CardAction>
                     {
                         new AAttack { damage = GetDmg(s, 10) }
                     });
-                    actions.Add(new ADummyAction());
                     break;
             }
 
@@ -60,7 +55,6 @@ namespace Dave.Cards
         public override CardData GetData(State state) => new()
         {
             cost = 3,
-            art = card_sprite,
             exhaust = true
         };
     }

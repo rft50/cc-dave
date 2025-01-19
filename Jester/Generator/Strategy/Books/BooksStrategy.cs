@@ -1,6 +1,4 @@
 ﻿using Jester.Api;
-using Jester.Generator.Provider.Books;
-using Microsoft.Extensions.Logging;
 
 namespace Jester.Generator.Strategy.Books;
 
@@ -22,7 +20,20 @@ public class BooksStrategy : IStrategy
         var points = request.BasePoints;
         var maxActions = request.ActionLimit;
         var actionCount = 0;
-        var shardDistribution = CreateShardDistribution(maxActions / 2, rng.NextInt() % 5 + 1, 3, rng);
+        var shardDistribution = CreateShardDistribution(maxActions / 2, rng.NextInt() % (maxActions - 1) + 1, 3, rng);
+        
+        // POINT DISTRIBUTION
+        int smallPoints;
+        int bigPoints;
+
+        {
+            var bigCount = maxActions / 2;
+            var smallCount = maxActions - bigCount;
+
+            smallPoints = points * smallCount / (smallCount + bigCount * 2);
+            points -= shardDistribution.Select(ShardCost).Sum();
+            bigPoints = points - smallPoints;
+        }
         
         // INITIAL ENTRIES
 
@@ -32,13 +43,28 @@ public class BooksStrategy : IStrategy
         while (actionCount < maxActions)
         {
             actionCount++;
-            
+
             if (actionCount % 2 == 0)
-                points += -ShardCost(shardDistribution[actionCount / 2 - 1]);
-            request.MaxCost = points;
+            {
+                request.MaxCost = bigPoints;
+            }
+            else
+            {
+                request.MaxCost = smallPoints;
+            }
+            
             var option = ModManifest.JesterApi.GetRandomEntry(request, providers, 1);
             
-            if (option == null) break;
+            if (option == null)
+            {
+                if (actionCount % 2 == 0)
+                {
+                    var remove = ShardCost(shardDistribution[actionCount / 2 - 1]);
+                    points += remove;
+                    bigPoints += remove;
+                }
+                continue;
+            }
             
             if (actionCount % 2 == 0)
                 option = new ShardCostEntry
@@ -48,7 +74,16 @@ public class BooksStrategy : IStrategy
                 };
             option.AfterSelection(request);
             entries.Add(option);
+            
             points -= option.GetCost();
+            if (actionCount % 2 == 0)
+            {
+                bigPoints -= option.GetCost();
+            }
+            else
+            {
+                smallPoints -= option.GetCost();
+            }
         }
 
         ModManifest.JesterApi.PerformUpgrade(request, ref points, Upgrade.None);
@@ -76,9 +111,9 @@ public class BooksStrategy : IStrategy
         return data;
     }
 
-    private static int ShardCost(int x) // -5, -11, -18, -27, -37, etc
+    private static int ShardCost(int x) // -10, -22, -36, etc
     {
-        return -(x + 9) * x / 2;
+        return -(x + 9) * x;
     }
 
     public double GetWeight(IJesterRequest request) => ModManifest.JesterApi.HasCharacterFlag("shard") ? 1 : 0;
@@ -87,8 +122,8 @@ public class BooksStrategy : IStrategy
 
     private class ShardCostEntry : IEntry
     {
-        public int Count { get; set; }
-        public IEntry Entry { get; set; } = null!;
+        public int Count { get; init; }
+        public IEntry Entry { get; init; } = null!;
 
         public IReadOnlySet<string> Tags => Entry.Tags;
 
@@ -111,7 +146,7 @@ public class BooksStrategy : IStrategy
                     Entry
                     .GetUpgradeOptions(request, upDir)
                     )
-                .Append((0.5, new ShardCostEntry
+                .Append((upDir == Upgrade.None ? 0 : 1, new ShardCostEntry
                 {
                     Count = Count - 1,
                     Entry = Entry
@@ -120,7 +155,7 @@ public class BooksStrategy : IStrategy
 
         private IEnumerable<(double, IEntry)> WrapUpgradeOptions(IEnumerable<(double, IEntry)> options)
         {
-            return options.Select(e => (e.Item1, new ShardCostEntry
+            return options.Select(e => (e.Item1 * 2, new ShardCostEntry
             {
                 Count = Count,
                 Entry = e.Item2

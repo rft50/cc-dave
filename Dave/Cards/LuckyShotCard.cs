@@ -8,8 +8,6 @@ namespace Dave.Cards;
 [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
 public class LuckyShotCard : Card
 {
-    public static Spr card_sprite;
-
     public override List<CardAction> GetActions(State s, Combat c)
     {
         List<CardAction> actions;
@@ -30,8 +28,7 @@ public class LuckyShotCard : Card
                 {
                     builtActions[0],
                     builtActions[1],
-                    builtActions[2],
-                    new ADummyAction()
+                    builtActions[2]
                 };
                 break;
             case Upgrade.A:
@@ -44,8 +41,7 @@ public class LuckyShotCard : Card
                 {
                     builtActions[0],
                     builtActions[1],
-                    new AAttack { damage = this.GetDmg(s, 1) },
-                    new ADummyAction()
+                    new AAttack { damage = this.GetDmg(s, 1) }
                 };
                 break;
             case Upgrade.B:
@@ -63,8 +59,7 @@ public class LuckyShotCard : Card
                     builtActions[0],
                     builtActions[1],
                     builtActions[2],
-                    builtActions[3],
-                    new ADummyAction()
+                    builtActions[3]
                 };
                 break;
         }
@@ -74,7 +69,6 @@ public class LuckyShotCard : Card
 
     public override CardData GetData(State state) => new()
     {
-        cost = 1,
-        art = card_sprite
+        cost = 1
     };
 }

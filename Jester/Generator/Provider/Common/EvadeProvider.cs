@@ -43,7 +43,7 @@ public class EvadeProvider : IProvider
 
         public int GetCost()
         {
-            return Evade * 10;
+            return Evade * 15;
         }
 
         public IEnumerable<(double, IEntry)> GetUpgradeOptions(IJesterRequest request, Upgrade upDir)

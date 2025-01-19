@@ -30,13 +30,13 @@ public class ShadowCover : Card, IRegisterable, IHasCustomCardTraits
             new AStatus
             {
                 status = Status.shield,
-                statusAmount = upgrade == Upgrade.A ? 3 : 2,
+                statusAmount = 2,
                 targetPlayer = true
             },
             new AStatus
             {
                 status = ModEntry.Instance.Curse.Status,
-                statusAmount = 1,
+                statusAmount = upgrade == Upgrade.B ? 2 : 1,
                 targetPlayer = true
             }
         ];
@@ -50,7 +50,7 @@ public class ShadowCover : Card, IRegisterable, IHasCustomCardTraits
 
     public IReadOnlySet<ICardTraitEntry> GetInnateTraits(State state)
     {
-        if (upgrade == Upgrade.B)
+        if (upgrade == Upgrade.A)
             return new HashSet<ICardTraitEntry>();
         return new HashSet<ICardTraitEntry>
         {

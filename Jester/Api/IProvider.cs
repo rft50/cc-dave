@@ -1,6 +1,4 @@
-﻿using Jester.Generator.Provider;
-
-namespace Jester.Api;
+﻿namespace Jester.Api;
 
 public partial interface IJesterApi
 {

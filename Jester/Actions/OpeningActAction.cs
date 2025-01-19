@@ -1,4 +1,5 @@
 ﻿using Jester.Artifacts;
+using Nickel;
 
 namespace Jester.Actions;
 
@@ -36,7 +37,8 @@ public class OpeningActAction : CardAction
 
     public override List<Tooltip> GetTooltips(State s) => new()
     {
-        new TTGlossary("status." + ModManifest.OpeningFatigue.GlobalName)
+        new TTGlossary(ModManifest.OpeningScriptedGlossary.Head),
+        StatusMeta.GetTooltips((Status) ModManifest.OpeningFatigue.Id!, 1)[0]
     };
 
     public static OpeningScript GetOpeningScript(State s, Combat c)

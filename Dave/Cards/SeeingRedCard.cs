@@ -8,8 +8,6 @@ namespace Dave.Cards;
 [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
 public class SeeingRedCard : Card
 {
-    public static Spr card_sprite;
-
     public override List<CardAction> GetActions(State s, Combat c)
     {
         var shieldHurt = upgrade switch
@@ -31,17 +29,15 @@ public class SeeingRedCard : Card
         {
             builtActions[0],
             builtActions[2],
-            new ShieldHurtAction { dmg = shieldHurt },
+            new ShieldHurtAction { hurtAmount = shieldHurt },
             new AStatus { status = Status.overdrive, statusAmount = upgrade == Upgrade.B ? 2 : 1, targetPlayer = true },
-            builtActions[1],
-            new ADummyAction()
+            builtActions[1]
         };
     }
 
     public override CardData GetData(State state) => new()
     {
         cost = 1,
-        art = card_sprite,
         artTint = "ffffff"
     };
 }

@@ -1,7 +1,11 @@
-﻿namespace Dave.External;
+﻿using Nickel;
+
+namespace Dave.External;
 
 public interface IDraculaApi
 {
+	IDeckEntry DraculaDeck { get; }
+	IStatusEntry BleedingStatus { get; }
 	void RegisterBloodTapOptionProvider(IBloodTapOptionProvider provider, double priority = 0);
 }
 

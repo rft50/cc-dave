@@ -1,0 +1,193 @@
+﻿{
+    "character": {
+        "name": "Dave",
+        "description": [
+            "<c=159D3E>DAVE</c>",
+            "A gambler. His cards have <c=cardtrait>random effects</c> and allow him to rig the odds."
+        ]
+    },
+    "status": {
+        "RedRigging": {
+            "name": "Red Rigging",
+            "description": "The next {0} cards with Red/Black actions will go Red."
+        },
+        "BlackRigging": {
+            "name": "Black Rigging",
+            "description": "The next {0} cards with Red/Black actions will go Black."
+        },
+        "RedBias": {
+            "name": "Red Bias",
+            "description": "Each stack of this makes Red/Black actions 10% more likely to roll Red."
+        },
+        "BlackBias": {
+            "name": "Black Bias",
+            "description": "Each stack of this makes Red/Black actions 10% more likely to roll Black."
+        }
+    },
+    "action": {
+        "RandomFoeMove": {
+            "name": "Random Foe Move",
+            "description": "Instantly move the opponent <c=boldPink>{0}</c> spaces in a random direction."
+        },
+        "ShieldHurt": {
+            "name": "Shield Hurt",
+            "description": "Take <c=boldPink>{0}</c> damage, hitting shields first."
+        },
+        "RedBlack": {
+            "name": "Red/Black",
+            "description": "When played, either performs the Red or Black actions."
+        }
+    },
+    "artifact": {
+        "Chip": {
+            "name": "CHIP",
+            "description": "This chip indicates the red/black roll result for the last card you played."
+        },
+        "DriveRefund": {
+            "name": "DRIVE REFUND",
+            "description": "The first time you lose <c=status>OVERDRIVE</c> each turn, draw a card."
+        },
+        "Ashtray": {
+            "name": "ASHTRAY",
+            "description": "Every 5 non-Dave cards you play, add a Perfect Odds to your hand."
+        },
+        "Roulette": {
+            "name": "ROULETTE",
+            "description": "Every 3 red/black cards you play with no Rigging, add a Perfect Odds to your hand."
+        },
+        "UnderdriveGenerator": {
+            "name": "UNDERDRIVE GENERATOR",
+            "description": "Gain 1 extra <c=energy>ENERGY</c> every turn. <c=downside>Gain -1 <c=status>OVERDRIVE</c> every 2 turns</c>."
+        },
+        "RiggedDice": {
+            "name": "RIGGED DICE",
+            "description": "Every other turn, add a Perfect Odds to your hand."
+        },
+        "duo": {
+            "Dizzy": {
+                "name": "SAFE BET SHIELD",
+                "description": "Whenever you lose <c=status>SHIELD</c> or <c=downside>hull</c> from playing a card, gain 1 <c=status>TEMP SHIELD</c>."
+            },
+            "Riggs": {
+                "name": "ARROW SIGN",
+                "description": "All random movement is increased by 1."
+            },
+            "Peri": {
+                "name": "OVERDRIVE INSURANCE",
+                "description": "While you have negative <c=status>OVERDRIVE</c>, <c=peri>Peri</c>'s and <c=98FB98>Dave</c>'s cards deal +1 damage."
+            },
+            "Isaac": {
+                "name": "SPADE MODULE",
+                "description": "Whenever you play a card that deploys a midrow object, Black: Gain a <c=status>BUBBLE</c> first."
+            },
+            "Drake": {
+                "name": "HOT STREAK",
+                "description": "Whenever your <c=status>HEAT</c> is increased to 3, gain 1 <c=status>RED RIGGING</c> and 1 <c=status>BLACK RIGGING</c>."
+            },
+            "Max": {
+                "name": "FOIL CARD",
+                "description": "The first time each combat you end your turn with any <c=status>RIGGING</c>, gain 1 <c=status>RED RIGGING</c> and 1 <c=status>BLACK RIGGING</c>."
+            },
+            "Books": {
+                "name": "COLORED SHARDS",
+                "description": "Whenever you play a card and have no <c=status>RIGGING</c>, spend 2 <c=status>Shard</c> to make it <c=status>DUAL RIGGED</c>."
+            },
+            "CAT": {
+                "name": "PAIR OF ACES",
+                "description": "EXE cards offer half as many cards, but they summon an extra copy of that card."
+            },
+            
+            "Dyna": {
+                "name": "TACTICAL RIGGING",
+                "description": "The first time you deploy a <c=parttrait>Charge</c> each turn, gain <c=status>RED RIGGING</c> or <c=status>BLACK RIGGING</c>, alternating."
+            },
+            "Dracula": {
+                "name": "BLOOD MONEY",
+                "description": "Whenever you roll Red from rolling, apply 1 <c=status>BLEEDING</c> to the enemy."
+            },
+            "Eddie": {
+                "name": "RED LIGHTBULB",
+                "description": "At the start of your turn, if you have any <c=status>RED RIGGING</c>, spend 1 to gain 1 <c=energy>ENERGY</c>."
+            },
+            "Johnson": {
+                "name": "EMBEZZLEMENT",
+                "description": "Whenever you end your turn with negative <c=status>OVERDRIVE</c>, gain 1 <c=status>CHEAP FIX</c>."
+            },
+            "Soggins": {
+                "name": "CRACKED CHIP",
+                "description": "While you have both <c=status>RED RIGGING</c> and <c=status>BLACK RIGGING</c>, <c=downside>botch</c> and <c=cheevoGold>double</c> chances are tripled."
+            }
+        }
+    },
+    "card": {
+        "LuckyEscape": {
+            "name": "Lucky Escape"
+        },
+        "RiggingShot": {
+            "name": "Rigging Shot"
+        },
+        "WildStep": {
+            "name": "Wild Step"
+        },
+        "WildShot": {
+            "name": "Wild Shot"
+        },
+        "Windup": {
+            "name": "Windup"
+        },
+        "PrimedShot": {
+            "name": "Primed Shot"
+        },
+        "PinchShot": {
+            "name": "Pinch Shot"
+        },
+        "WildWall": {
+            "name": "Wild Wall"
+        },
+        "Fold": {
+            "name": "Fold"
+        },
+        
+        "WildBarrage": {
+            "name": "Wild Barrage"
+        },
+        "Rigging": {
+            "name": "Rigging"
+        },
+        "Raise": {
+            "name": "Raise"
+        },
+        "Investment": {
+            "name": "Investment"
+        },
+        "Lowball": {
+            "name": "Lowball"
+        },
+        "LuckyShot": {
+            "name": "Lucky Shot"
+        },
+        "SeeingRed": {
+            "name": "Seeing Red"
+        },
+        
+        "LoadedDice": {
+            "name": "Loaded Dice"
+        },
+        "AllIn": {
+            "name": "All In"
+        },
+        "EvenBet": {
+            "name": "Even Bet"
+        },
+        "AllBetsAreOff": {
+            "name": "All Bets Are Off"
+        },
+        "DrawnGambit": {
+            "name": "Drawn Gambit"
+        },
+        
+        "PerfectOdds": {
+            "name": "Perfect Odds"
+        }
+    }
+}

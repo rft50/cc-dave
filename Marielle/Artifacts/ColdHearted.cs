@@ -35,6 +35,8 @@ public class ColdHearted : Artifact, IRegisterable
         state.ship.heatMin -= 2;
         state.ship.Add(Status.heat, -2);
         state.ship.heatMin += 2;
+        
+        Pulse();
     }
 
     [HarmonyTranspiler]

@@ -25,38 +25,20 @@ public class Voodoo : Card, IRegisterable
 
     public override List<CardAction> GetActions(State s, Combat c)
     {
-        if (upgrade == Upgrade.B)
-        {
-            return
-            [
-                new AAttack
-                {
-                    damage = GetDmg(s, 2),
-                    status = ModEntry.Instance.Curse.Status,
-                    statusAmount = 1
-                },
-                new AStatus
-                {
-                    status = ModEntry.Instance.Curse.Status,
-                    statusAmount = 3,
-                    targetPlayer = true
-                }
-            ];
-        }
         return
         [
             new AAttack
             {
-                damage = GetDmg(s, upgrade == Upgrade.A ? 5 : 2),
+                damage = GetDmg(s, upgrade == Upgrade.None ? 2 : 5),
                 status = ModEntry.Instance.Curse.Status,
-                statusAmount = 1
+                statusAmount = upgrade == Upgrade.B ? 2 : 1
             },
         ];
     }
 
     public override CardData GetData(State state) => new()
     {
-        cost = 1,
+        cost = upgrade == Upgrade.B ? 2 : 1,
         artTint = "FFFFFF",
         exhaust = true
     };

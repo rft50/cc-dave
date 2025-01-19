@@ -6,8 +6,6 @@
 [CardMeta(rarity = Rarity.uncommon, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
 public class LowballCard : Card
 {
-    public static Spr card_sprite;
-
     public override List<CardAction> GetActions(State s, Combat c)
     {
         var outgoing = upgrade switch
@@ -33,7 +31,6 @@ public class LowballCard : Card
     public override CardData GetData(State state) => new()
     {
         cost = 2,
-        art = card_sprite,
         exhaust = true
     };
 }

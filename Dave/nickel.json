@@ -1,8 +1,8 @@
 {
   "EntryPointAssembly": "Dave.dll",
   "UniqueName": "Dave",
-  "Version": "1.1.3",
-  "RequiredApiVersion": "0.4.0",
+  "Version": "2.0.1",
+  "RequiredApiVersion": "0.10.0",
   "Dependencies": [
     {
       "UniqueName": "Nickel.Legacy",
@@ -23,7 +23,18 @@
       "UniqueName": "TheJazMaster.MoreDifficulties",
       "Version": "1.3.2",
       "IsRequired": false
+    },
+    {
+      "UniqueName": "rft.Jester",
+      "Version": "0.7.0",
+      "IsRequired": false
     }
   ],
-  "ModType": "Nickel.Legacy"
+  "LoadPhase": "AfterDbInit",
+  "Author": "rft50",
+  "UpdateChecks": {
+    "NexusMods": {
+      "ID": 35
+    }
+  }
 }

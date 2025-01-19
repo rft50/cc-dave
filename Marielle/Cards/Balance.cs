@@ -26,18 +26,42 @@ public class Balance : Card, IRegisterable
 
     public override List<CardAction> GetActions(State s, Combat c)
     {
+        if (upgrade == Upgrade.B)
+        {
+            return
+            [
+                new AStatus
+                {
+                    status = Status.tempShield,
+                    statusAmount = 2,
+                    targetPlayer = true
+                },
+                new AStatus
+                {
+                    status = Status.serenity,
+                    statusAmount = 1,
+                    targetPlayer = true
+                },
+                new AStatus
+                {
+                    status = ModEntry.Instance.Curse.Status,
+                    statusAmount = 1,
+                    targetPlayer = true
+                }
+            ];
+        }
         return
         [
             new AStatus
             {
                 status = Status.serenity,
-                statusAmount = upgrade == Upgrade.B ? 2 : 1,
+                statusAmount = 1,
                 targetPlayer = true
             },
             new AStatus
             {
                 status = ModEntry.Instance.Curse.Status,
-                statusAmount = upgrade == Upgrade.None ? 1 : 2,
+                statusAmount = upgrade == Upgrade.A ? 2 : 1,
                 targetPlayer = true
             }
         ];
@@ -45,8 +69,7 @@ public class Balance : Card, IRegisterable
 
     public override CardData GetData(State state) => new()
     {
-        cost = upgrade == Upgrade.B ? 0 : 1,
-        artTint = "FFFFFF",
-        exhaust = upgrade == Upgrade.B
+        cost = 1,
+        artTint = "FFFFFF"
     };
 }

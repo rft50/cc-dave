@@ -32,13 +32,19 @@ public class Hex : Card, IRegisterable, IHasCustomCardTraits
                 status = ModEntry.Instance.Curse.Status,
                 statusAmount = upgrade == Upgrade.B ? 2 : 1,
                 targetPlayer = false
+            },
+            new AStatus
+            {
+                status = Status.tempShield,
+                statusAmount = 2,
+                targetPlayer = true
             }
         ];
     }
 
     public override CardData GetData(State state) => new()
     {
-        cost = upgrade == Upgrade.A? 0 : 1,
+        cost = upgrade == Upgrade.A ? 0 : 1,
         artTint = "FFFFFF",
         exhaust = true
     };

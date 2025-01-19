@@ -6,8 +6,6 @@
 [CardMeta(rarity = Rarity.rare, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
 public class DrawnGambitCard : Card
 {
-    public static Spr card_sprite;
-
     public override List<CardAction> GetActions(State s, Combat c)
     {
         List<CardAction> actions;
@@ -39,7 +37,6 @@ public class DrawnGambitCard : Card
     {
         cost = upgrade == Upgrade.B ? 1 : 0,
         exhaust = upgrade != Upgrade.B,
-        art = card_sprite,
         description = upgrade == Upgrade.A
         ? "Draw to 10 cards, then discard to your old hand size + 2."
         : "Draw to 10 cards, then discard to your old hand size."

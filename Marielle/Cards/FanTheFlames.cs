@@ -30,19 +30,21 @@ public class FanTheFlames : Card, IRegisterable
         {
             Upgrade.A =>
             [
+                new AStatus
+                {
+                    status = Status.heat,
+                    statusAmount = 1, targetPlayer = false
+                },
                 ModEntry.Instance.KokoroApi.Actions.SetTargetPlayer(new AVariableHint
                 {
                     status = Status.heat
                 }, false),
                 new AStatus
                 {
-                    status = Status.heat, statusAmount = c.otherShip.Get(Status.heat),
+                    status = Status.heat,
+                    statusAmount = c.otherShip.Get(Status.heat) + 1,
                     xHint = 1,
                     targetPlayer = false
-                },
-                new AStatus
-                {
-                    status = Status.heat, statusAmount = 1, targetPlayer = false
                 }
             ],
             Upgrade.B =>
@@ -53,7 +55,8 @@ public class FanTheFlames : Card, IRegisterable
                 },
                 new AStatus
                 {
-                    status = Status.heat, statusAmount = s.ship.Get(Status.heat),
+                    status = Status.heat,
+                    statusAmount = s.ship.Get(Status.heat),
                     xHint = 1,
                     targetPlayer = false
                 }
@@ -66,7 +69,8 @@ public class FanTheFlames : Card, IRegisterable
                 }, false),
                 new AStatus
                 {
-                    status = Status.heat, statusAmount = c.otherShip.Get(Status.heat),
+                    status = Status.heat,
+                    statusAmount = c.otherShip.Get(Status.heat),
                     xHint = 1,
                     targetPlayer = false
                 }

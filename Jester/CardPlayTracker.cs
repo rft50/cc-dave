@@ -25,8 +25,8 @@ public static class CardPlayTracker
     
     private static IEnumerable<Card> Load(State s, Combat c)
     {
-        var ids = ModManifest.KokoroApi.ObtainExtensionData<List<int>>(c, "CardTracking.Ids");
-        var singleCards = ModManifest.KokoroApi.ObtainExtensionData<List<Card>>(c, "CardTracking.SingleCards");
+        var ids = ModManifest.Helper.ModData.ObtainModData<List<int>>(c, "CardTracking.Ids");
+        var singleCards = ModManifest.Helper.ModData.ObtainModData<List<Card>>(c, "CardTracking.SingleCards");
 
         var allCards = c.hand
             .Union(s.deck)
@@ -46,7 +46,7 @@ public static class CardPlayTracker
 
     private static void Save(IEnumerable<Card> cards, State state)
     {
-        if (state?.route is not Combat combat) return;
+        if (state.route is not Combat combat) return;
 
         var enumerable = cards.ToList();
         var ids = enumerable
@@ -56,7 +56,7 @@ public static class CardPlayTracker
             .Where(c => c.singleUseOverride == true || c.GetData(state).singleUse)
             .ToList();
         
-        ModManifest.KokoroApi.SetExtensionData(combat, "CardTracking.Ids", ids);
-        ModManifest.KokoroApi.SetExtensionData(combat, "CardTracking.SingleCards", singleUse);
+        ModManifest.Helper.ModData.SetModData(combat, "CardTracking.Ids", ids);
+        ModManifest.Helper.ModData.SetModData(combat, "CardTracking.SingleCards", singleUse);
     }
 }

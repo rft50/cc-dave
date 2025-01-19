@@ -8,8 +8,6 @@ namespace Dave.Cards;
 [CardMeta(rarity = Rarity.common, upgradesTo = new[] { Upgrade.A, Upgrade.B })]
 public class PinchShotCard : Card
 {
-    public static Spr card_sprite;
-
     public override List<CardAction> GetActions(State s, Combat c)
     {
         var builtActions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
@@ -25,14 +23,12 @@ public class PinchShotCard : Card
             builtActions[0],
             builtActions[1],
             builtActions[2],
-            new ShieldHurtAction { dmg = upgrade == Upgrade.A ? 2 : 1 },
-            new ADummyAction()
+            new ShieldHurtAction { hurtAmount = upgrade == Upgrade.A ? 2 : 1 }
         };
     }
 
     public override CardData GetData(State state) => new()
     {
-        cost = 1,
-        art = card_sprite
+        cost = 1
     };
 }

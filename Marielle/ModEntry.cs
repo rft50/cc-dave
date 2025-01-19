@@ -6,9 +6,11 @@ using Marielle.Artifacts;
 using Marielle.Cards;
 using Marielle.ExternalAPI;
 using Marielle.Features;
+using Marielle.Jester;
 using Microsoft.Extensions.Logging;
 using Nanoray.PluginManager;
 using Nickel;
+using IJesterApi = Marielle.ExternalAPI.IJesterApi;
 
 /* In the Cobalt Core modding community it is common for namespaces to be <Author>.<ModName>
  * This is helpful to know at a glance what mod we're looking at, and who made it */
@@ -21,6 +23,7 @@ public sealed class ModEntry : SimpleMod
     internal static ModEntry Instance { get; private set; } = null!;
     internal IKokoroApi KokoroApi { get; }
     internal ILouisApi? LouisApi { get; }
+    internal IJesterApi? JesterApi { get; }
     internal IMoreDifficultiesApi? MoreDifficultyApi { get; }
     internal ILocalizationProvider<IReadOnlyList<string>> AnyLocalizations { get; }
     internal ILocaleBoundNonNullLocalizationProvider<IReadOnlyList<string>> Localizations { get; }
@@ -56,7 +59,7 @@ public sealed class ModEntry : SimpleMod
     
     internal static IReadOnlyList<Type> MarielleRareCardTypes { get; } = [
         typeof(FanTheFlames),
-        typeof(RendAssunder),
+        typeof(RendAsunder),
         typeof(Scourge),
         typeof(SlowRoast),
         typeof(DarkThoughts)
@@ -102,6 +105,7 @@ public sealed class ModEntry : SimpleMod
          * If you're interested in more fancy stuff, make sure to peek at the Kokoro repository found online. */
         KokoroApi = helper.ModRegistry.GetApi<IKokoroApi>("Shockah.Kokoro")!;
         LouisApi = helper.ModRegistry.GetApi<ILouisApi>("TheJazMaster.Louis");
+        JesterApi = helper.ModRegistry.GetApi<IJesterApi>("rft.Jester");
         MoreDifficultyApi = helper.ModRegistry.GetApi<IMoreDifficultiesApi>("TheJazMaster.MoreDifficulties");
 
         /* These localizations lists help us organize our mod's text and messages by language.
@@ -318,5 +322,10 @@ public sealed class ModEntry : SimpleMod
         /* 6. HARMONY */
         var harmony = new Harmony("rft.Marielle");
         harmony.PatchAll();
+        
+        /* 7. JESTER */
+        JesterApi?.RegisterCharacterFlag("heat", MarielleDeck.Deck);
+        JesterApi?.RegisterCharacterFlag("enemyHeat", MarielleDeck.Deck);
+        JesterApi?.RegisterProvider(new MarielleJesterProvider());
     }
 }

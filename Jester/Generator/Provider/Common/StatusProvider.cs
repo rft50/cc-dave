@@ -157,6 +157,16 @@ public class StatusProvider : IProvider
             },
             Cost = CostFour,
             Stackable = false
+        },
+        new StatusStruct
+        {
+            Status = ModManifest.KokoroApi.RedrawVanillaStatus,
+            Tags = new HashSet<string>
+            {
+                "status",
+                "utility"
+            },
+            Cost = 10
         }
     };
 

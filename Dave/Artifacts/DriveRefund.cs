@@ -1,16 +1,14 @@
-﻿using CobaltCoreModding.Definitions.ExternalItems;
-
-namespace Dave.Artifacts;
+﻿namespace Dave.Artifacts;
 
 // DriveRefund: The first time you lose overdrive each turn, draw a card.
 
 [ArtifactMeta(pools = new[] { ArtifactPool.Common }, extraGlossary = new[] {"status.overdriveAlt"})]
 public class DriveRefund : Artifact
 {
-    public static ExternalSprite on;
-    public static ExternalSprite off;
+    internal static Spr On;
+    internal static Spr Off;
 
-    public bool popped;
+    private bool _popped;
 
     public override List<Tooltip> GetExtraTooltips() => new()
     {
@@ -19,19 +17,19 @@ public class DriveRefund : Artifact
 
     public override void OnTurnStart(State state, Combat combat)
     {
-        popped = false;
+        _popped = false;
     }
 
     public override void OnCombatEnd(State state)
     {
-        popped = false;
+        _popped = false;
     }
 
     public override void AfterPlayerStatusAction(State state, Combat combat, Status status, AStatusMode mode, int statusAmount)
     {
         if (status != Enum.Parse<Status>("overdrive") || mode != AStatusMode.Add || statusAmount >= 0) return;
 
-        popped = true;
+        _popped = true;
         
         Pulse();
         
@@ -40,6 +38,6 @@ public class DriveRefund : Artifact
 
     public override Spr GetSprite()
     {
-        return (Spr) (popped ? off : on).Id!;
+        return _popped ? Off : On;
     }
 }

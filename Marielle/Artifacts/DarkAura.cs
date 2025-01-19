@@ -30,15 +30,8 @@ public class DarkAura : Artifact, IRegisterable
             {
                 status = ModEntry.Instance.Curse.Status,
                 statusAmount = 1,
-                targetPlayer = true,
-                artifactPulse = Key()
-            },
-            new AStatus
-            {
-                status = ModEntry.Instance.Curse.Status,
-                statusAmount = 1,
                 targetPlayer = false,
-                timer = 0
+                artifactPulse = Key()
             }
         ]);
     }

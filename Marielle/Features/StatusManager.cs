@@ -52,35 +52,6 @@ public class StatusManager : IStatusLogicHook
     {
         return instance.targetPlayer ? s.ship : ((Combat)s.route).otherShip;
     }
-
-    [HarmonyTranspiler]
-    [HarmonyPatch(typeof(AOverheat), "Begin")]
-    private static IEnumerable<CodeInstruction> AOverheat_Begin_Transpiler(IEnumerable<CodeInstruction> instructions)
-    {
-        try
-        {
-            return new SequenceBlockMatcher<CodeInstruction>(instructions)
-                .Find(
-                    ILMatches.Ldarg(2),
-                    ILMatches.Ldfld("ship"),
-                    ILMatches.AnyStloc.CreateLdlocInstruction(out var ldloc)
-                )
-                .Find(
-                    ILMatches.Instruction(OpCodes.Ldc_I4_1)
-                )
-                .Replace(
-                    ldloc,
-                    new(OpCodes.Ldfld, AccessTools.Field("Ship:overheatDamage"))
-                )
-                .AllElements();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("AOverheat's Begin patch failed!");
-            Console.WriteLine(e);
-            return instructions;
-        }
-    }
     
     [HarmonyPrefix]
     [HarmonyPatch(typeof(Ship), "ResetAfterCombat")]

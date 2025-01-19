@@ -8,13 +8,11 @@ namespace Dave.Cards
     [CardMeta(rarity = Rarity.common, upgradesTo = new [] { Upgrade.A, Upgrade.B })]
     public class LuckyEscapeCard : Card
     {
-        public static Spr card_sprite;
-        
         public override List<CardAction> GetActions(State s, Combat c)
         {
             var builtActions = RandomChoiceActionFactory.BuildActions(new List<CardAction>
             {
-                new AStatus { status = (Status)(ModManifest.red_rigging.Id ?? throw new Exception("missing status")), targetPlayer = true, statusAmount = 1, mode = AStatusMode.Add },
+                new AStatus { status = ModEntry.Instance.RedRigging.Status, targetPlayer = true, statusAmount = 1, mode = AStatusMode.Add },
             }, new List<CardAction>
             {
                 new AStatus { status = Status.evade, targetPlayer = true, statusAmount = upgrade == Upgrade.B ? 2 : 1, mode = AStatusMode.Add }
@@ -23,17 +21,15 @@ namespace Dave.Cards
             return new List<CardAction>
             {
                 builtActions[0],
-                new RandomMoveFoeAction { dist = upgrade == Upgrade.A ? 3 : 2 },
+                new RandomMoveFoeAction { Dist = upgrade == Upgrade.A ? 3 : 2 },
                 builtActions[2],
-                builtActions[1],
-                new ADummyAction()
+                builtActions[1]
             };
         }
 
         public override CardData GetData(State state) => new()
         {
-            cost = 1,
-            art = card_sprite
+            cost = 1
         };
     }
 }
