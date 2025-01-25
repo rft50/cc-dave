@@ -20,7 +20,6 @@ public class RestartOptionManager
 
     public void Register()
     {
-
         DB.story.all["infinite_loopRestart"] = new()
         {
             type = NodeType.@event,
@@ -32,7 +31,7 @@ public class RestartOptionManager
                 {
                     who = "comp",
                     loopTag = "loading3",
-                    Text = "SYSTEM TIME CORRUPTED!! >>> <c=downside>MUST REVERT POWER!</c> PLEASE SELECT REBOOT OPTION"
+                    Text = ModEntry.Instance.Localizations.Localize(["restart", "boot", "text"])
                 }
             ],
             choiceFunc = "infinite_loopRestart"
@@ -68,14 +67,19 @@ public class RestartOptionManager
             return new Choice
             {
                 label = first.GetDoubleDescription(s),
-                actions = first.GetDoubleActions(s)
+                actions = [
+                    new AShipUpgrades
+                    {
+                        actions = first.GetDoubleActions(s)
+                    }
+                ]
             };
         }
         else
         {
             return new Choice
             {
-                label = first.GetSingleDescription(s) + " & " + second.GetSingleDescription(s) + ".",
+                label = ModEntry.Instance.Localizations.Localize(["restart", "boot", "pair"], new {First = first.GetSingleDescription(s), Second = second.GetSingleDescription(s)}),
                 actions = [
                     new AShipUpgrades
                     {

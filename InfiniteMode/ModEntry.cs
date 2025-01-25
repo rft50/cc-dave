@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using InfiniteMode.Artifacts;
+using InfiniteMode.ExternalAPI;
 using InfiniteMode.Features;
 using Microsoft.Extensions.Logging;
 using Nanoray.PluginManager;
 using Nickel;
-using IKokoroApi = InfiniteMode.ExternalAPI.IKokoroApi;
 
 /* In the Cobalt Core modding community it is common for namespaces to be <Author>.<ModName>
  * This is helpful to know at a glance what mod we're looking at, and who made it */
@@ -18,7 +18,7 @@ namespace InfiniteMode;
 public sealed class ModEntry : SimpleMod
 {
     internal static ModEntry Instance { get; private set; } = null!;
-    internal IKokoroApi KokoroApi { get; }
+    internal IKokoroApi.IV2 KokoroApi { get; }
     internal ILocalizationProvider<IReadOnlyList<string>> AnyLocalizations { get; }
     internal ILocaleBoundNonNullLocalizationProvider<IReadOnlyList<string>> Localizations { get; }
     internal ICardTraitEntry CorruptedCardTrait { get; }
@@ -40,10 +40,7 @@ public sealed class ModEntry : SimpleMod
         /* We use Kokoro to handle our statuses. This means Kokoro is a Dependency, and our mod will fail to work without it.
          * We take from Kokoro what we need and put in our own project. Head to ExternalAPI/StatusLogicHook.cs if you're interested in what, exactly, we use.
          * If you're interested in more fancy stuff, make sure to peek at the Kokoro repository found online. */
-        KokoroApi = helper.ModRegistry.GetApi<IKokoroApi>("Shockah.Kokoro")!;
-        KokoroApi.RegisterTypeForExtensionData(typeof(State));
-        KokoroApi.RegisterTypeForExtensionData(typeof(Combat));
-        KokoroApi.RegisterTypeForExtensionData(typeof(Artifact));
+        KokoroApi = helper.ModRegistry.GetApi<IKokoroApi>("Shockah.Kokoro")!.V2;
 
         /* These localizations lists help us organize our mod's text and messages by language.
          * For general use, prefer AnyLocalizations, as that will provide an easier time to potential localization submods that are made for your mod 
@@ -98,7 +95,8 @@ public sealed class ModEntry : SimpleMod
         
         /* 7. MANAGERS */
         RestartOptionManager.Instance.Register();
-        CorruptedCardManager.Instance.Register(helper);
+        CorruptedCardManager.Instance.Register();
         CorruptedArtifactManager.Instance.Register();
+        ArtifactRewardModifierManager.Instance.Register();
     }
 }

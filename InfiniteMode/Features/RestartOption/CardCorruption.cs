@@ -31,9 +31,9 @@ public class CardCorruption : IRestartOption
         new ACorruptCard()
     ];
 
-    public string GetSingleDescription(State s) => "Corrupt 4 cards";
+    public string GetSingleDescription(State s) => ModEntry.Instance.Localizations.Localize(["restart", "option", "card", "single"]);
 
-    public string GetDoubleDescription(State s) => "Corrupt 8 cards.";
+    public string GetDoubleDescription(State s) => ModEntry.Instance.Localizations.Localize(["restart", "option", "card", "double"]);
 }
 
 internal class ACorruptCard : CardAction
@@ -46,12 +46,12 @@ internal class ACorruptCard : CardAction
         typeof(DodgeColorless),
         typeof(DroneshiftColorless)
     ];
-    private string _text = "Corrupt Card";
+    public string Text = ModEntry.Instance.Localizations.Localize(["restart", "option", "card", "default"]);
     
     public override void Begin(G g, State s, Combat c)
     {
         var corrupted = CorruptedCardManager.Instance.GetCorruptedCards(s);
-        var candidates = s.deck.Except(corrupted).ToList();
+        var candidates = s.deck.Except(corrupted.Select(e => e.Item1)).ToList();
         if (candidates.Count == 0) return;
 
         var nonStarters = candidates.Where(card => !_startercards.Contains(card.GetType())).ToList();
@@ -59,12 +59,11 @@ internal class ACorruptCard : CardAction
             candidates = nonStarters;
         
         var card = candidates.ElementAt(s.rngActions.NextInt() % candidates.Count);
-        corrupted.Add(card);
-        CorruptedCardManager.Instance.SetCorruptedCards(s, corrupted);
-        _text = "Corrupt " + card.Name();
+        CorruptedCardManager.Instance.CorruptCard(card, CorruptedCardManager.Instance.DetermineCorruptionLevel(card));
+        Text = ModEntry.Instance.Localizations.Localize(["restart", "option", "card", "chosen"], new {Card = card.GetLocName()});
     }
 
-    public override string GetUpgradeText(State s) => _text;
+    public override string GetUpgradeText(State s) => Text;
 
     public override List<Tooltip> GetTooltips(State s) =>
     [

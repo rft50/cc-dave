@@ -20,7 +20,7 @@ public class HullDissolution : IRestartOption
         {
             hurtAmount = GetSingleDamage(s),
             targetPlayer = true
-        }.WithDescription("- " + GetSingleDamage(s) + " Hull")
+        }.WithDescription(ModEntry.Instance.Localizations.Localize(["restart", "option", "hull", "line"], new {Hull = GetSingleDamage(s)}))
     ];
 
     public List<CardAction> GetDoubleActions(State s) =>
@@ -34,12 +34,14 @@ public class HullDissolution : IRestartOption
         {
             hurtAmount = GetDoubleDamage(s),
             targetPlayer = true
-        }.WithDescription("- " + GetDoubleDamage(s) + " Hull")
+        }.WithDescription(ModEntry.Instance.Localizations.Localize(["restart", "option", "hull", "line"], new {Hull = GetDoubleDamage(s)}))
     ];
 
-    public string GetSingleDescription(State s) => "Lose 4 Max Hull & " + GetSingleDamage(s) + " Hull";
+    public string GetSingleDescription(State s) =>
+        ModEntry.Instance.Localizations.Localize(["restart", "option", "hull", "desc"], new {MH = 4, Hull = GetSingleDamage(s)});
 
-    public string GetDoubleDescription(State s) => "Lose 8 Max Hull & " + GetDoubleDamage(s) + " Hull.";
+    public string GetDoubleDescription(State s) =>
+        ModEntry.Instance.Localizations.Localize(["restart", "option", "hull", "desc"], new {MH = 8, Hull = GetDoubleDamage(s)});
 
     private int GetSingleDamage(State s) => Math.Min(s.ship.hullMax - 4, s.ship.hull) / 3;
     private int GetDoubleDamage(State s) => Math.Min(s.ship.hullMax - 8, s.ship.hull) * 2 / 3;

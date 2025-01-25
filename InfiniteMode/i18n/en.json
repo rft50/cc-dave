@@ -8,5 +8,56 @@
       "name": "Corrupted Artifact",
       "description": "Corrupted artifacts will be removed after the first or second zone boss."
     }
+  },
+  
+  "artifact": {
+    "InfinityArtifact": {
+      "name": "INFINITY TRACKER",
+      "description": "At the start of each zone, increase the difficulty of all future fights."
+    }
+  },
+  
+  "corruption": {
+    "card": {
+      "tick": "Tick a Corrupted Card",
+      "destroy": "Destroy {{Name}}",
+      "singleUse": "{{Name}}\n  is Single Use",
+      "limited": "{{Name}}\n  is Limited {{Amount}}"
+    },
+    "artifact": {
+      "tooltip": "<c=downside>This artifact is Corrupted.</c>",
+      "lose": "Lose {{Name}}"
+    }
+  },
+  
+  "restart": {
+    "boot": {
+      "text": "SYSTEM TIME CORRUPTED!! >>> <c=downside>MUST REVERT POWER!</c> PLEASE SELECT REBOOT OPTION",
+      "pair": "{{First}} & {{Second}}."
+    },
+    "option": {
+      "artifact": {
+        "single": "Corrupt an artifact for Z1 & Corrupt an artifact for Z2",
+        "double": "Corrupt two artifacts for Z1 & Corrupt two artifacts for Z2.",
+        "default": "Corrupt Artifact",
+        "chosen": "Corrupt {{Artifact}}"
+      },
+      "card": {
+        "single": "Corrupt 4 cards",
+        "double": "Corrupt 8 cards.",
+        "default": "Corrupt Card",
+        "chosen": "Corrupt {{Card}}"
+      },
+      "core": {
+        "single": "Add 1 Debris to your deck",
+        "double": "Add 2 Debris to your deck.",
+        "one": "+ 1 Debris",
+        "two": "+ 2 Debris"
+      },
+      "hull": {
+        "desc": "Lose {{MH}} Max Hull & {{Hull}} Hull",
+        "line": "- {{Hull}} Hull"
+      }
+    }
   }
 }

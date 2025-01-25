@@ -69,6 +69,8 @@ public class EnemyModificationManager
         var shipPts = s.rngAi.NextInt() % ptsCap;
         var fightPts = ptsCap - shipPts;
 
+        c.otherShip.hull = c.otherShip.hullMax += ptsCap * 2;
+
         var fightMod = PickFightModifier(s, c, modifier, ref shipPts);
         var enemyMods = new Dictionary<IEnemyModifier, int>();
         var decisionMods = new Dictionary<string, int>();
@@ -104,8 +106,8 @@ public class EnemyModificationManager
                 decisionMods[mod] = 1;
         }
         
-        ModEntry.Instance.KokoroApi.SetExtensionData(c, "fightPts", fightPts);
-        ModEntry.Instance.KokoroApi.SetExtensionData(c, "decisionMods", decisionMods);
+        ModEntry.Instance.Helper.ModData.SetModData(c, "fightPts", fightPts);
+        ModEntry.Instance.Helper.ModData.SetModData(c, "decisionMods", decisionMods);
 
         return fightMod;
     }
@@ -142,9 +144,9 @@ public class EnemyModificationManager
 
     private static EnemyDecision ModifyEnemyDecision(EnemyDecision decision, State s, Combat c)
     {
-        if (!ModEntry.Instance.KokoroApi.TryGetExtensionData<Dictionary<string, int>>(c, "decisionMods",
+        if (!ModEntry.Instance.Helper.ModData.TryGetModData<Dictionary<string, int>>(c, "decisionMods",
                 out var rawRequiredMods)
-            || !ModEntry.Instance.KokoroApi.TryGetExtensionData<int>(c, "fightPts", out var fightPts))
+            || !ModEntry.Instance.Helper.ModData.TryGetModData<int>(c, "fightPts", out var fightPts))
             return decision;
         
         

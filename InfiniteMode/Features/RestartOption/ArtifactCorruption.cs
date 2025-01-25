@@ -42,14 +42,14 @@ public class ArtifactCorruption : IRestartOption
         }
     }.Shuffle(s.rngActions).ToList();
 
-    public string GetSingleDescription(State s) => "Corrupt an artifact for Z1 & Corrupt an artifact for Z2";
+    public string GetSingleDescription(State s) => ModEntry.Instance.Localizations.Localize(["restart", "option", "artifact", "single"]);
 
-    public string GetDoubleDescription(State s) => "Corrupt two artifacts for Z1 & Corrupt two artifacts for Z2.";
+    public string GetDoubleDescription(State s) => ModEntry.Instance.Localizations.Localize(["restart", "option", "artifact", "double"]);
 }
 
 internal class ACorruptArtifact : CardAction
 {
-    private string _text = "Corrupt Artifact";
+    public string Text = ModEntry.Instance.Localizations.Localize(["restart", "option", "artifact", "default"]);
     public CorruptedArtifactStatus Status = CorruptedArtifactStatus.Normal;
     
     public override void Begin(G g, State s, Combat c)
@@ -58,10 +58,10 @@ internal class ACorruptArtifact : CardAction
         if (candidates.Count == 0) return;
         var artifact = candidates.ElementAt(s.rngActions.NextInt() % candidates.Count);
         CorruptedArtifactManager.Instance.SetArtifactCorruption(artifact, Status);
-        _text = "Corrupt " + artifact.Name();
+        Text = ModEntry.Instance.Localizations.Localize(["restart", "option", "artifact", "chosen"], new {Artifact = artifact.GetLocName()});
     }
 
-    public override string GetUpgradeText(State s) => _text;
+    public override string GetUpgradeText(State s) => Text;
 
     public override List<Tooltip> GetTooltips(State s) =>
     [

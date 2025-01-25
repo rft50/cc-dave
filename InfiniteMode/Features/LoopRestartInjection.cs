@@ -18,6 +18,8 @@ public class LoopRestartInjection
     [HarmonyPostfix]
     private static void MapBase_Populate_Postfix(MapBase __instance)
     {
+        if (__instance is not MapThree) return;
+        
         var markers = __instance.markers;
         var furthest = markers
             .Select(v => v.Key.y)
@@ -73,10 +75,12 @@ public class LoopRestartInjection
         if (s.map.markers[s.map.currentLocation].contents is not MapBattle contents) return;
         if (contents.battleType != BattleType.Boss) return;
 
-        var infinity = s.EnumerateAllArtifacts().Find(v => v is InfinityArtifact) as InfinityArtifact;
-        if (infinity != null)
+        if (s.EnumerateAllArtifacts().Find(v => v is InfinityArtifact) is InfinityArtifact infinity)
+        {
             infinity.Level++;
-        
+            infinity.Pulse();
+        }
+
         CorruptedArtifactStatus? status = null;
         if (s.map.GetType() == typeof(MapFirst))
             status = CorruptedArtifactStatus.Zone1;
@@ -86,17 +90,12 @@ public class LoopRestartInjection
         
         var artifacts = s.EnumerateAllArtifacts()
             .Where(a =>
-                ModEntry.Instance.KokoroApi.TryGetExtensionData<CorruptedArtifactStatus>(a, "corruptedArtifact",
-                    out var data) && data == status)
+               CorruptedArtifactManager.Instance.GetArtifactCorruption(a) == status)
             .ToList();
-        foreach (var artifact in artifacts)
-        {
-            artifact.OnRemoveArtifact(s);
-            s.artifacts.Remove(artifact);
-            foreach (var character in s.characters)
+        Util.ApplyToShipUpgrades(g.state, artifacts
+            .Select(a => new ALoseArtifact
             {
-                character.artifacts.Remove(artifact);
-            }
-        }
+                artifactType = a.Key()
+            }.WithDescription(ModEntry.Instance.Localizations.Localize(["corruption", "artifact", "lose"], new {Name = a.GetLocName()}))));
     }
 }

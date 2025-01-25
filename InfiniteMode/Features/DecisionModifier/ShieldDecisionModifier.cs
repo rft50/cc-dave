@@ -12,7 +12,7 @@ public class ShieldDecisionModifier : IDecisionModifier
         if (part == null) return;
         decision.intents?.Add(new IntentStatus
         {
-            amount = amount / count,
+            amount = count,
             key = part,
             status = Status.shield,
             targetSelf = true

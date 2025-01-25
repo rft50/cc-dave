@@ -7,10 +7,15 @@ namespace InfiniteMode.Map;
 
 public class MapLoopRestart : MapNodeContents
 {
-    public override Route MakeRoute(State s)
+    public override Route MakeRoute(State s, Vec coord)
     {
         if (!s.EnumerateAllArtifacts().Any(v => v is InfinityArtifact))
-            s.AddNonCharacterArtifact(new InfinityArtifact());
+        {
+            var infinity = new InfinityArtifact();
+            s.AddNonCharacterArtifact(infinity);
+            infinity.Pulse();
+        }
+
         var map = new MapFirst();
         map.Populate(s, s.rngZone.Offshoot());
         s.map = map;

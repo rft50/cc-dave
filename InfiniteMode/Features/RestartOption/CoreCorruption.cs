@@ -14,7 +14,7 @@ public class CoreCorruption : IRestartOption
             card = new NonTempTrash(),
             destination = CardDestination.Deck,
             amount = 1
-        }.WithDescription("+ 1 Debris")
+        }.WithDescription(ModEntry.Instance.Localizations.Localize(["restart", "option", "core", "one"]))
     ];
 
     public List<CardAction> GetDoubleActions(State s) =>
@@ -24,10 +24,10 @@ public class CoreCorruption : IRestartOption
             card = new NonTempTrash(),
             destination = CardDestination.Deck,
             amount = 2
-        }.WithDescription("+ 2 Debris")
+        }.WithDescription(ModEntry.Instance.Localizations.Localize(["restart", "option", "core", "two"]))
     ];
 
-    public string GetSingleDescription(State s) => "Add 1 Debris to your deck";
+    public string GetSingleDescription(State s) => ModEntry.Instance.Localizations.Localize(["restart", "option", "core", "single"]);
 
-    public string GetDoubleDescription(State s) => "Add 2 Debris to your deck.";
+    public string GetDoubleDescription(State s) => ModEntry.Instance.Localizations.Localize(["restart", "option", "core", "double"]);
 }

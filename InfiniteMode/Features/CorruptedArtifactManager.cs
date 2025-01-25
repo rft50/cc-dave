@@ -15,8 +15,16 @@ public class CorruptedArtifactManager
 
     public bool IsArtifactCorrupted(Artifact a)
     {
-        return ModEntry.Instance.KokoroApi.TryGetExtensionData<CorruptedArtifactStatus>(a, "corruptedArtifact", out var data)
+        return ModEntry.Instance.Helper.ModData.TryGetModData<CorruptedArtifactStatus>(a, "corruptedArtifact", out var data)
                && data != CorruptedArtifactStatus.Normal;
+    }
+
+    public CorruptedArtifactStatus GetArtifactCorruption(Artifact a)
+    {
+        return ModEntry.Instance.Helper.ModData.TryGetModData<CorruptedArtifactStatus>(a, "corruptedArtifact",
+            out var data)
+            ? data
+            : CorruptedArtifactStatus.Normal;
     }
     
     public List<Artifact> GetCorruptedArtifacts(State s)
@@ -36,7 +44,7 @@ public class CorruptedArtifactManager
     
     public void SetArtifactCorruption(Artifact a, CorruptedArtifactStatus status)
     {
-        ModEntry.Instance.KokoroApi.SetExtensionData(a, "corruptedArtifact", status);
+        ModEntry.Instance.Helper.ModData.SetModData(a, "corruptedArtifact", status);
     }
 
     [HarmonyPatch(typeof(Artifact), "GetTooltips")]
@@ -45,10 +53,11 @@ public class CorruptedArtifactManager
     {
         if (Instance.IsArtifactCorrupted(__instance))
         {
-            __result.Add(new TTText("<c=downside>This artifact is Corrupted.</c>"));
+            __result.Add(new TTText(ModEntry.Instance.Localizations.Localize(["corruption", "artifact", "tooltip"])));
         }
     }
 }
+
 
 public enum CorruptedArtifactStatus
 {
