@@ -43,7 +43,8 @@ public class Malediction : Card, IRegisterable
                 new AAttack
                 {
                     damage = GetDamage(s),
-                    xHint = 1
+                    xHint = 1,
+                    piercing = true
                 }
             ],
             Upgrade.B =>
@@ -56,7 +57,8 @@ public class Malediction : Card, IRegisterable
                 new AAttack
                 {
                     damage = GetDamage(s),
-                    xHint = 1
+                    xHint = 1,
+                    piercing = true
                 }
             ],
             _ =>
@@ -68,7 +70,8 @@ public class Malediction : Card, IRegisterable
                 new AAttack
                 {
                     damage = GetDamage(s),
-                    xHint = 1
+                    xHint = 1,
+                    piercing = true
                 }
             ]
         };

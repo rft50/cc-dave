@@ -31,7 +31,7 @@ public class Immolation : Card, IRegisterable
             new AStatus
             {
                 status = Status.evade,
-                statusAmount = upgrade == Upgrade.A ? 2 : 1,
+                statusAmount = upgrade == Upgrade.B ? 2 : 1,
                 targetPlayer = true
             },
             new AStatus
@@ -51,7 +51,7 @@ public class Immolation : Card, IRegisterable
 
     public override CardData GetData(State state) => new()
     {
-        cost = 1,
+        cost = upgrade == Upgrade.A ? 0 : 1,
         artTint = "FFFFFF"
     };
 }

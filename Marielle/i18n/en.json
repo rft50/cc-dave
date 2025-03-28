@@ -2,7 +2,7 @@
   "character": {
     "Marielle": {
       "name": "Marielle",
-      "description": "<c=ac507e>Marielle</c>\nA zealot of the occult. She uses her cards to <c=pink>fry her enemies</c> and <c=red>delay the inevitable</c>."
+      "description": "<c=ac507e>MARIELLE</c>\nA zealot of the occult. She uses her cards to <c=pink>fry her enemies</c> and <c=red>delay the inevitable</c>."
     }
   },
   "artifact": {
@@ -121,6 +121,40 @@
     "Fleeting": {
       "name": "Fleeting",
       "description": "If this card is in your hand at the end of your turn, it is exhausted."
+    }
+  },
+  "duo": {
+    "Riggs": {
+      "name": "WAX WINGS",
+      "description": "At the start of every turn, if you are at least 2 heat away from overheating, gain 1 <c=status>EVADE</c> and 1 <c=status>HEAT</c>."
+    },
+    "Dizzy": {
+      "name": "DIVINE INTERVENTION",
+      "description": "Allows shields to block overheat damage for the first 2 times you'd overheat each combat."
+    },
+    "Peri": {
+      "name": "BLAZE OF GLORY",
+      "description": "<c=status>OVERDRIVE</c> and <c=status>POWERDRIVE</c> also increase <c=status>HEAT</c> applied to the enemy."
+    },
+    "Isaac": {
+      "name": "SMOKING GUN",
+      "description": "Attack drone shots inflict 1 <c=status>HEAT</c>."
+    },
+    "Drake": {
+      "name": "DARK PERSONA",
+      "description": "All negative heat on cards are replaced with twice as much curse gain."
+    },
+    "Max": {
+      "name": "ONE WITH NOTHING",
+      "description": "If you end your turn with no cards in hand, draw, and discard, apply 10 <c=status>CURSE</c> and 99 <c=status>HEAT</c> to the enemy."
+    },
+    "Books": {
+      "name": "BLACK MAGIC",
+      "description": "If you do not have enough <c=status>SHARD</c> to perform a shard action, perform it anyways and gain <c=status>HEAT</c> equal to the missing shard."
+    },
+    "CAT": {
+      "name": "REFRESH",
+      "description": "If you end your turn with more than 0 ENERGY, gain 1 <c=status>SERENITY</c>."
     }
   }
 }

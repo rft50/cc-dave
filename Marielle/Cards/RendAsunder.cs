@@ -26,16 +26,6 @@ public class RendAsunder : Card, IRegisterable
 
     public override List<CardAction> GetActions(State s, Combat c)
     {
-        if (upgrade == Upgrade.A)
-            return
-            [
-                new AStatus
-                {
-                    status = ModEntry.Instance.Curse.Status,
-                    statusAmount = 1,
-                    targetPlayer = false
-                }
-            ];
         return
         [
             new AStatus
@@ -47,11 +37,13 @@ public class RendAsunder : Card, IRegisterable
             new AStatus
             {
                 status = Status.heat,
-                statusAmount = upgrade switch
-                {
-                    Upgrade.B => 2,
-                    _ => 1
-                },
+                statusAmount = upgrade == Upgrade.A ? 3 : 2,
+                targetPlayer = false
+            },
+            new AStatus
+            {
+                status = Status.heat,
+                statusAmount = upgrade == Upgrade.B ? 2 : 1,
                 targetPlayer = true
             }
         ];

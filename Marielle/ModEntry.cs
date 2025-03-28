@@ -91,9 +91,11 @@ public sealed class ModEntry : SimpleMod
     internal static IReadOnlyList<Type> MarielleBossArtifactTypes { get; } = [
         typeof(NoMercy)
     ];
-    internal static IEnumerable<Type> MatielleAllArtifactTypes
+    
+    internal static IEnumerable<Type> MarielleAllArtifactTypes
         => MarielleCommonArtifactTypes
-        .Concat(MarielleBossArtifactTypes);
+        .Concat(MarielleBossArtifactTypes)
+        .Append(typeof(VanillaDuos));
 
 
     public ModEntry(IPluginPackage<IModManifest> package, IModHelper helper, ILogger logger) : base(package, helper, logger)
@@ -261,7 +263,7 @@ public sealed class ModEntry : SimpleMod
          * Creating artifacts is pretty similar to creating Cards
          * Take a look at the Artifacts folder for demo artifacts!
          * You may also notice we're using the other interface from InternalInterfaces.cs, IDemoArtifact, to help us out */
-        foreach (var artifactType in MatielleAllArtifactTypes)
+        foreach (var artifactType in MarielleAllArtifactTypes)
             AccessTools.DeclaredMethod(artifactType, nameof(IRegisterable.Register))?.Invoke(null, [package, helper]);
 
         /* 4. STATUSES
@@ -328,4 +330,17 @@ public sealed class ModEntry : SimpleMod
         JesterApi?.RegisterCharacterFlag("enemyHeat", MarielleDeck.Deck);
         JesterApi?.RegisterProvider(new MarielleJesterProvider());
     }
+
+    public override object GetApi(IModManifest requestingMod) => new MarielleApi();
+}
+
+public sealed class MarielleApi : IMarielleApi
+{
+    public IDeckEntry MarielleDeck() => ModEntry.Instance.MarielleDeck;
+
+    public IStatusEntry Curse() => ModEntry.Instance.Curse;
+
+    public IStatusEntry Enflamed() => ModEntry.Instance.Enflamed;
+
+    public ICardTraitEntry Fleeting() => ModEntry.Instance.Fleeting;
 }

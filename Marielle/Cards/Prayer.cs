@@ -30,12 +30,8 @@ public class Prayer : Card, IRegisterable
         [
             new AStatus
             {
-                status = Status.shield,
-                statusAmount = upgrade switch {
-                    Upgrade.A => 3,
-                    Upgrade.B => 1,
-                    _ => 2
-                },
+                status = Status.evade,
+                statusAmount = upgrade == Upgrade.A ? 2 : 1,
                 targetPlayer = true
             },
             new AStatus
