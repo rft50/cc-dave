@@ -8,6 +8,8 @@ namespace Marielle.Cards;
 
 public class Prayer : Card, IRegisterable
 {
+    public bool Discounted = false;
+    
     public static void Register(IPluginPackage<IModManifest> package, IModHelper helper)
     {
         helper.Content.Cards.RegisterCard("Prayer", new()
@@ -45,7 +47,7 @@ public class Prayer : Card, IRegisterable
 
     public override CardData GetData(State state) => new()
     {
-        cost = 2,
+        cost = Discounted ? 1 : 2,
         artTint = "FFFFFF"
     };
 }

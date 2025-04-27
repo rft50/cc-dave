@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using FMOD;
 using HarmonyLib;
 using Marielle.ExternalAPI;
 using Nanoray.PluginManager;
@@ -20,7 +19,7 @@ public interface IDuoArtifact
 
 public class VanillaDuos : IRegisterable
 {
-    private static List<Type> artifactTypes =
+    private static readonly List<Type> ArtifactTypes =
     [
         typeof(MarielleRiggsDuoArtifact),
         typeof(MarielleDizzyDuoArtifact),
@@ -36,7 +35,7 @@ public class VanillaDuos : IRegisterable
     {
         helper.ModRegistry.AwaitApi<IDuoApi>("Shockah.DuoArtifacts", api =>
         {
-            foreach (var artifactType in artifactTypes)
+            foreach (var artifactType in ArtifactTypes)
             {
                 AccessTools.DeclaredMethod(artifactType, nameof(IDuoArtifact.Register))?.Invoke(null, [package, helper, api]);
             }
@@ -64,7 +63,7 @@ public class MarielleRiggsDuoArtifact : Artifact, IDuoArtifact
         duoApi.RegisterDuoArtifact(MethodBase.GetCurrentMethod()!.DeclaringType!, [ModEntry.Instance.MarielleDeck.Deck, Deck.riggs]);
     }
 
-    public override List<Tooltip>? GetExtraTooltips() =>
+    public override List<Tooltip> GetExtraTooltips() =>
     [
         new TTGlossary("status.evade", 1),
         new TTGlossary("status.heat", 1)
@@ -172,6 +171,13 @@ public class MariellePeriDuoArtifact : Artifact, IDuoArtifact
         duoApi.RegisterDuoArtifact(MethodBase.GetCurrentMethod()!.DeclaringType!, [ModEntry.Instance.MarielleDeck.Deck, Deck.peri]);
     }
 
+    public override List<Tooltip> GetExtraTooltips() =>
+    [
+        new TTGlossary("status.overdrive", 1),
+        new TTGlossary("status.powerdrive", 1),
+        new TTGlossary("status.heat", 1)
+    ];
+
     [HarmonyPrefix]
     [HarmonyPatch(typeof(AStatus), "Begin")]
     public static void AStatus_Begin_Prefix(State s, AStatus __instance)
@@ -208,6 +214,12 @@ public class MarielleIsaacDuoArtifact : Artifact, IDuoArtifact
         });
         duoApi.RegisterDuoArtifact(MethodBase.GetCurrentMethod()!.DeclaringType!, [ModEntry.Instance.MarielleDeck.Deck, Deck.goat]);
     }
+
+    public override List<Tooltip> GetExtraTooltips() =>
+    [
+        new TTGlossary("midrow.drone", ""),
+        new TTGlossary("status.heat", 1)
+    ];
 
     [HarmonyTranspiler]
     [HarmonyPatch(typeof(AttackDrone), "GetActions")]
@@ -270,6 +282,12 @@ public class MarielleDrakeDuoArtifact : Artifact, IDuoArtifact
         });
         duoApi.RegisterDuoArtifact(MethodBase.GetCurrentMethod()!.DeclaringType!, [ModEntry.Instance.MarielleDeck.Deck, Deck.eunice]);
     }
+    
+    public override List<Tooltip> GetExtraTooltips() =>
+    [
+        new TTGlossary("status.heat", 1),
+        StatusMeta.GetTooltips(ModEntry.Instance.Curse.Status, 1)[0]
+    ];
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Card), "GetActionsOverridden")]
@@ -307,6 +325,12 @@ public class MarielleMaxDuoArtifact : Artifact, IDuoArtifact
         });
         duoApi.RegisterDuoArtifact(MethodBase.GetCurrentMethod()!.DeclaringType!, [ModEntry.Instance.MarielleDeck.Deck, Deck.hacker]);
     }
+
+    public override List<Tooltip> GetExtraTooltips() =>
+    [
+        new TTGlossary("status.heat", 99),
+        StatusMeta.GetTooltips(ModEntry.Instance.Curse.Status, 10)[0]
+    ];
 
     public override void OnTurnEnd(State state, Combat combat)
     {
@@ -355,6 +379,12 @@ public class MarielleBooksDuoArtifact : Artifact, IDuoArtifact
         ModEntry.Instance.KokoroApi.V2.ActionCosts.RegisterResourceCostIcon(new MarielleBooksHeatResource(), costIcon, costIcon);
         ModEntry.Instance.KokoroApi.V2.ActionCosts.RegisterHook(new MarielleBooksActionCostHook(), double.MinValue);
     }
+    
+    public override List<Tooltip> GetExtraTooltips() =>
+    [
+        new TTGlossary("status.shard", 1),
+        new TTGlossary("status.heat", 1)
+    ];
 
     private class MarielleBooksActionCostHook : IKokoroApi.IV2.IActionCostsApi.IHook
     {
@@ -430,8 +460,13 @@ public class MarielleCatDuoArtifact : Artifact, IDuoArtifact
             Name = ModEntry.Instance.AnyLocalizations.Bind(["duo", "CAT", "name"]).Localize,
             Description = ModEntry.Instance.AnyLocalizations.Bind(["duo", "CAT", "description"]).Localize
         });
-        duoApi.RegisterDuoArtifact(MethodBase.GetCurrentMethod()!.DeclaringType!, [ModEntry.Instance.MarielleDeck.Deck, Deck.shard]);
+        duoApi.RegisterDuoArtifact(MethodBase.GetCurrentMethod()!.DeclaringType!, [ModEntry.Instance.MarielleDeck.Deck, Deck.colorless]);
     }
+    
+    public override List<Tooltip> GetExtraTooltips() =>
+    [
+        new TTGlossary("status.serenity", 1)
+    ];
 
     public override void OnTurnEnd(State state, Combat combat)
     {

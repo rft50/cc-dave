@@ -2,13 +2,13 @@
   "character": {
     "Marielle": {
       "name": "Marielle",
-      "description": "<c=ac507e>MARIELLE</c>\nA zealot of the occult. She uses her cards to <c=pink>fry her enemies</c> and <c=red>delay the inevitable</c>."
+      "description": "<c=ac507e>MARIELLE</c>\nA zealot of the occult. She uses her cards to <c=boldPink>fry her enemies</c> and <c=downside>delay the inevitable</c>."
     }
   },
   "artifact": {
-    "Repentance": {
-      "name": "REPENTANCE",
-      "description": "At the start of combat, gain an <c=card>Absolve</c>."
+    "GuidingLight": {
+      "name": "GUIDING LIGHT",
+      "description": "Add a 1-cost <c=card>Prayer</c> to your deck on pickup."
     },
     "DarkAura": {
       "name": "DARK AURA",
@@ -155,6 +155,26 @@
     "CAT": {
       "name": "REFRESH",
       "description": "If you end your turn with more than 0 ENERGY, gain 1 <c=status>SERENITY</c>."
+    },
+    "TySasha": {
+      "name": "COLLAR BELL",
+      "description": "While overheating, increase the value of X on all cards for each <c=status>CURSE</c> you have."
+    },
+    "Johnson": {
+      "name": "LEGAL BINDING",
+      "description": "Whenever you play a temp card, apply 1 <c=status>HEAT</c> to the enemy."
+    },
+    "Bucket": {
+      "name": "TEMPERANCE",
+      "description": "<c=status>SERENITY</c> also negates trash gain."
+    },
+    "TH34": {
+      "name": "BLACK METAL",
+      "description": "Every 2 turns, convert 1 <c=status>CURSE</c> to 1 <c=status>HEAT CAPACITY</c>."
+    },
+    "Dyna": {
+      "name": "INSULT TO INJURY",
+      "description": "Attacks that hit a ship part with weak, brittle, or flux inflict 1 <c=status>HEAT</c>."
     }
   }
 }

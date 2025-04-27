@@ -80,7 +80,7 @@ public sealed class ModEntry : SimpleMod
 
     /* We'll organize our artifacts the same way: making lists and then feed those to an IEnumerable */
     internal static IReadOnlyList<Type> MarielleCommonArtifactTypes { get; } = [
-        typeof(Repentance),
+        typeof(GuidingLight),
         typeof(DarkAura),
         typeof(ColdHearted),
         typeof(HotPotato),
@@ -95,7 +95,8 @@ public sealed class ModEntry : SimpleMod
     internal static IEnumerable<Type> MarielleAllArtifactTypes
         => MarielleCommonArtifactTypes
         .Concat(MarielleBossArtifactTypes)
-        .Append(typeof(VanillaDuos));
+        .Append(typeof(VanillaDuos))
+        .Append(typeof(ModdedDuos));
 
 
     public ModEntry(IPluginPackage<IModManifest> package, IModHelper helper, ILogger logger) : base(package, helper, logger)

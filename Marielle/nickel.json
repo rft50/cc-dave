@@ -1,6 +1,6 @@
 {
   "UniqueName": "rft.Marielle",
-  "Version": "1.2.0",
+  "Version": "{{ModVersion}}",
   "Author": "rft50, Soggoru Waffle",
   "Description": "Marielle\nA zealot of the occult. She uses her cards to fry her enemies and delay the inevitable.",
   "RequiredApiVersion": "0.6.0",

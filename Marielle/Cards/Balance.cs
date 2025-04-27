@@ -26,32 +26,14 @@ public class Balance : Card, IRegisterable
 
     public override List<CardAction> GetActions(State s, Combat c)
     {
-        if (upgrade == Upgrade.B)
-        {
-            return
-            [
-                new AStatus
-                {
-                    status = Status.tempShield,
-                    statusAmount = 2,
-                    targetPlayer = true
-                },
-                new AStatus
-                {
-                    status = Status.serenity,
-                    statusAmount = 1,
-                    targetPlayer = true
-                },
-                new AStatus
-                {
-                    status = ModEntry.Instance.Curse.Status,
-                    statusAmount = 1,
-                    targetPlayer = true
-                }
-            ];
-        }
         return
         [
+            new AStatus
+            {
+                status = Status.tempShield,
+                statusAmount = upgrade == Upgrade.B ? 2 : 1,
+                targetPlayer = true
+            },
             new AStatus
             {
                 status = Status.serenity,
